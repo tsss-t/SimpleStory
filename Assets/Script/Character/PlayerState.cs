@@ -14,7 +14,7 @@ public class PlayerState
 {
     public enum PlayerAction
     {
-        Free, Died, Shopping,Talking
+        Free, Died, Shopping, Talking
     }
     //シングルトン
     private static PlayerState _instans;
@@ -258,10 +258,10 @@ public class PlayerState
     {
         return attackDis;
     }
-    public void KillEnemy(int enemyID,int EXP,int level)
+    public void KillEnemy(int enemyID, int EXP, int level)
     {
         ExpUp(EXP);
-        DoQuest(QuestType.killEnemy,enemyID);
+        DoQuest(QuestType.killEnemy, enemyID);
     }
     private void ExpUp(int exp)
     {
@@ -298,6 +298,12 @@ public class PlayerState
     #endregion
 
     #region アイテム関連
+    public void GetMoney(int money)
+    {
+        this.money += money;
+        PlayerStateChanged(PlayerStateChangeType.money);
+    }
+
     /// <summary>
     /// アイテムget
     /// </summary>
@@ -380,13 +386,31 @@ public class PlayerState
     {
 
     }
-    public void DoQuest(QuestType type,int ID)
+    public void DoQuest(QuestType type, int ID)
     {
-        quest.DoQuest(type,ID);
+        quest.DoQuest(type, ID);
     }
-    public void OverQuest()
+    public bool OverQuest(int questID)
     {
-
+        QuestAward(quest.GetAcceptQuestList()[questID].GetStepNow().award);
+        return quest.OverQuest(questID);
+    }
+    public bool CanReport(int questID)
+    {
+        if (quest.GetAcceptQuestList()[questID].GetStepNow().questType == QuestType.findItem)
+        {
+            quest.GetAcceptQuestList()[questID].count = bag.GetItemCount(questID);
+        }
+        return quest.IsOverStep(questID);
+    }
+    public void QuestAward(QuestInfo.Award award)
+    {
+        if (award.itemID >= 0)
+        {
+            GetItem(award.itemID);
+        }
+        GetMoney(award.money);
+        ExpUp(award.EXP);
     }
 
     #endregion

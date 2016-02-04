@@ -204,7 +204,7 @@ public class PlayerBag
         int count = 0;
         foreach (Item item in dictionBag.Values)
         {
-            if (item.id == itemID)
+            if (item.info.id == itemID)
             {
                 count += item.count;
             }

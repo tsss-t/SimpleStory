@@ -24,9 +24,10 @@ public class NPCInfomation : MonoBehaviour
         this.questList = questList;
     }
 
-    public void Communication()
+    public int Communication()
     {
         CommunicationStart(this.NPCID);
+        return NPCID;
     }
     public void SetNPCType(Dictionary<CommunicationType, bool> NPCType)
     {

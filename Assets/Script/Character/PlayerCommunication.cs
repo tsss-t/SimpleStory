@@ -26,15 +26,15 @@ public class PlayerCommunication : MonoBehaviour
         timer += Time.deltaTime;
         if (playerState.PlayerAliveNow)
         {
-            if (Input.GetButtonDown("Comunication")&& targetObject!=null&& timer>0.5f)
+            if (Input.GetButtonDown("Comunication") && targetObject != null && timer > 0.5f)
             {
-                targetObject.GetComponent<NPCInfomation>().Communication();
+                playerState.DoQuest(QuestType.findNPC, targetObject.GetComponent<NPCInfomation>().Communication());
                 timer = 0f;
             }
         }
 
 
-        if(colliderList.Count!=0)
+        if (colliderList.Count != 0)
         {
             FindObject();
         }
@@ -45,9 +45,9 @@ public class PlayerCommunication : MonoBehaviour
     {
         if (collider.gameObject.tag == Tags.NPC)
         {
-            colliderList.Add( collider.gameObject);
+            colliderList.Add(collider.gameObject);
             FindObject();
-        }   
+        }
     }
     void OnTriggerExit(Collider collider)
     {

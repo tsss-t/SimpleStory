@@ -94,24 +94,34 @@ public class UIQuestManager : MonoBehaviour
 
         if (selectQuest != null)
         {
-            for (int i = 0; i < selectQuest.info.step.Count; i++)
+            for (int i = 1; i <=  selectQuest.stepNow; i++)
             {
                 goStep = NGUITools.AddChild(containStepGrid, prefabStepButton);
-                switch (selectQuest.info.step[i].questType)
+                switch (selectQuest.info.GetStep(i).questType)
                 {
                     case QuestType.findNPC:
-                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}と話してください。", selectQuest.info.step[i].description, npcManager.GetNPCInfo(selectQuest.info.step[i].targetID).name);
+                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}と話してください。{2}",
+                            selectQuest.info.GetStep(i).description, 
+                            npcManager.GetNPCInfo(selectQuest.info.GetStep(i).targetID).name,
+                            selectQuest.info.GetStep(i).count==selectQuest.count?"(完成)":"");
                         break;
                     case QuestType.findItem:
-                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}  :  {2}/{3}", selectQuest.info.step[i].description,ItemList.getItem(selectQuest.info.step[i].targetID).name,PlayerState.GamePlayerState.GetPlayerBag().GetItemCount(selectQuest.info.step[i].targetID), selectQuest.count);
+                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}  :  {2}/{3}", 
+                            selectQuest.info.GetStep(i).description,
+                            ItemList.getItem(selectQuest.info.GetStep(i).targetID).name,
+                            PlayerState.GamePlayerState.GetPlayerBag().GetItemCount(selectQuest.info.GetStep(i).targetID), 
+                            selectQuest.info.GetStep(i).count);
                         break;
                     case QuestType.killEnemy:
-                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1} :  {2}/{3}", selectQuest.info.step[i].description, enemyManager.getEnemyName(selectQuest.info.step[i].targetID),selectQuest.count, selectQuest.info.step[i].count);
+                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1} :  {2}/{3}", 
+                            selectQuest.info.GetStep(i).description, 
+                            enemyManager.getEnemyName(selectQuest.info.GetStep(i).targetID),
+                            selectQuest.count, selectQuest.info.GetStep(i).count);
                         break;
                     default:
                         break;
                 }
-                goStep.transform.Find("Title").GetComponent<UILabel>().text = string.Format("Step : {0}", i + 1);
+                goStep.transform.Find("Title").GetComponent<UILabel>().text = string.Format("Step : {0}", i);
                 goStep.name = i.ToString();
                 stepShowList.Add(goStep);
             }

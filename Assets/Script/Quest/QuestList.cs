@@ -26,11 +26,11 @@ public static class QuestList
 
 
         //tset data
-        _instance.Add(1, new QuestInfo(1, "Kill Boss", "aaaaaaaaaaaaaaaaaaaaaaaaaaaa", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the boss", QuestType.findNPC, 1, 1), QuestInfo.makeStep("You must kill the boss", QuestType.killEnemy, 1, 1) }));
-        _instance.Add(2, new QuestInfo(2, "Find NPC", "ddddddddddddddddddddddddddddd", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the NPC", QuestType.findNPC, 2, 1) }));
-        _instance.Add(3, new QuestInfo(3, "Find Item", "cccccccccccccccccccccccccccc", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the Item", QuestType.findItem, 1, 5) }));
-        _instance.Add(4, new QuestInfo(4, "Find Item1", "abc", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the Item1", QuestType.findItem, 2, 5) }));
-        _instance.Add(5, new QuestInfo(5, "Find Item2", "cba", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the Item2", QuestType.findItem, 3, 5) }));
+        _instance.Add(1, new QuestInfo(1, "Kill Boss", "this is the frist quest", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the NPC right", QuestType.findNPC, 1, 1,100,100), QuestInfo.makeStep("You must kill the boss", QuestType.killEnemy, 1, 1,1000,1000,5) }));
+        _instance.Add(2, new QuestInfo(2, "Find NPC", "this is the second quest", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the NPC left", QuestType.findNPC, 2, 1,100,100) }));
+        _instance.Add(3, new QuestInfo(3, "Find Item", "quest3", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the Item", QuestType.findItem, 1, 5,100,100) }));
+        _instance.Add(4, new QuestInfo(4, "Find Item1", "quest4", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the Item1", QuestType.findItem, 2, 5, 100, 100) }));
+        _instance.Add(5, new QuestInfo(5, "Find Item2", "quest5", new List<QuestInfo.QuestStep>() { QuestInfo.makeStep("You must find the Item2", QuestType.findItem, 3, 5, 100, 100) }));
 
 
     }

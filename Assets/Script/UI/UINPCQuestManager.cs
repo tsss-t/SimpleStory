@@ -6,9 +6,13 @@ public class UINPCQuestManager : MonoBehaviour
     #region para
     PlayerState playerState;
 
-    public GameObject questIntemPrefab;
+    public GameObject questItemPrefab;
+    public GameObject questItemOverPrefab;
     public GameObject NPC;
     private int selectShopID;
+    /// <summary>
+    /// NPCクエストリスト中のID
+    /// </summary>
     private int selectQuestID;
 
     private NPCManager npcManager;
@@ -18,6 +22,9 @@ public class UINPCQuestManager : MonoBehaviour
 
     GameObject containQuestList;
     GameObject containQuestInfo;
+
+    GameObject acceptButton;
+    GameObject overButton;
 
     UIController mainControllerUI;
     UILabel questInfoLabel;
@@ -41,6 +48,8 @@ public class UINPCQuestManager : MonoBehaviour
         containQuestList = transform.Find("QuestList").Find("Scroll View").Find("Items").gameObject;
         containQuestInfo = transform.Find("QuestInfo").Find("Scroll View").Find("Items").gameObject;
 
+        acceptButton = transform.Find("AcceptButton").gameObject;
+        overButton = transform.Find("OverButton").gameObject;
         questInfoLabel = containQuestInfo.transform.Find("QuestInfoLabel").GetComponent<UILabel>();
         this.gameObject.SetActive(false);
     }
@@ -65,6 +74,7 @@ public class UINPCQuestManager : MonoBehaviour
 
         int j = 1;
 
+        //NPCクエストのLoop
         for (int i = 0; i < npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList().Count; i++)
         {
 
@@ -75,7 +85,20 @@ public class UINPCQuestManager : MonoBehaviour
                 {
                     selectQuestID = i;
                 }
-                go = NGUITools.AddChild(containQuestList, questIntemPrefab);
+                go = NGUITools.AddChild(containQuestList, questItemPrefab);
+                go.transform.Find("QuestName").GetComponent<UILabel>().text = npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[i].name;
+                go.gameObject.name = i.ToString();
+
+                containQuestList.GetComponent<UITable>().repositionNow = true;
+                questDictionary.Add(j++, go);
+            }
+            else if (IsOverStep(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[i].ID))
+            {
+                if (selectQuestID == -1)
+                {
+                    selectQuestID = i;
+                }
+                go = NGUITools.AddChild(containQuestList, questItemOverPrefab);
                 go.transform.Find("QuestName").GetComponent<UILabel>().text = npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[i].name;
                 go.gameObject.name = i.ToString();
 
@@ -86,36 +109,80 @@ public class UINPCQuestManager : MonoBehaviour
     }
     void UpdateQuestInfo()
     {
+        acceptButton.SetActive(false);
+        overButton.SetActive(false);
         if (selectQuestID != -1)
         {
-            questInfoLabel.text = npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].description;
+            //新規クエスト
+            if (!CheckQuest(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID))
+            {
+                if (PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID, out quest))
+                {
+                    questInfoLabel.text = quest.GetStepNow().description;
+                }
+                else
+                {
+                    questInfoLabel.text = npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].description;
+                }
+                acceptButton.SetActive(true);
+            }
+            //クエスト報告
+            else if (IsOverStep(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID))
+            {
+                int questID = npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID;
+                quest = playerState.GetPlayerQuest().GetAcceptQuestList()[questID];
+                questInfoLabel.text = quest.GetStepNow().description;
+
+                overButton.SetActive(true);
+            }
         }
         else
         {
             questInfoLabel.text = "";
         }
-
     }
 
+    Quest quest;
     /// <summary>
     /// このクエストは既に受け取ったか？　受け取ったら：true
     /// </summary>
-    /// <param name="QuestID">NPCのクエスト　クエストリスト中のID</param>
+    /// <param name="questID">クエストリスト中のID</param>
     /// <returns></returns>
-    bool CheckQuest(int QuestID)
+    bool CheckQuest(int questID)
     {
-
-        Quest quest;
-        if (PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(QuestID, out quest))
+        if (PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(questID, out quest))
         {
-            return true;
+            if(quest.isAccept)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
             return false;
         }
     }
-
+    /// <summary>
+    /// 完成した報告できるクエストですか
+    /// </summary>
+    /// <param name="questID">クエストリスト中のID</param>
+    /// <returns></returns>
+    bool IsOverStep(int questID)
+    {
+        PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(questID, out quest);
+        if (!quest.isOver)
+        {
+            if (quest.GetStepNow().count == quest.count)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
     #region 外部API
     public void SetSelectedShopID(int shopID)
@@ -138,6 +205,10 @@ public class UINPCQuestManager : MonoBehaviour
     {
         AcceptQuest();
     }
+    public void OnOverButtonClick()
+    {
+        OverQuest();
+    }
     public void OnCloseButtonClick()
     {
         Hide();
@@ -149,22 +220,21 @@ public class UINPCQuestManager : MonoBehaviour
     }
     #endregion
     #region UI Action
-    public void Show()
+    void Show()
     {
         PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Talking);
         Init();
         this.gameObject.SetActive(true);
     }
-    public void Hide()
+    void Hide()
     {
         PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Free);
         this.gameObject.SetActive(false);
     }
-    public void AcceptQuest()
+    void AcceptQuest()
     {
         if (playerState.AcceptQuest(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID))
         {
-            
             Init();
         }
         else
@@ -173,6 +243,17 @@ public class UINPCQuestManager : MonoBehaviour
             //TODO:エラー処理
         }
     }
-
+    void OverQuest()
+    {
+        if (playerState.OverQuest(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID))
+        {
+            Init();
+        }
+        else
+        {
+            Debug.Log("任務受取る失敗！");
+            //TODO:エラー処理
+        }
+    }
     #endregion
 }

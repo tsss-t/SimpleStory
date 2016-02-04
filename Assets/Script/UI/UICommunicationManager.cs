@@ -127,7 +127,7 @@ public class UICommunicationManager : MonoBehaviour
     void ShowQuestMenu()
     {
         OnCloseButtonClick();
-        npcQuestManagerUI.Show();
+        npcQuestManagerUI.OnOpenButtonClick();
     }
     #endregion
 }

@@ -133,12 +133,11 @@ public class EnemyController : MonoBehaviour
                         break;
                     }
             }
-        }
-
-        //BUG防止
-        if(gameObject.transform.position.y<-100)
-        {
-            Die();
+            //BUG防止
+            if (gameObject.transform.position.y < -100)
+            {
+                BugDie();
+            }
         }
     }
     #endregion
@@ -502,7 +501,12 @@ public class EnemyController : MonoBehaviour
         this.GetComponent<CharacterController>().enabled = false;
 
     }
-
+    private void BugDie()
+    {
+        nowState = ActionState.die;
+        StartCoroutine(AfterDie());
+        this.GetComponent<CharacterController>().enabled = false;
+    }
 
     #endregion
 

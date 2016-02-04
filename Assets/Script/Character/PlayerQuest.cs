@@ -61,17 +61,14 @@ public class PlayerQuest
         Quest quest;
         if (questAcceptList.TryGetValue(info.ID, out quest))
         {
-            return false;
+            quest.isAccept = true;
         }
         else
         {
             questAcceptList.Add(info.ID, new Quest(info.ID, 1, 0, info, false));
-
             //TODO:サーバへ提出
-
-            return true;
         }
-
+        return true;
     }
     /// <summary>
     /// 任務をゲット
@@ -82,16 +79,15 @@ public class PlayerQuest
         Quest quest;
         if (questAcceptList.TryGetValue(questID, out quest))
         {
-            return false;
+            quest.isAccept = true;
         }
         else
         {
             questAcceptList.Add(questID, new Quest(questID, 1, 0, QuestList.getQuest(questID), false));
 
             //TODO:サーバへ提出
-
-            return true;
         }
+        return true;
     }
 
 
@@ -99,12 +95,38 @@ public class PlayerQuest
     {
         foreach (Quest item in questAcceptList.Values)
         {
-            if (item.info.step[item.stepNow].questType == type && item.info.step[item.stepNow].targetID == ID && item.count < item.info.step[item.stepNow].count)
+            if (item.isAccept&& item.GetStepNow().questType == type && item.GetStepNow().targetID == ID && item.count < item.info.GetStepCount())
             {
-                
                 item.count++;
             }
         }
     }
+    public bool OverQuest(int questID)
+    {
+        if (questAcceptList[questID].stepNow < questAcceptList[questID].info.GetStepCount())
+        {
+            questAcceptList[questID].stepNow++;
+            questAcceptList[questID].isAccept = false;
+            questAcceptList[questID].count = 0;
+        }
+        else if (questAcceptList[questID].stepNow == questAcceptList[questID].info.GetStepCount())
+        {
+            questAcceptList[questID].isOver = true;
+        }
+
+        return true;
+    }
+    public bool IsOverStep(int questID)
+    {
+        if (questAcceptList[questID].count == questAcceptList[questID].GetStepNow().count)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     #endregion
 }
