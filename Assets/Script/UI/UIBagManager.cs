@@ -13,6 +13,9 @@ public class UIBagManager : MonoBehaviour
     #region para
     PlayerState playerState;
     UIController mainControllerUI;
+
+    bool isShowPanel;
+
     #region bag
     public GameObject prefabItem;
     public GameObject prefabItemE;
@@ -61,6 +64,7 @@ public class UIBagManager : MonoBehaviour
     {
         playerState = PlayerState.GamePlayerState;
         playerBag = playerState.GetPlayerBag();
+        isShowPanel = false;
         //equepInfo = plyerState.getPlayerEquep();
 
         dictionaryUIBagItem = new Dictionary<int, GameObject>();
@@ -190,11 +194,7 @@ public class UIBagManager : MonoBehaviour
     {
         PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Free);
         OnEquepInfoPanelCloseButtonClick();
-        if (gameObject.activeSelf)
-        {
-            //GetComponent<UITweener>().PlayReverse();
-            gameObject.SetActive(false);
-        }
+        Hide();
     }
     public void OpenPanelEquep()
     {
@@ -234,16 +234,31 @@ public class UIBagManager : MonoBehaviour
         if (gameObject.activeSelf)
         {
             //GetComponent<UITweener>().PlayReverse();
-            gameObject.SetActive(false);
+            Hide();
         }
         else
         {
-            mainControllerUI.CloseAllWindows();
-            gameObject.SetActive(true);
+            Show();
             //GetComponent<UITweener>().PlayForward();
             OnStatesChanged(PlayerStateChangeType.bag);
             OnStatesChanged(PlayerStateChangeType.equep);
             OnStatesChanged(PlayerStateChangeType.money);
+        }
+    }
+    void Show()
+    {
+        if (!isShowPanel)
+        {
+            this.gameObject.SetActive(true);
+            mainControllerUI.CloseAllWindows();
+            StartCoroutine(ShowPanel());
+        }
+    }
+    void Hide()
+    {
+        if (isShowPanel)
+        {
+            StartCoroutine(HidePanel());
         }
     }
     #endregion
@@ -303,12 +318,20 @@ public class UIBagManager : MonoBehaviour
     }
     #endregion
     #region Panel CUTIN/OUT
-    //float playtime = 0.2f;
-    //IEnumerator HidePanel(GameObject panle)
-    //{
-    //    yield return new WaitForSeconds(playtime);
-    //    panle.SetActive(false);
-    //}
+    IEnumerator HidePanel()
+    {
+
+        this.GetComponent<UITweener>().PlayForward();
+        yield return new WaitForSeconds(this.transform.GetComponent<UITweener>().duration);
+        this.gameObject.SetActive(false);
+        isShowPanel = false;
+    }
+    IEnumerator ShowPanel()
+    {
+        this.GetComponent<UITweener>().PlayReverse();
+        yield return new WaitForSeconds(0.05f);
+        isShowPanel = true;
+    }
     #endregion
     #endregion
 }

@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public enum AttackType
-{
-    normalAttack
-}
 /// <summary>
 /// 主人公の動作、動作だけ！
 /// </summary>
@@ -53,6 +49,7 @@ public class CharaControler : MonoBehaviour
     }
     #endregion
     #region Update
+    bool isAttack;
     // Update is called once per frame
     void Update()
     {
@@ -73,15 +70,17 @@ public class CharaControler : MonoBehaviour
             }
 
 
-            bool attack = Input.GetButtonDown("Attack");
-            //Attack
-            Attack(attack);
+            isAttack = Input.GetButtonDown("Attack");
+            //basic Attack
+            if(isAttack)
+            {
+                Attack( SkillType.basic);
+            }
             if (Input.GetButtonDown("Walk"))
             {
                 WalkChange();
             }
         }
-
     }
 
     void FixedUpdate()
@@ -174,7 +173,7 @@ public class CharaControler : MonoBehaviour
     /// ノーマル攻撃力の攻撃効果（特效）,Animatorから読み出し
     /// </summary>
     /// <param name="effectName"></param>
-    public void ShowAttack(string effectName)
+    void ShowAttack(string effectName)
     {
         NormalAttackEffect getEffect;
         normalAttackDictinary.TryGetValue(effectName, out getEffect);
@@ -186,43 +185,46 @@ public class CharaControler : MonoBehaviour
         {
             enemyLocalPosition = transform.InverseTransformPoint(canAttackEnemy[i].transform.position);
             //目の前の攻撃判定
-            if (enemyLocalPosition.z>0.0f)
+            if (enemyLocalPosition.z > 0.0f)
             {
                 //Debug.Log(playerState.GetAttackDis());
-                if (Vector3.Distance(canAttackEnemy[i].transform.position, transform.position)<playerState.GetAttackDis())
+                if (Vector3.Distance(canAttackEnemy[i].transform.position, transform.position) < playerState.GetAttackDis())
                 {
                     canAttackEnemy[i].GetComponent<EnemyController>().Hit(playerState.ATK);
                     //Debug.Log("hit!");
                 }
             }
-            
+
         }
     }
-    void Attack(bool attack)
+    void Attack(SkillType type)
     {
         //今回の攻撃が未完成時攻撃を入力すると、次の攻撃を備える
-        if (attack)
+        switch (type)
         {
-            if (!anim.GetBool(hash.AttackBool) && Attack(AttackType.normalAttack))
-            {
-                anim.SetBool(hash.AttackBool, true);
-               
-            }
+            case SkillType.basic:
+                {
+                    if (!anim.GetBool(hash.AttackBool) && CanAttack(SkillType.basic))
+                    {
+                        anim.SetBool(hash.AttackBool, true);
+                    }
+                    break;
+                }
 
         }
     }
-
+    
     /// <summary>
     /// 攻撃動作による、体力減少
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public bool Attack(AttackType type)
+    bool CanAttack(SkillType type)
     {
-
+        
         switch (type)
         {
-            case AttackType.normalAttack:
+            case SkillType.basic:
                 {
                     if (playerState.energy < 20)
                     {
@@ -235,6 +237,46 @@ public class CharaControler : MonoBehaviour
     }
 
 
+
+
+    void die()
+    {
+        playerState.PlayerAliveNow = false;
+        anim.SetTrigger(hash.dieTrigger);
+    }
+    #endregion
+    #region 自然回復
+    void EnergyUp()
+    {
+        if (playerState.energy < playerState.energyMax)
+        {
+            playerState.energy += 1;
+            playerState.PlayerStateChanged(PlayerStateChangeType.energy);
+        }
+    }
+    void Health()
+    {
+        if (playerState.HP < playerState.HPMax)
+        {
+            if (playerState.HP + playerState.health > playerState.HPMax)
+            {
+                playerState.HP = playerState.HPMax;
+            }
+            else
+            {
+                playerState.HP += (int)playerState.health;
+            }
+            playerState.PlayerStateChanged(PlayerStateChangeType.HP);
+
+        }
+    }
+    #endregion
+    #region 外部API
+    /// <summary>
+    /// 被攻撃
+    /// </summary>
+    /// <param name="enemyATK"></param>
+    /// <param name="ACC"></param>
     public void Hit(int enemyATK, int ACC)
     {
         //TODO:攻撃のダメージ算出
@@ -252,39 +294,11 @@ public class CharaControler : MonoBehaviour
         }
         playerState.PlayerStateChanged(PlayerStateChangeType.HP);
     }
-
-    public void die()
+    public void UseSkill(SkillType type)
     {
-        playerState.PlayerAliveNow = false;
-        anim.SetTrigger(hash.dieTrigger);
+        Attack(type);
     }
+
     #endregion
-    #region 自然回復
-    public void EnergyUp()
-    {
-        if (playerState.energy < playerState.energyMax)
-        {
-            playerState.energy += 1;
-            playerState.PlayerStateChanged(PlayerStateChangeType.energy);
-        }
-    }
-    public void Health()
-    {
-        if (playerState.HP < playerState.HPMax)
-        {
-            if (playerState.HP + playerState.health > playerState.HPMax)
-            {
-                playerState.HP = playerState.HPMax;
-            }
-            else
-            {
-                playerState.HP += (int)playerState.health;
-            }
-            playerState.PlayerStateChanged(PlayerStateChangeType.HP);
-
-        }
-    }
-    #endregion 
-
 
 }

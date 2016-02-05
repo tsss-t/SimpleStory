@@ -15,7 +15,7 @@ public class NPCInfomation : MonoBehaviour
     public Dictionary<CommunicationType,bool> NPCType;
     void Start()
     {
-        NPCType = new Dictionary<CommunicationType, bool>() { { CommunicationType.Talk, false }, { CommunicationType.Shop, false }, { CommunicationType.Quest, false } };
+        NPCType = new Dictionary<CommunicationType, bool>() { { CommunicationType.Talk, true }, { CommunicationType.Shop, false }, { CommunicationType.Quest, false } };
         questList = new List<QuestInfo>();
     }
 

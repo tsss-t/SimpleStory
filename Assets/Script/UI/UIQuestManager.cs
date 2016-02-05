@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 
 public class UIQuestManager : MonoBehaviour
 {
     #region para
+    bool isShowPanel;
+
     public GameObject NPC;
 
     private Quest selectQuest;
@@ -34,7 +37,7 @@ public class UIQuestManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        isShowPanel = false;
         questShowList = new List<GameObject>();
         stepShowList = new List<GameObject>();
         playerQuest = PlayerState.GamePlayerState.GetPlayerQuest();
@@ -94,27 +97,27 @@ public class UIQuestManager : MonoBehaviour
 
         if (selectQuest != null)
         {
-            for (int i = 1; i <=  selectQuest.stepNow; i++)
+            for (int i = 1; i <= selectQuest.stepNow; i++)
             {
                 goStep = NGUITools.AddChild(containStepGrid, prefabStepButton);
                 switch (selectQuest.info.GetStep(i).questType)
                 {
                     case QuestType.findNPC:
                         goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}と話してください。{2}",
-                            selectQuest.info.GetStep(i).description, 
+                            selectQuest.info.GetStep(i).description,
                             npcManager.GetNPCInfo(selectQuest.info.GetStep(i).targetID).name,
-                            selectQuest.info.GetStep(i).count==selectQuest.count?"(完成)":"");
+                            selectQuest.info.GetStep(i).count == selectQuest.count ? "(完成)" : "");
                         break;
                     case QuestType.findItem:
-                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}  :  {2}/{3}", 
+                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}  :  {2}/{3}",
                             selectQuest.info.GetStep(i).description,
                             ItemList.getItem(selectQuest.info.GetStep(i).targetID).name,
-                            PlayerState.GamePlayerState.GetPlayerBag().GetItemCount(selectQuest.info.GetStep(i).targetID), 
+                            PlayerState.GamePlayerState.GetPlayerBag().GetItemCount(selectQuest.info.GetStep(i).targetID),
                             selectQuest.info.GetStep(i).count);
                         break;
                     case QuestType.killEnemy:
-                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1} :  {2}/{3}", 
-                            selectQuest.info.GetStep(i).description, 
+                        goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1} :  {2}/{3}",
+                            selectQuest.info.GetStep(i).description,
                             enemyManager.getEnemyName(selectQuest.info.GetStep(i).targetID),
                             selectQuest.count, selectQuest.info.GetStep(i).count);
                         break;
@@ -138,28 +141,59 @@ public class UIQuestManager : MonoBehaviour
     #region UI Event
     public void OnCloseButtonClick()
     {
-
-        gameObject.SetActive(false);
+        Hide();
     }
     public void OnOpenButtonClick()
     {
-        mainControllerUI.CloseAllWindows();
-        UpdateQuest();
-        gameObject.SetActive(true);
+        Show();
     }
     public void OnTollgleButtonClick()
     {
-        if (!gameObject.activeSelf)
+        if (isShowPanel)
         {
-            UpdateQuest();
-            mainControllerUI.CloseAllWindows();
+            Hide();
         }
-
-        gameObject.SetActive(!gameObject.activeSelf);
+        else
+        {
+            Show();
+        }
     }
     public void OnQuestButtonClick()
     {
         UpdateStep();
+    }
+    void Show()
+    {
+        if (!isShowPanel)
+        {
+            this.gameObject.SetActive(true);
+            mainControllerUI.CloseAllWindows();
+            UpdateQuest();
+            StartCoroutine(ShowPanel());
+        }
+    }
+    void Hide()
+    {
+        if (isShowPanel)
+        {
+            StartCoroutine(HidePanel());
+        }
+    }
+    #endregion
+    #region Panel CUTIN/OUT
+    IEnumerator HidePanel()
+    {
+
+        this.GetComponent<UITweener>().PlayForward();
+        yield return new WaitForSeconds(this.transform.GetComponent<UITweener>().duration);
+        this.gameObject.SetActive(false);
+        isShowPanel = false;
+    }
+    IEnumerator ShowPanel()
+    {
+        this.GetComponent<UITweener>().PlayReverse();
+        yield return new WaitForSeconds(0.05f);
+        isShowPanel = true;
     }
     #endregion
 }

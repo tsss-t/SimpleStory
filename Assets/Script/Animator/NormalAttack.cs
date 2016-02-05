@@ -16,7 +16,7 @@ public class NormalAttack : StateMachineBehaviour {
 
         if (stateInfo.fullPathHash!=hash.EmptyState)
         {
-            Attack(AttackType.normalAttack);
+            Attack( SkillType.basic);
         }
 
     }
@@ -46,12 +46,12 @@ public class NormalAttack : StateMachineBehaviour {
     /// </summary>
     /// <param name="type">攻撃種類</param>
     /// <returns></returns>
-    public bool Attack(AttackType type)
+    public bool Attack(SkillType type)
     {
 
         switch (type)
         {
-            case AttackType.normalAttack:
+            case SkillType.basic:
                 {
                     if (playerState.energy >= 20)
                     {
