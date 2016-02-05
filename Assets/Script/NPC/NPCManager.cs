@@ -11,6 +11,7 @@ public class NPCManager : MonoBehaviour {
     #region para
     private Dictionary<int, GameObject> NPCDictionary;
     #endregion
+
     #region test data
     public GameObject NPC1;
     public GameObject NPC2;
@@ -32,15 +33,20 @@ public class NPCManager : MonoBehaviour {
 
     void LoadData()
     {
+        GameObject[] NPClist = GameObject.FindGameObjectsWithTag(Tags.NPC);
+        for (int i =0; i < NPClist.Length; i++)
+        {
+            NPCDictionary.Add(NPClist[i].GetComponent<NPCInfomation>().NPCID, NPClist[i]);
+
+        }
         NPC1.GetComponent<NPCInfomation>().SetNPCType(new Dictionary<CommunicationType, bool>() { { CommunicationType.Talk,true }, { CommunicationType.Shop,true }, { CommunicationType .Quest,true}  });
         NPC1.GetComponent<NPCInfomation>().SetQuest(new List<QuestInfo>() {QuestList.getQuest(2), QuestList.getQuest(3), QuestList.getQuest(4), QuestList.getQuest(5) });
-        NPCDictionary.Add(NPC1.GetComponent<NPCInfomation>().NPCID, NPC1);
+
 
             
         NPC2.GetComponent<NPCInfomation>().SetNPCType(new Dictionary<CommunicationType, bool>() { { CommunicationType.Talk, true }, { CommunicationType.Shop, true }, { CommunicationType.Quest, true } });
         NPC2.GetComponent<NPCInfomation>().SetQuest(new List<QuestInfo>() { QuestList.getQuest(1), QuestList.getQuest(4) });
 
-        NPCDictionary.Add(NPC2.GetComponent<NPCInfomation>().NPCID, NPC2);
     }
     #endregion
 

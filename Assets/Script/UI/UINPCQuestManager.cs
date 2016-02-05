@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class UINPCQuestManager : MonoBehaviour
 {
     #region para
+    bool isShowPanel;
+
     PlayerState playerState;
 
     public GameObject questItemPrefab;
@@ -35,6 +38,7 @@ public class UINPCQuestManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        isShowPanel = false;
         playerState = PlayerState.GamePlayerState;
         npcManager = NPC.GetComponent<NPCManager>();
 
@@ -215,22 +219,47 @@ public class UINPCQuestManager : MonoBehaviour
     }
     public void OnOpenButtonClick()
     {
-        mainControllerUI.CloseAllWindows();
         Show();
     }
     #endregion
     #region UI Action
     void Show()
     {
-        PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Talking);
-        Init();
-        this.gameObject.SetActive(true);
+        if (!isShowPanel)
+        {
+
+            PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Talking);
+            this.gameObject.SetActive(true);
+            Init();
+            mainControllerUI.CloseAllWindows();
+            StartCoroutine(ShowPanel());
+        }
     }
     void Hide()
     {
-        PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Free);
-        this.gameObject.SetActive(false);
+        if (isShowPanel)
+        {
+            PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Free);
+            StartCoroutine(HidePanel());
+        }
     }
+
+    #region Panel CUTIN/OUT
+    IEnumerator HidePanel()
+    {
+
+        this.GetComponent<UITweener>().PlayForward();
+        yield return new WaitForSeconds(this.transform.GetComponent<UITweener>().duration);
+        this.gameObject.SetActive(false);
+        isShowPanel = false;
+    }
+    IEnumerator ShowPanel()
+    {
+        this.GetComponent<UITweener>().PlayReverse();
+        yield return new WaitForSeconds(0.05f);
+        isShowPanel = true;
+    }
+    #endregion
     void AcceptQuest()
     {
         if (playerState.AcceptQuest(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID))

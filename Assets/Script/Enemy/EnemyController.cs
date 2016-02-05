@@ -17,6 +17,8 @@ public class EnemyController : MonoBehaviour
     public float fieldDistance;//監視距離
     public float fieldAngle;//監視範囲
 
+    public GameObject damageEffectPrefab;//流血
+
     //enemy state
     public int HP;
     public int HPMax;
@@ -61,6 +63,7 @@ public class EnemyController : MonoBehaviour
     private GameObject hpBar;
     private UISlider hpSlider;
 
+    
 
     #endregion
     #region start
@@ -446,6 +449,7 @@ public class EnemyController : MonoBehaviour
     {
         if (nowState != ActionState.die)
         {
+            GameObject.Instantiate(damageEffectPrefab, transform.position, Quaternion.identity);
             if (hitActionList.Length == 1)
             {
                 hitAction = hitActionList[0];
@@ -510,7 +514,7 @@ public class EnemyController : MonoBehaviour
 
     #endregion
 
-    #region 
+    #region Die
     float height = 5;
     Vector3 targetPos;
     IEnumerator AfterDie()

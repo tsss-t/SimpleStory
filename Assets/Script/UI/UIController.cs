@@ -7,12 +7,16 @@ public class UIController : MonoBehaviour
     private PlayerState playerState;
     private CharaControler player;
 
+    bool isToolbarShow;
 
     private Transform containerPlayerState;
     private Transform containerMap;
     private Transform containerToolBar;
     private Transform containerEquepMenu;
     private Transform spriteAllow;
+    private Transform containerController;
+    private Transform containerSkill;
+
     private UISlider sliderEnergy;
     private UILabel labelEnergy;
     private UISlider sliderHP;
@@ -23,6 +27,7 @@ public class UIController : MonoBehaviour
     private UIQuestManager questManagerUI;
     private UINPCQuestManager npcQuestManagerUI;
     private UICommunicationManager communicationPanelUI;
+    private UISkillManager skillManagerUI;
     #endregion
     #region Start/Update
     // Use this for initialization
@@ -33,13 +38,15 @@ public class UIController : MonoBehaviour
         player = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<CharaControler>();
         playerState = PlayerState.GamePlayerState;
 
+        isToolbarShow = false;
+
         containerToolBar = transform.Find("ToolBar");
         containerPlayerState = transform.Find("PlayerState");
         containerMap = transform.Find("GameMap");
         containerEquepMenu = transform.Find("EquepMenu");
-
-
-        spriteAllow = containerMap.Find("miniMap").Find("spriteAllow");
+        containerController = transform.Find("ControllerPanel");
+        containerSkill = containerController.Find("SkillContainer");
+        spriteAllow = containerMap.Find("miniMap/spriteAllow");
         sliderEnergy = containerPlayerState.Find("sliderEnergy").GetComponent<UISlider>();
         labelEnergy = sliderEnergy.gameObject.transform.Find("labelEnergy").GetComponent<UILabel>();
         sliderHP = containerPlayerState.Find("sliderHP").GetComponent<UISlider>();
@@ -52,6 +59,7 @@ public class UIController : MonoBehaviour
         questManagerUI = transform.Find("QuestMenu").GetComponent<UIQuestManager>();
         npcQuestManagerUI = transform.Find("NPCQuestPanel").GetComponent<UINPCQuestManager>();
         communicationPanelUI = transform.Find("CommunicationPanel").GetComponent<UICommunicationManager>();
+        skillManagerUI = transform.Find("SkillPanel").GetComponent<UISkillManager>();
         ToolBarInit();
     }
 
@@ -156,8 +164,30 @@ public class UIController : MonoBehaviour
 
     #endregion
     #region Toolbar
+
     private void ToolBarInit()
     {
+    }
+    public void ToolBarToggle()
+    {
+        if(isToolbarShow)
+        {
+            containerToolBar.GetComponent<UITweener>().PlayForward();
+            containerSkill.GetComponent<UITweener>().PlayForward();
+        }
+        else
+        {
+            containerToolBar.GetComponent<UITweener>().PlayReverse();
+            containerSkill.GetComponent<UITweener>().PlayReverse();
+
+        }
+        isToolbarShow = !isToolbarShow;
+
+    }
+    
+    public void OnSkillButtonClicked()
+    {
+        skillManagerUI.OnToggleButtonClick();
     }
     public void OnBagButtonClicked()
     {
@@ -179,6 +209,7 @@ public class UIController : MonoBehaviour
         questManagerUI.OnCloseButtonClick();
         npcQuestManagerUI.OnCloseButtonClick();
         communicationPanelUI.OnCloseButtonClick();
+        skillManagerUI.OnCloseButtonClick();
     }
     #endregion
 }

@@ -134,7 +134,7 @@ public class PlayerState
         baseINT = 50;
         baseCON = 50;
         baseLUK = 20;
-        money = 100;
+        money = 10000;
         playerActionNow = PlayerAction.Free;
         #endregion
         this.bag = PlayerBag.nowPlayerBag;
@@ -317,7 +317,7 @@ public class PlayerState
     /// アイテム購入
     /// </summary>
     /// <param name="itemID"></param>
-    public void BuyItem(int itemID)
+    public bool BuyItem(int itemID)
     {
         if (ItemList.getItem(itemID).money <= money)
         {
@@ -325,7 +325,13 @@ public class PlayerState
             bag.AddItem(itemID);
             PlayerStateChanged(PlayerStateChangeType.bag);
             PlayerStateChanged(PlayerStateChangeType.money);
+            return true;
         }
+        else
+        {
+            return false;
+        }
+
     }
     /// <summary>
     /// アイテム売る
@@ -414,4 +420,20 @@ public class PlayerState
     }
 
     #endregion
+    #region Skill関連
+    public bool SkillUp(int money)
+    {
+        if (this.money > money)
+        {
+            this.money -= money;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+    #endregion 
 }

@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using System.Collections;
 public class UICommunicationManager : MonoBehaviour
 {
     #region para
+    bool isShowPanel;
     private PlayerState playerState;
     public GameObject NPC;
     private NPCManager npcManager;
@@ -28,6 +29,7 @@ public class UICommunicationManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        isShowPanel = false;
         npcManager = NPC.GetComponent<NPCManager>();
         NPCDictionary = npcManager.GetNPCDctionary();
         playerState = PlayerState.GamePlayerState;
@@ -65,10 +67,19 @@ public class UICommunicationManager : MonoBehaviour
             {
                 shopButton.gameObject.SetActive(true);
             }
+            else
+            {
+                shopButton.gameObject.SetActive(false);
+            }
             if (NPCDictionary[selectNPCID].GetComponent<NPCInfomation>().GetNPCType()[CommunicationType.Quest])
             {
                 questButton.gameObject.SetActive(true);
             }
+            else
+            {
+                questButton.gameObject.SetActive(false);
+            }
+
         }
         else
         {
@@ -98,16 +109,50 @@ public class UICommunicationManager : MonoBehaviour
     }
     public void OnOpenButtonClick()
     {
-        mainControllerUI.CloseAllWindows();
-        this.gameObject.SetActive(true);
-        containItems.GetComponent<UITable>().repositionNow = true;
+        Show();
     }
 
     public void OnCloseButtonClick()
     {
-        playerState.ChangeAction(PlayerState.PlayerAction.Free);
-        this.gameObject.SetActive(false);
+        Hide();
     }
+
+    void Show()
+    {
+        if (!isShowPanel)
+        {
+            this.gameObject.SetActive(true);
+            mainControllerUI.CloseAllWindows();
+            containItems.GetComponent<UITable>().repositionNow = true;
+            StartCoroutine(ShowPanel());
+        }
+    }
+    void Hide()
+    {
+        if (isShowPanel)
+        {
+            playerState.ChangeAction(PlayerState.PlayerAction.Free);
+            StartCoroutine(HidePanel());
+        }
+    }
+    #endregion
+    #region Panel CUTIN/OUT
+    IEnumerator HidePanel()
+    {
+
+        this.GetComponent<UITweener>().PlayForward();
+        yield return new WaitForSeconds(this.transform.GetComponent<UITweener>().duration);
+        this.gameObject.SetActive(false);
+        isShowPanel = false;
+    }
+    IEnumerator ShowPanel()
+    {
+        this.GetComponent<UITweener>().PlayReverse();
+        yield return new WaitForSeconds(0.05f);
+        isShowPanel = true;
+    }
+
+
     public void OnShopButtonClick()
     {
         ShowShopMenu();

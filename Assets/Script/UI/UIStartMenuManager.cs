@@ -1,21 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UIStartMenuManager : MonoBehaviour {
+public class UIStartMenuManager : MonoBehaviour
+{
+    UISceneManager sceneManagerUI;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    // Use this for initialization
+    void Start()
+    {
+        sceneManagerUI = transform.Find("LoadingBar").GetComponent<UISceneManager>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     public void OnNewButtonClick()
     {
-        Application.LoadLevel(1);
+        sceneManagerUI.Show(Application.LoadLevelAsync(1));
     }
     public void OnContinueButtonClick()
     {
