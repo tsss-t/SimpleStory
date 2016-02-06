@@ -5,7 +5,7 @@ public class UIController : MonoBehaviour
 {
     #region para
     private PlayerState playerState;
-    private CharaControler player;
+    private PlayerController player;
 
     bool isToolbarShow;
 
@@ -35,7 +35,7 @@ public class UIController : MonoBehaviour
     {
 
 
-        player = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<CharaControler>();
+        player = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<PlayerController>();
         playerState = PlayerState.GamePlayerState;
 
         isToolbarShow = false;

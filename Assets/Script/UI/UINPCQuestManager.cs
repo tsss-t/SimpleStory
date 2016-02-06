@@ -65,7 +65,6 @@ public class UINPCQuestManager : MonoBehaviour
         UpdateDate();
         UpdateQuestInfo();
     }
-
     GameObject go;
     void UpdateDate()
     {
@@ -81,7 +80,6 @@ public class UINPCQuestManager : MonoBehaviour
         //NPCクエストのLoop
         for (int i = 0; i < npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList().Count; i++)
         {
-
             //まだ受け取っていない
             if (!CheckQuest(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[i].ID))
             {
@@ -180,7 +178,7 @@ public class UINPCQuestManager : MonoBehaviour
         PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(questID, out quest);
         if (!quest.isOver)
         {
-            if (quest.GetStepNow().count == quest.count)
+            if (quest.GetStepNow().count <= quest.count)
             {
                 return true;
             }
@@ -228,10 +226,10 @@ public class UINPCQuestManager : MonoBehaviour
         if (!isShowPanel)
         {
 
-            PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Talking);
             this.gameObject.SetActive(true);
             Init();
             mainControllerUI.CloseAllWindows();
+            PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Talking);
             StartCoroutine(ShowPanel());
         }
     }
@@ -280,7 +278,7 @@ public class UINPCQuestManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("任務受取る失敗！");
+            Debug.Log("任務完成失敗！");
             //TODO:エラー処理
         }
     }

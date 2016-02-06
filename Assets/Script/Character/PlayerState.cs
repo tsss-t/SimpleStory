@@ -9,7 +9,10 @@ public enum PlayerStateChangeType
 {
     EXP, LEVEL, STATE, HP, energy, money, all, bag, equep
 }
-
+public enum PlayerType
+{
+    warrior=0, assassin=1
+}
 public class PlayerState
 {
     public enum PlayerAction
@@ -66,6 +69,7 @@ public class PlayerState
 
         }
     }
+    public PlayerType type;
     public bool isWalk;
 
     public int level;//レベル
@@ -79,17 +83,17 @@ public class PlayerState
     private float attackDis = 0;
 
 
-    public int baseSTR;//力
-    public int baseDEX;//素早さ
-    public int baseINT;//知恵
-    public int baseCON;//体力
-    public int baseLUK;//運
+    private int baseSTR;//力
+    private int baseDEX;//素早さ
+    private int baseINT;//知恵
+    private int baseCON;//体力
+    private int baseLUK;//運
 
-    public int equepSTR;//力
-    public int equepDEX;//素早さ
-    public int equepINT;//知恵
-    public int equepCON;//体力
-    public int equepLUK;//運
+    private int equepSTR;//力
+    private int equepDEX;//素早さ
+    private int equepINT;//知恵
+    private int equepCON;//体力
+    private int equepLUK;//運
 
     public int EXP;//経験値
     public int STR;//力
@@ -127,20 +131,22 @@ public class PlayerState
         //TODO：　ファイルから数値を読み取る
 
         #region Tempデータ
+        PlayerStateData data = GameController._instans.LoadPlayerState();
 
-        EXP = 740;
-        baseSTR = 50;
-        baseDEX = 50;
-        baseINT = 50;
-        baseCON = 50;
-        baseLUK = 20;
-        money = 10000;
-        playerActionNow = PlayerAction.Free;
+        EXP = data.EXP;
+        baseSTR = data.BaseSTR;
+        baseDEX = data.BaseDEX;
+        baseINT = data.BaseINT;
+        baseCON = data.BaseCON;
+        baseLUK = data.BaseLUK;
+        money = data.Money;
+        isWalk = data.IsWalk;
         #endregion
+        playerActionNow = PlayerAction.Free;
         this.bag = PlayerBag.nowPlayerBag;
         this.equep = PlayerEquep.nowPlayerEquep;
         this.quest = PlayerQuest.nowPlayerQuest;
-        isWalk = false;
+
     }
     //status算出
     private void Init()
@@ -298,6 +304,10 @@ public class PlayerState
     #endregion
 
     #region アイテム関連
+    /// <summary>
+    /// コインを貰う
+    /// </summary>
+    /// <param name="money">コイン数</param>
     public void GetMoney(int money)
     {
         this.money += money;
@@ -307,22 +317,24 @@ public class PlayerState
     /// <summary>
     /// アイテムget
     /// </summary>
-    /// <param name="itemID">アイテムid</param>
+    /// <param name="itemID">アイテムリスト中のアイテムID</param>
     public void GetItem(int itemID)
     {
         bag.AddItem(itemID);
+        quest.UpdateQuestProcess(itemID);
         PlayerStateChanged(PlayerStateChangeType.bag);
     }
     /// <summary>
     /// アイテム購入
     /// </summary>
-    /// <param name="itemID"></param>
+    /// <param name="itemID">アイテムリスト中のアイテムID</param>
     public bool BuyItem(int itemID)
     {
         if (ItemList.getItem(itemID).money <= money)
         {
             money -= ItemList.getItem(itemID).money;
             bag.AddItem(itemID);
+            quest.UpdateQuestProcess(itemID);
             PlayerStateChanged(PlayerStateChangeType.bag);
             PlayerStateChanged(PlayerStateChangeType.money);
             return true;
@@ -336,7 +348,7 @@ public class PlayerState
     /// <summary>
     /// アイテム売る
     /// </summary>
-    /// <param name="itemBagID"></param>
+    /// <param name="itemBagID">Bag中のid</param>
     public void SellItem(int itemBagID)
     {
         if (bag.isEqueped(itemBagID))
@@ -345,70 +357,96 @@ public class PlayerState
         }
         this.money += bag.dictionBag[itemBagID].info.money;
         bag.DeleteItem(itemBagID);
+        quest.UpdateQuestProcess(bag.BagIDToItemID(itemBagID));
+
         PlayerStateChanged(PlayerStateChangeType.bag);
         PlayerStateChanged(PlayerStateChangeType.money);
     }
     /// <summary>
     /// アイテム使用
     /// </summary>
-    /// <param name="itemBagID"></param>
+    /// <param name="itemBagID">Bag中のid</param>
     public void UseItem(int itemBagID)
     {
         HP += bag.dictionBag[itemBagID].info.HP;
         energy += bag.dictionBag[itemBagID].info.energy;
         bag.DeleteItem(itemBagID);
+        quest.UpdateQuestProcess(bag.BagIDToItemID(itemBagID));
         PlayerStateChanged(PlayerStateChangeType.bag);
     }
     /// <summary>
     /// 装備交換
     /// </summary>
-    /// <param name="id">Bag中のid</param>
-    public void ChangeEquep(int id)
+    /// <param name="itemBagID">Bag中のid</param>
+    public void ChangeEquep(int itemBagID)
     {
-        bag.ChangeEquep(id);
+        bag.ChangeEquep(itemBagID);
         Init();
+        quest.UpdateQuestProcess(bag.BagIDToItemID(itemBagID));
         PlayerStateChanged(PlayerStateChangeType.equep);
         PlayerStateChanged(PlayerStateChangeType.STATE);
     }
     /// <summary>
     /// 装備撤下
     /// </summary>
-    /// <param name="id">Bag中のid</param>
-    public void SetdownEquep(int id)
+    /// <param name="itemBagID">Bag中のid</param>
+    public void SetdownEquep(int itemBagID)
     {
-        bag.SetdownEquep(id);
+        bag.SetdownEquep(itemBagID);
         Init();
+        quest.UpdateQuestProcess(bag.BagIDToItemID(itemBagID));
         PlayerStateChanged(PlayerStateChangeType.equep);
         PlayerStateChanged(PlayerStateChangeType.STATE);
     }
     #endregion
 
     #region クエスト関連
+
+    /// <summary>
+    /// getクエスト
+    /// </summary>
+    /// <param name="questID"></param>
+    /// <returns></returns>
     public bool AcceptQuest(int questID)
     {
         return quest.AcceptQuest(questID);
     }
-    public void CancelQuest()
-    {
-
-    }
+    /// <summary>
+    /// クエストをやる
+    /// </summary>
+    /// <param name="type">クエストステップタイプ</param>
+    /// <param name="ID">ターゲットID</param>
     public void DoQuest(QuestType type, int ID)
     {
         quest.DoQuest(type, ID);
     }
+    /// <summary>
+    /// クエストを報告　完成する
+    /// </summary>
+    /// <param name="questID">クエストのID</param>
+    /// <returns></returns>
     public bool OverQuest(int questID)
     {
         QuestAward(quest.GetAcceptQuestList()[questID].GetStepNow().award);
         return quest.OverQuest(questID);
     }
+    /// <summary>
+    /// クエストの進捗、報告ができるか否や
+    /// </summary>
+    /// <param name="questID"></param>
+    /// <returns></returns>
     public bool CanReport(int questID)
     {
         if (quest.GetAcceptQuestList()[questID].GetStepNow().questType == QuestType.findItem)
         {
-            quest.GetAcceptQuestList()[questID].count = bag.GetItemCount(questID);
+            quest.GetAcceptQuestList()[questID].count = bag.GetItemCount(quest.GetAcceptQuestList()[questID].GetStepNow().targetID);
         }
         return quest.IsOverStep(questID);
     }
+    /// <summary>
+    /// クエストの報酬を貰う
+    /// </summary>
+    /// <param name="award"></param>
     public void QuestAward(QuestInfo.Award award)
     {
         if (award.itemID >= 0)
@@ -421,6 +459,11 @@ public class PlayerState
 
     #endregion
     #region Skill関連
+    /// <summary>
+    /// スキルのレベルをアップ
+    /// </summary>
+    /// <param name="money"></param>
+    /// <returns></returns>
     public bool SkillUp(int money)
     {
         if (this.money > money)

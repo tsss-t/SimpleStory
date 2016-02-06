@@ -202,9 +202,12 @@ public class UIBagManager : MonoBehaviour
     }
     public void OpenPanelShop(int shopID)
     {
-        PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Shopping);
-        shopManagerUI.SetSelectShop(shopID);
-        MenuButtonClick(BagMode.Shop);
+        if (!isShowPanel)
+        {
+            shopManagerUI.SetSelectShop(shopID);
+            MenuButtonClick(BagMode.Shop);
+            PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Shopping);
+        }
     }
 
     void MenuButtonClick(BagMode mode)
@@ -329,7 +332,7 @@ public class UIBagManager : MonoBehaviour
     IEnumerator ShowPanel()
     {
         this.GetComponent<UITweener>().PlayReverse();
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(this.transform.GetComponent<UITweener>().duration);
         isShowPanel = true;
     }
     #endregion

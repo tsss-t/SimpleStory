@@ -3,6 +3,7 @@ using System.Collections;
 
 public class UISkillManager : MonoBehaviour
 {
+    #region para
     bool isShowPanel;
     UIController mainControllerUI;
     UILabel skillNameLabel;
@@ -10,8 +11,9 @@ public class UISkillManager : MonoBehaviour
     UIButton upgradeButton;
     UILabel upgradeLabel;
     Skill selectedSkill;
-
+    #endregion
     // Use this for initialization
+    #region Start Init
     void Start()
     {
         isShowPanel = false;
@@ -34,6 +36,23 @@ public class UISkillManager : MonoBehaviour
         DisabelUpgradeButton("スキルを選ぶ");
     }
     // Update is called once per frame
+
+    void UpdatePanel()
+    {
+        skillNameLabel.text = string.Format("{0} Lv.{1}", selectedSkill.Name, selectedSkill.Level);
+        skillDesLabel.text = string.Format("スキルの攻撃力は{0}、次のレベルの攻撃力は{1}、レベルアップ必要なコインは{2}", selectedSkill.Damage * selectedSkill.Level, selectedSkill.Damage * (selectedSkill.Level + 1), selectedSkill.needMoney());
+
+        if (PlayerState.GamePlayerState.money > selectedSkill.needMoney())
+        {
+            EnableUpgradeButton();
+        }
+        else
+        {
+            DisabelUpgradeButton("コイン不足");
+        }
+    }
+    #endregion
+    #region UI Event
     void DisabelUpgradeButton(string label = "")
     {
         upgradeButton.SetState(UIButtonColor.State.Disabled, true);
@@ -50,20 +69,6 @@ public class UISkillManager : MonoBehaviour
         if (label != "")
         {
             upgradeLabel.text = label;
-        }
-    }
-    void UpdatePanel()
-    {
-        skillNameLabel.text = string.Format("{0} Lv.{1}", selectedSkill.Name, selectedSkill.Level);
-        skillDesLabel.text = string.Format("スキルの攻撃力は{0}、次のレベルの攻撃力は{1}、レベルアップ必要なコインは{2}", selectedSkill.Damage * selectedSkill.Level, selectedSkill.Damage * (selectedSkill.Level + 1), selectedSkill.needMoney());
-
-        if (PlayerState.GamePlayerState.money > selectedSkill.needMoney())
-        {
-            EnableUpgradeButton();
-        }
-        else
-        {
-            DisabelUpgradeButton("コイン不足");
         }
     }
     public void OnSkillButtonClick(Skill skill)
@@ -99,6 +104,8 @@ public class UISkillManager : MonoBehaviour
         }
     }
 
+    #endregion
+    #region UI Action
     void Show()
     {
         if (!isShowPanel)
@@ -132,7 +139,7 @@ public class UISkillManager : MonoBehaviour
         isShowPanel = true;
     }
     #endregion
-
+    #endregion
 
 
 }

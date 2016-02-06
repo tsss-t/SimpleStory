@@ -168,6 +168,7 @@ public class UIQuestManager : MonoBehaviour
         {
             this.gameObject.SetActive(true);
             mainControllerUI.CloseAllWindows();
+
             UpdateQuest();
             StartCoroutine(ShowPanel());
         }
