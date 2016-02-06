@@ -45,7 +45,7 @@ public class QuestInfo
         step.questType = questType;
         step.count = count;
         step.targetID = targetID;
-        step.award = new Award() { EXP = awardEXP, money = awardMoney, itemID = awardItemID };
+        step.award = new Award() { EXP = awardEXP, money = awardMoney, itemID = awardItemID >= 0 ? awardItemID : -1 };
         return step;
 
     }

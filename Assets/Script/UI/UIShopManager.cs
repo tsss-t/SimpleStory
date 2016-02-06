@@ -23,14 +23,7 @@ public class UIShopManager : MonoBehaviour
         //TODO:データベースからデータ読み取り
 
         //test用
-        shopItemsDictionary.Clear();
-        shopItemsDictionary.Add(1, new Item(1, false, ItemList.getItem(1)));
-        shopItemsDictionary.Add(2, new Item(2, false, ItemList.getItem(2)));
-        shopItemsDictionary.Add(3, new Item(3, false, ItemList.getItem(1)));
-        shopItemsDictionary.Add(4, new Item(4, false, ItemList.getItem(1)));
-        shopItemsDictionary.Add(5, new Item(5, 6, ItemList.getItem(4)));
-        shopItemsDictionary.Add(6, new Item(6, 5, ItemList.getItem(3)));
-        shopItemsDictionary.Add(7, new Item(7, false, ItemList.getItem(5)));
+        shopItemsDictionary = GameController._instans.LoadShopItem(selectedShopID);
     }
     public void UpdateShop(int shopID)
     {

@@ -40,16 +40,7 @@ public class PlayerBag
         //TODO:Load from text
 
         //TODO:test Load
-        dictionBag = new Dictionary<int, Item>();
-        //dictionBagのkeyは、データベースのBagのidと対応
-        dictionBag.Add(1, new Item(1, true, ItemList.getItem(1)));
-        dictionBag.Add(2, new Item(2, 5, ItemList.getItem(3)));
-        dictionBag.Add(3, new Item(3, true, ItemList.getItem(2)));
-
-        for (int i = 4; i <= 40; i++)
-        {
-            dictionBag.Add(i, new Item(i, false, ItemList.getItem(2)));
-        }
+        dictionBag = GameController._instans.LoadBag();
 
         foreach (KeyValuePair<int, Item> part in dictionBag)
         {
@@ -61,6 +52,7 @@ public class PlayerBag
         count = 40;
     }
     #endregion
+    #region 外部API
     #region 装備変更
     /// <summary>
     /// 装備の撤下、外部使用はplayerstateから使用してください
@@ -103,14 +95,7 @@ public class PlayerBag
     public void AddItem(int itemID)
     {
         ItemInfo item = ItemList.getItem(itemID);
-        if (item.type == ItemType.head ||
-        item.type == ItemType.body ||
-        item.type == ItemType.necklace ||
-        item.type == ItemType.ring ||
-        item.type == ItemType.bracelet ||
-        item.type == ItemType.foot ||
-        item.type == ItemType.weapon ||
-        item.type == ItemType.wing
+        if (!ItemInfo.IsEquep(item.type)
         )
         {
             count++;
@@ -136,23 +121,17 @@ public class PlayerBag
 
         }
     }
+    #endregion
+    #region アイテム削除
     /// <summary>
-    /// バッグ中のアイテムID
+    /// 使用/削除　アイテム
     /// </summary>
-    /// <param name="itemBagID"></param>
+    /// <param name="itemBagID">バッグ中のアイテムID</param>
     public void DeleteItem(int itemBagID)
     {
         ItemInfo item = dictionBag[itemBagID].info;
 
-        if (item.type == ItemType.head ||
-        item.type == ItemType.body ||
-        item.type == ItemType.necklace ||
-        item.type == ItemType.ring ||
-        item.type == ItemType.bracelet ||
-        item.type == ItemType.foot ||
-        item.type == ItemType.weapon ||
-        item.type == ItemType.wing
-        )
+        if (ItemInfo.IsEquep(item.type))
         {
             dictionBag.Remove(itemBagID);
         }
@@ -169,20 +148,86 @@ public class PlayerBag
         }
     }
     /// <summary>
+    /// 使用/削除　アイテム
+    /// </summary>
+    /// <param name="itemBagID">バッグ中のアイテムID</param>
+    /// <param name="count">アイテム数</param>
+    public void DeleteItem(int itemBagID, int count)
+    {
+        ItemInfo item = dictionBag[itemBagID].info;
+
+        if (ItemInfo.IsEquep(item.type))
+        {
+            dictionBag.Remove(itemBagID);
+        }
+        else
+        {
+            if (dictionBag[itemBagID].count > count)
+            {
+                dictionBag[itemBagID].count -= count;
+            }
+            else
+            {
+                dictionBag.Remove(itemBagID);
+            }
+        }
+    }
+    /// <summary>
+    ///　クエスト必要なものを提出
+    /// </summary>
+    /// <param name="itemID">アイテムリストの中のID</param>
+    /// <param name="count">アイテム必要数</param>
+    public void UseItemToOverQuest(int itemID, int count)
+    {
+        List<int> deleteList = new List<int>();
+        foreach (Item item in dictionBag.Values)
+        {
+            if (count > 0)
+            {
+                if (item.info.id == itemID && !item.isEqueped)
+                {
+                    if (ItemInfo.IsEquep(item.info.type))
+                    {
+                        deleteList.Add(item.id);
+                        count--;
+                    }
+                    else
+                    {
+                        DeleteItem(item.id, count);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+        for (int i = 0; i < deleteList.Count; i++)
+        {
+            DeleteItem(deleteList[i]);
+        }
+    }
+    #endregion
+
+    /// <summary>
+    /// バッグ中指定したアイテムのリストIDを貰う
+    /// </summary>
+    /// <param name="bagItemID">バッグ中のID</param>
+    /// <returns>アイテムリストのID</returns>
+    public int BagIDToItemID(int bagItemID)
+    {
+        return dictionBag[bagItemID].info.id;
+    }
+
+    /// <summary>
     /// 選択した装備は今装備していますかとか
     /// </summary>
     /// <param name="itemBagID">バッグ中のID</param>
     /// <returns></returns>
     public bool isEqueped(int itemBagID)
     {
-        if (dictionBag[itemBagID].info.type == ItemType.head ||
-        dictionBag[itemBagID].info.type == ItemType.body ||
-        dictionBag[itemBagID].info.type == ItemType.necklace ||
-        dictionBag[itemBagID].info.type == ItemType.ring ||
-        dictionBag[itemBagID].info.type == ItemType.bracelet ||
-        dictionBag[itemBagID].info.type == ItemType.foot ||
-        dictionBag[itemBagID].info.type == ItemType.weapon ||
-        dictionBag[itemBagID].info.type == ItemType.wing
+        if (ItemInfo.IsEquep(dictionBag[itemBagID].info.type)
         )
         {
             if (playerEquep.dictionaryEquep[dictionBag[itemBagID].info.type].id == itemBagID)
@@ -204,7 +249,7 @@ public class PlayerBag
         int count = 0;
         foreach (Item item in dictionBag.Values)
         {
-            if (item.info.id == itemID)
+            if (item.info.id == itemID && !item.isEqueped)
             {
                 count += item.count;
             }

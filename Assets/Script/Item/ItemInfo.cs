@@ -2,7 +2,7 @@
 using System.Collections;
 public enum ItemType
 {
-    head, body, foot, necklace, ring, bracelet, wing,weapon, drug, key, quest, error
+    head=0, necklace=1, body=2, foot=3, ring=4, bracelet=5, wing=6, weapon=7, drug=8, key=9, quest=10, error=11
 }
 /// <summary>
 /// アイテムの詳細情報、データベースのitemテーブル
@@ -51,15 +51,9 @@ public class ItemInfo
     /// <param name="needCON">装備必要な運</param>
     /// <param name="needLevel">装備必要なレベル</param>
     /// <param name="money">値段</param>
-    public ItemInfo(int id, ItemType type, string picAdress, string name, int STR, int DEX, int INT, int CON, int LUK, int needSTR, int needDEX, int needINT, int needCON,int needLevel,int money)
+    public ItemInfo(int id, ItemType type, string picAdress, string name, int STR, int DEX, int INT, int CON, int LUK, int needSTR, int needDEX, int needINT, int needCON, int needLevel, int money)
     {
-        if (type != ItemType.head &&
-            type != ItemType.body &&
-            type != ItemType.necklace &&
-            type != ItemType.ring &&
-            type != ItemType.bracelet &&
-            type != ItemType.weapon &&
-            type != ItemType.wing)
+        if (!IsEquep(type))
         {
             Debug.LogWarning("Bag data Error!");
             this.id = -1;
@@ -95,7 +89,7 @@ public class ItemInfo
     /// <param name="HP">HP回復点数</param>
     /// <param name="energy">体力回復点数</param>
     /// <param name="money">値段</param>
-    public ItemInfo(int id, string picAress, string name, int HP, int energy,int money)
+    public ItemInfo(int id, string picAress, string name, int HP, int energy, int money)
     {
         this.id = id;
         this.adress = picAress;
@@ -106,4 +100,22 @@ public class ItemInfo
         this.money = money;
     }
     #endregion
+    public static bool IsEquep(ItemType type)
+    {
+        if (type != ItemType.head &&
+            type != ItemType.body &&
+            type != ItemType.necklace &&
+            type != ItemType.ring &&
+            type != ItemType.bracelet &&
+            type != ItemType.weapon &&
+            type != ItemType.wing)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+
+    }
 }

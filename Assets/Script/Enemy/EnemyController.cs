@@ -49,7 +49,7 @@ public class EnemyController : MonoBehaviour
     private float attackTimer;
     private PlayerState playerState;
     private Vector3 playerPosition;
-    private CharaControler charaControler;
+    private PlayerController charaControler;
 
     private ActionState nowState;
     private ActionType nowAction;
@@ -83,7 +83,7 @@ public class EnemyController : MonoBehaviour
         anim = this.GetComponent<Animator>();
         timer = 0f;
         hash = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<HashIDs>();
-        charaControler = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<CharaControler>();
+        charaControler = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<PlayerController>();
         moveForward = new Vector2(transform.forward.x, transform.forward.z);
         enemyManager = GameObject.FindGameObjectWithTag(Tags.enemyManager).GetComponent<EnemyManager>();
         hpBarManager = UIHpBarManager.hpBarManager;

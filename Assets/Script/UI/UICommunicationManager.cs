@@ -103,7 +103,6 @@ public class UICommunicationManager : MonoBehaviour
     #region UI EVENT
     void showTalk(string talkInfo)
     {
-        playerState.ChangeAction(PlayerState.PlayerAction.Talking);
         UpdateTalk(talkInfo);
         OnOpenButtonClick();
     }
@@ -123,6 +122,7 @@ public class UICommunicationManager : MonoBehaviour
         {
             this.gameObject.SetActive(true);
             mainControllerUI.CloseAllWindows();
+            playerState.ChangeAction(PlayerState.PlayerAction.Talking);
             containItems.GetComponent<UITable>().repositionNow = true;
             StartCoroutine(ShowPanel());
         }

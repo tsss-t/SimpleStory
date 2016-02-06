@@ -30,7 +30,7 @@ public class NPCManager : MonoBehaviour {
     {
         LoadData();
     }
-
+    Dictionary<int, Dictionary<CommunicationType, bool>> npcsType;
     void LoadData()
     {
         GameObject[] NPClist = GameObject.FindGameObjectsWithTag(Tags.NPC);
@@ -39,14 +39,12 @@ public class NPCManager : MonoBehaviour {
             NPCDictionary.Add(NPClist[i].GetComponent<NPCInfomation>().NPCID, NPClist[i]);
 
         }
-        NPC1.GetComponent<NPCInfomation>().SetNPCType(new Dictionary<CommunicationType, bool>() { { CommunicationType.Talk,true }, { CommunicationType.Shop,true }, { CommunicationType .Quest,true}  });
-        NPC1.GetComponent<NPCInfomation>().SetQuest(new List<QuestInfo>() {QuestList.getQuest(2), QuestList.getQuest(3), QuestList.getQuest(4), QuestList.getQuest(5) });
-
-
-            
-        NPC2.GetComponent<NPCInfomation>().SetNPCType(new Dictionary<CommunicationType, bool>() { { CommunicationType.Talk, true }, { CommunicationType.Shop, true }, { CommunicationType.Quest, true } });
-        NPC2.GetComponent<NPCInfomation>().SetQuest(new List<QuestInfo>() { QuestList.getQuest(1), QuestList.getQuest(4) });
-
+        npcsType = GameController._instans.LoadNpcType();
+        foreach (KeyValuePair<int,Dictionary<CommunicationType,bool>> npc in npcsType)
+        {
+            NPCDictionary[npc.Key].GetComponent<NPCInfomation>().SetNPCType(npc.Value);
+            NPCDictionary[npc.Key].GetComponent<NPCInfomation>().SetQuest(GameController._instans.LoadNpcQuest(npc.Key));
+        }
     }
     #endregion
 
