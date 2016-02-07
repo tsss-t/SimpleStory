@@ -20,24 +20,24 @@ public class PlayerState
         Free, Died, Shopping, Talking
     }
     //シングルトン
-    private static PlayerState _instans;
+    private static PlayerState _instance;
     public static PlayerState GamePlayerState
     {
         get
         {
-            if (_instans == null)
+            if (_instance == null)
             {
-                _instans = new PlayerState();
-                return _instans;
+                _instance = new PlayerState();
+                return _instance;
             }
             else
             {
-                return _instans;
+                return _instance;
             }
         }
         set
         {
-            _instans = value;
+            _instance = value;
         }
     }
     #region para
@@ -131,7 +131,7 @@ public class PlayerState
         //TODO：　ファイルから数値を読み取る
 
         #region Tempデータ
-        PlayerStateData data = GameController._instans.LoadPlayerState();
+        PlayerStateData data = GameController._instance.LoadPlayerState();
 
         EXP = data.EXP;
         baseSTR = data.BaseSTR;
@@ -301,6 +301,11 @@ public class PlayerState
     {
         this.playerActionNow = action;
     }
+    public void UseEnergy(int count)
+    {
+        energy -= count;
+    }
+
     #endregion
 
     #region アイテム関連

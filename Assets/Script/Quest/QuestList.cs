@@ -25,7 +25,7 @@ public static class QuestList
         //TODO:LOAD FROM SERVER
 
         //tset data
-        _instance = GameController._instans.LoadQuestList();
+        _instance = GameController._instance.LoadQuestList();
     }
     /// <summary>
     /// クエストリストからクエストの情報を貰う

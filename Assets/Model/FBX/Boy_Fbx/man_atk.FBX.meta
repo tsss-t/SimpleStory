@@ -165,7 +165,7 @@ ModelImporter:
       events:
       - time: .585139334
         functionName: ShowAttack
-        data: attack1
+        data: 0,attack1
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
@@ -322,7 +322,7 @@ ModelImporter:
       events:
       - time: .170278639
         functionName: ShowAttack
-        data: attack2
+        data: 0,attack2
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
@@ -479,7 +479,7 @@ ModelImporter:
       events:
       - time: .284829736
         functionName: ShowAttack
-        data: attack3
+        data: 0,attack3
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0

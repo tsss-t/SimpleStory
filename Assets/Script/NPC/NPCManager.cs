@@ -39,11 +39,11 @@ public class NPCManager : MonoBehaviour {
             NPCDictionary.Add(NPClist[i].GetComponent<NPCInfomation>().NPCID, NPClist[i]);
 
         }
-        npcsType = GameController._instans.LoadNpcType();
+        npcsType = GameController._instance.LoadNpcType();
         foreach (KeyValuePair<int,Dictionary<CommunicationType,bool>> npc in npcsType)
         {
             NPCDictionary[npc.Key].GetComponent<NPCInfomation>().SetNPCType(npc.Value);
-            NPCDictionary[npc.Key].GetComponent<NPCInfomation>().SetQuest(GameController._instans.LoadNpcQuest(npc.Key));
+            NPCDictionary[npc.Key].GetComponent<NPCInfomation>().SetQuest(GameController._instance.LoadNpcQuest(npc.Key));
         }
     }
     #endregion

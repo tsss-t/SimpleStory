@@ -26,7 +26,7 @@ public static class ItemList {
         //TODO:アイテムリストをサーバーから読み込む
 
         //test
-        _instance = GameController._instans.LoadItemList();
+        _instance = GameController._instance.LoadItemList();
     }
     public static ItemInfo getItem(int id)
     {

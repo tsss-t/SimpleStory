@@ -14,8 +14,8 @@ public class UIController : MonoBehaviour
     private Transform containerToolBar;
     private Transform containerEquepMenu;
     private Transform spriteAllow;
-    private Transform containerController;
     private Transform containerSkill;
+    private Transform containerMove;
 
     private UISlider sliderEnergy;
     private UILabel labelEnergy;
@@ -44,8 +44,8 @@ public class UIController : MonoBehaviour
         containerPlayerState = transform.Find("PlayerState");
         containerMap = transform.Find("GameMap");
         containerEquepMenu = transform.Find("EquepMenu");
-        containerController = transform.Find("ControllerPanel");
-        containerSkill = containerController.Find("SkillContainer");
+        containerSkill = transform.Find("SkillContainer");
+        containerMove = transform.Find("MoveContainer");
         spriteAllow = containerMap.Find("miniMap/spriteAllow");
         sliderEnergy = containerPlayerState.Find("sliderEnergy").GetComponent<UISlider>();
         labelEnergy = sliderEnergy.gameObject.transform.Find("labelEnergy").GetComponent<UILabel>();
@@ -60,6 +60,7 @@ public class UIController : MonoBehaviour
         npcQuestManagerUI = transform.Find("NPCQuestPanel").GetComponent<UINPCQuestManager>();
         communicationPanelUI = transform.Find("CommunicationPanel").GetComponent<UICommunicationManager>();
         skillManagerUI = transform.Find("SkillPanel").GetComponent<UISkillManager>();
+
         ToolBarInit();
     }
 
@@ -174,11 +175,14 @@ public class UIController : MonoBehaviour
         {
             containerToolBar.GetComponent<UITweener>().PlayForward();
             containerSkill.GetComponent<UITweener>().PlayForward();
+            containerMove.GetComponent<UITweener>().PlayForward();
         }
         else
         {
             containerToolBar.GetComponent<UITweener>().PlayReverse();
             containerSkill.GetComponent<UITweener>().PlayReverse();
+            containerMove.GetComponent<UITweener>().PlayReverse();
+
 
         }
         isToolbarShow = !isToolbarShow;
