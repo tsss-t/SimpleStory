@@ -45,11 +45,10 @@ public class GameController : MonoBehaviour
     public TextAsset skillData;
     #endregion
     #region Awake
-    public static GameController _instans;
+    public static GameController _instance;
     void Awake()
     {
-
-        _instans = this;
+        _instance = this;
         xs= new XmlSaver();
         gameData = new GameData();
         gameData.key = SystemInfo.deviceUniqueIdentifier;
@@ -60,8 +59,6 @@ public class GameController : MonoBehaviour
     #region Save
     public void WriteData()
     {
-        Debug.Log("Save");
-
         string gameDataFile = GetDataPath() + "/" + dataFileName;
         string dataString = xs.SerializeObject(gameData, typeof(GameData));
         xs.CreateXML(gameDataFile, dataString);
@@ -112,6 +109,10 @@ public class GameController : MonoBehaviour
     }
     #endregion
     #region Skill
+    void SaveSkill()
+    {
+
+    }
 
     #endregion
     #endregion
@@ -413,9 +414,10 @@ public class GameController : MonoBehaviour
     }
     #endregion
     #region Skill
+    List<Skill> skillList;
     public List<Skill> LoadSkill()
     {
-        List<Skill> skillList = new List<Skill>();
+        skillList = new List<Skill>();
         string[] proArray;
         string[] dataArray = skillData.ToString().Split('\n');
         foreach (string item in dataArray)

@@ -40,7 +40,7 @@ public class PlayerBag
         //TODO:Load from text
 
         //TODO:test Load
-        dictionBag = GameController._instans.LoadBag();
+        dictionBag = GameController._instance.LoadBag();
 
         foreach (KeyValuePair<int, Item> part in dictionBag)
         {

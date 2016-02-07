@@ -41,7 +41,7 @@ public class PlayerQuest
         //TODO:Load from text
 
         //TODO:test Load
-        questAcceptList = GameController._instans.LoadAcceptQuest();
+        questAcceptList = GameController._instance.LoadAcceptQuest();
     }
     #endregion
     #region 外部API

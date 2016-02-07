@@ -2,13 +2,10 @@
 using System.Collections;
 
 public class UIControllerPanelManager : MonoBehaviour {
-    PlayerController controller;
     GameObject skillContainer;
     TweenPosition skillContainerTweener;
     void Awake()
     {
-        controller = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<PlayerController>();
-
         //skillContainer = transform.Find("SkillContainer").gameObject;
         //skillContainerTweener = skillContainer.GetComponent<TweenPosition>();
         //skillContainerTweener.to = skillContainerTweener.gameObject.transform.position;
@@ -17,7 +14,10 @@ public class UIControllerPanelManager : MonoBehaviour {
 
     public void OnBasicButtonClick()
     {
-        controller.UseSkill( SkillType.basic);
+        PlayerAttack._instance.Attack( SkillType.basic,0);
     }
-
+    public void OnSkill1ButtonClick()
+    {
+        PlayerAttack._instance.Attack(SkillType.skill, PosType.one);
+    }
 }

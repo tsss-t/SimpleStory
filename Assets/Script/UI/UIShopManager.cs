@@ -23,7 +23,7 @@ public class UIShopManager : MonoBehaviour
         //TODO:データベースからデータ読み取り
 
         //test用
-        shopItemsDictionary = GameController._instans.LoadShopItem(selectedShopID);
+        shopItemsDictionary = GameController._instance.LoadShopItem(selectedShopID);
     }
     public void UpdateShop(int shopID)
     {

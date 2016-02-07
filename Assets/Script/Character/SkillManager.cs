@@ -16,7 +16,7 @@ public class SkillManager : MonoBehaviour
 
     void InitSkill()
     {
-        skillList = GameController._instans.LoadSkill();
+        skillList = GameController._instance.LoadSkill();
     }
     public Skill GetSkillByPosition(PosType type)
     {

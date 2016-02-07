@@ -111,7 +111,7 @@ ModelImporter:
     400102: //RootNode
     4300000: ce01_leg01
     4300002: lod1
-    7400000: Take 001
+    7400000: Idel
     9500000: //RootNode
     13700000: ce01_leg01
     13700002: lod1
@@ -136,7 +136,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
+      name: Idel
       takeName: Take 001
       firstFrame: 0
       lastFrame: 40
