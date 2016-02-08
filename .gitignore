@@ -3,6 +3,8 @@
 Library/
 Temp/
 Assets/Plugin/
+Assets/tankyWarData.dat
+Assets/tankyWarData.dat.meta
 *.sln
 *.csproj
 *.sln
@@ -10,5 +12,3 @@ Assets/Plugin/
 *.unityproj
 *.DS_Store
 *.meta
-tankyWarData.dat
-tankyWarData.dat.meta
