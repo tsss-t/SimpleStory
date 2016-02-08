@@ -1,8 +1,0 @@
-﻿1001,ｸ｡ﾉ敎ﾐ,icon_zhu,Warrior,Basic,Basic,0,30
-1002,ﾓﾀｺ翆羝ﾈ,icon_up,Warrior,Skill,One,5,30
-1003,ｰ・ﾂﾕｶ,iocn_ho,Warrior,Skill,Two,8,40
-1004,褄ｳﾟﾌ・ﾄ,iocn_yi,Warrior,Skill,Three,10,50
-2001,ﾀﾗｶｯｾﾅﾌ,icon_zhu,FemaleAssassin,Basic,Basic,0,30
-2002,ｳ耙ﾞﾂﾞ,icon_li,FemaleAssassin,Skill,One,5,35
-2003,ｲｻｶｯﾃ,iocn_fo,FemaleAssassin,Skill,Two,8,40
-2004,ﾎｨﾎﾒｶﾀﾗ,iocn_ho,FemaleAssassin,Skill,Three,13,50
