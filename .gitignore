@@ -2,9 +2,13 @@
 #################################################
 Library/
 Temp/
+Assets/Plugin/
 *.sln
 *.csproj
 *.sln
 *.userprefs
 *.unityproj
 *.DS_Store
+*.meta
+tankyWarData.dat
+tankyWarData.dat.meta
