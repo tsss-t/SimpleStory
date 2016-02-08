@@ -1,8 +1,10 @@
-﻿/**
+﻿#if UNITY_EDITOR
+/**
 	对TweenTransformEx.cs类的属性的编辑器定制，实现了功能自动化处理，节省开发时间
 	
 	Added by Teng.
 **/
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -114,3 +116,5 @@ public class TweenTransformHelperEditor : Editor
         return anchorGameObj;
     }
 }
+
+#endif

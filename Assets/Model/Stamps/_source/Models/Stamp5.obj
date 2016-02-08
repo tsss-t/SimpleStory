@@ -1,0 +1,19 @@
+# This file uses centimeters as units for non-parametric coordinates.
+
+mtllib Stamp5.mtl
+g default
+v -1.869943 0.215355 1.869943
+v 1.869943 0.215355 1.869943
+v 1.869943 0.215355 -1.869943
+v -1.869943 0.215355 -1.869943
+vt 0.500000 0.500000
+vt 0.750000 0.500000
+vt 0.750000 0.750000
+vt 0.500000 0.750000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+g polySurface10 polySurface7 polySurface5 polySurface3 polySurface1 pPlane1
+usemtl lambert2SG
+f 1/1/1 2/2/2 3/3/3 4/4/4

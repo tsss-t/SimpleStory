@@ -642,14 +642,14 @@ public class UIInput : MonoBehaviour
 			if (pf == RuntimePlatform.IPhonePlayer
 				|| pf == RuntimePlatform.Android
 				|| pf == RuntimePlatform.WP8Player
- #if UNITY_4_3
+#if UNITY_4_3
 				|| pf == RuntimePlatform.BB10Player
- #else
+#else
 				|| pf == RuntimePlatform.BlackBerryPlayer
-				|| pf == RuntimePlatform.MetroPlayerARM
-				|| pf == RuntimePlatform.MetroPlayerX64
-				|| pf == RuntimePlatform.MetroPlayerX86
- #endif
+				|| pf == RuntimePlatform.WSAPlayerARM
+				|| pf == RuntimePlatform.WSAPlayerX64
+				|| pf == RuntimePlatform.WSAPlayerX86
+#endif
 			)
 			{
 				string val;
@@ -687,8 +687,8 @@ public class UIInput : MonoBehaviour
 			}
 			else
 #endif // MOBILE
-			{
-				Vector2 pos = (UICamera.current != null && UICamera.current.cachedCamera != null) ?
+            {
+                Vector2 pos = (UICamera.current != null && UICamera.current.cachedCamera != null) ?
 					UICamera.current.cachedCamera.WorldToScreenPoint(label.worldCorners[0]) :
 					label.worldCorners[0];
 				pos.y = Screen.height - pos.y;

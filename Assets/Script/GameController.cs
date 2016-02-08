@@ -49,7 +49,9 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         _instance = this;
-        xs= new XmlSaver();
+        Application.targetFrameRate = 45;
+
+        xs = new XmlSaver();
         gameData = new GameData();
         gameData.key = SystemInfo.deviceUniqueIdentifier;
         InitSave();

@@ -28,7 +28,7 @@ public class EnemyManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        tr = GameObject.FindGameObjectWithTag(Tags.terrain).GetComponent<Terrain>();
+        //tr = GameObject.FindGameObjectWithTag(Tags.terrain).GetComponent<Terrain>();
         playerstate = PlayerState.GamePlayerState;
         canAttackEnemy = new List<GameObject>();
         buildPos = new Vector3(0, 0, 0);
@@ -60,7 +60,7 @@ public class EnemyManager : MonoBehaviour
                 0,
                  enemyList[enemyTypeI].height * Random.Range(0.0f, 1.0f) + enemyList[enemyTypeI].topLeft.y
                 );
-                buildPos.y = tr.SampleHeight(buildPos);
+                buildPos.y =0;
 
                 GameObject gameObject = Instantiate(enemyList[enemyTypeI].enemy, buildPos, Quaternion.Euler(0, Random.Range(-180, 180), 0)) as GameObject;
                 enemyList[enemyTypeI].enemyList.Add(gameObject);
