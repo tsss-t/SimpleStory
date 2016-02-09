@@ -11,7 +11,6 @@ public class UINPCQuestManager : MonoBehaviour
 
     public GameObject questItemPrefab;
     public GameObject questItemOverPrefab;
-    public GameObject NPC;
     private int selectShopID;
     /// <summary>
     /// NPCクエストリスト中のID
@@ -40,7 +39,7 @@ public class UINPCQuestManager : MonoBehaviour
     {
         isShowPanel = false;
         playerState = PlayerState.GamePlayerState;
-        npcManager = NPC.GetComponent<NPCManager>();
+        npcManager = GameObject.FindGameObjectWithTag(Tags.NPCManager).GetComponent<NPCManager>();
 
         questDictionary = new Dictionary<int, GameObject>();
 

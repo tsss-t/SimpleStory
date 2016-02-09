@@ -6,7 +6,6 @@ public class UICommunicationManager : MonoBehaviour
     #region para
     bool isShowPanel;
     private PlayerState playerState;
-    public GameObject NPC;
     private NPCManager npcManager;
     private Dictionary<int, GameObject> NPCDictionary;
     private int selectNPCID;
@@ -30,7 +29,7 @@ public class UICommunicationManager : MonoBehaviour
     void Start()
     {
         isShowPanel = false;
-        npcManager = NPC.GetComponent<NPCManager>();
+        npcManager = GameObject.FindGameObjectWithTag(Tags.NPCManager).GetComponent<NPCManager>();
         NPCDictionary = npcManager.GetNPCDctionary();
         playerState = PlayerState.GamePlayerState;
 

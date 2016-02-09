@@ -8,8 +8,6 @@ public class UIQuestManager : MonoBehaviour
     #region para
     bool isShowPanel;
 
-    public GameObject NPC;
-
     private Quest selectQuest;
 
     public GameObject prefabQuestButton;
@@ -42,7 +40,8 @@ public class UIQuestManager : MonoBehaviour
         stepShowList = new List<GameObject>();
         playerQuest = PlayerState.GamePlayerState.GetPlayerQuest();
 
-        npcManager = NPC.GetComponent<NPCManager>();
+        npcManager = GameObject.FindGameObjectWithTag(Tags.NPCManager).GetComponent<NPCManager>();
+
         enemyManager = GameObject.FindGameObjectWithTag(Tags.enemyManager).GetComponent<EnemyManager>();
 
         mainControllerUI = GameObject.FindGameObjectWithTag(Tags.UIRoot).GetComponent<UIController>();
