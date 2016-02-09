@@ -14,4 +14,5 @@ public class Tags : MonoBehaviour
     public const string enemyManager = "EnemyManager";
     public const string UIRoot = "UIRoot";
     public const string NPC = "NPC";
+    public const string NPCManager = "NPCManager";
 }
