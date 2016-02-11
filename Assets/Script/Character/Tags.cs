@@ -12,7 +12,11 @@ public class Tags : MonoBehaviour
     public const string enemy = "Enemy";
     public const string terrain = "Terrain";
     public const string enemyManager = "EnemyManager";
-    public const string UIRoot = "UIRoot";
     public const string NPC = "NPC";
     public const string NPCManager = "NPCManager";
+    public const string sceneManager= "SceneManager";
+
+    //UI:
+    public const string UIRoot = "UIRoot";
+    public const string UISceneLoading = "UILoading";
 }
