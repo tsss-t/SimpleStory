@@ -43,13 +43,14 @@ public class GameController : MonoBehaviour
     public TextAsset questListData;
     public TextAsset NPCData;
     public TextAsset skillData;
+    public TextAsset openingData;
     #endregion
     #region Awake
     public static GameController _instance;
     void Awake()
     {
         _instance = this;
-        Application.targetFrameRate = 45;
+        //Application.targetFrameRate = 45;
 
         xs = new XmlSaver();
         gameData = new GameData();
@@ -367,21 +368,26 @@ public class GameController : MonoBehaviour
         return npcQuestList;
     }
     Dictionary<int, Dictionary<CommunicationType, bool>> npcsType;
-    public Dictionary<int, Dictionary<CommunicationType, bool>> LoadNpcType()
+    public Dictionary<int, Dictionary<CommunicationType, bool>> LoadNpcType(int floorNum)
     {
         string[] proArray;
         string[] dataArray = NPCData.ToString().Split('\n');
         npcsType = new Dictionary<int, Dictionary<CommunicationType, bool>>();
         for (int i = 1; i < dataArray.Length; i++)
         {
-            if (dataArray[i] != "")
+            if (dataArray[i] != "" )
             {
+
                 proArray = dataArray[i].Split(',');
-                npcsType.Add(int.Parse(proArray[0]), new Dictionary<CommunicationType, bool>() {
-                    { CommunicationType.Talk, proArray[1] == "0" ? false : true },
-                    { CommunicationType.Shop,proArray[2]=="0"?false: true },
-                    { CommunicationType.Quest,proArray[3]=="0"?false:true }
+                if (proArray[1].EndsWith(floorNum.ToString()))
+                {
+                    npcsType.Add(int.Parse(proArray[0]), new Dictionary<CommunicationType, bool>() {
+                    { CommunicationType.Talk, proArray[2] == "0" ? false : true },
+                    { CommunicationType.Shop,proArray[3]=="0"?false: true },
+                    { CommunicationType.Quest,proArray[4]=="0"?false:true }
                 });
+                }
+
             }
         }
         return npcsType;
@@ -415,6 +421,64 @@ public class GameController : MonoBehaviour
         return state;
     }
     #endregion
+    List<TalkText> textList;
+    public List<TalkText> LoadText(int eventID)
+    {
+        textList = new List<TalkText>();
+        string[] proArray;
+        string[] dataArray = openingData.ToString().Split('\n');
+        for (int i = 1; i < dataArray.Length; i++)
+        {
+            if(dataArray[i]!="")
+            {
+                proArray = dataArray[i].Split(',');
+                if(proArray[0].EndsWith(eventID.ToString()))
+                {
+                    TalkText text = new TalkText();
+                    switch(proArray[1])
+                    {
+                        case "text":
+                            {
+                                text.textType = TextType.text;
+                                break;
+                            }
+                        case "textArea":
+                            {
+                                text.textType = TextType.textArea;
+                                break;
+                            }
+                        case "picture":
+                            {
+                                text.textType = TextType.picture;
+                                break;
+                            }
+                    }
+                    switch (proArray[2])
+                    {
+                        case "foi":
+                            {
+                                text.textEffect = TextEffect.foi;
+                                break;
+                            }
+                        case "in":
+                            {
+                                text.textEffect = TextEffect.pictureIn;
+                                break;
+                            }
+                        case "out":
+                            {
+                                text.textEffect = TextEffect.pictureOut;
+                                break;
+                            }
+                    }
+                    text.textInfo = proArray[3];
+                    textList.Add(text);
+                }
+            }
+        }
+        return textList;
+    }
+
     #region Skill
     List<Skill> skillList;
     public List<Skill> LoadSkill()

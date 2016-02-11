@@ -10,13 +10,12 @@ public class UISceneManager : MonoBehaviour {
     private AsyncOperation ao = null;
 
 	// Use this for initialization
-	void Awake () {
+	void Start () {
         _instance = this;
         BG = transform.Find("BG").gameObject;
         progressBar = BG.transform.Find("ProgressBar").GetComponent<UISlider>();
 
-        gameObject.SetActive(false);
-
+        BG.SetActive(false);
     }
 
     // Update is called once per frame
@@ -34,7 +33,6 @@ public class UISceneManager : MonoBehaviour {
 
     public void Show(AsyncOperation ao)
     {
-        gameObject.SetActive(true);
         BG.SetActive(true);
         isAsyn = true;
         this.ao = ao;

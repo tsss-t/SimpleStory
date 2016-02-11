@@ -4,17 +4,15 @@ using System.Collections;
 public class UIStartMenuManager : MonoBehaviour
 {
     UISceneManager sceneManagerUI;
-
     // Use this for initialization
     void Start()
     {
-        sceneManagerUI = transform.Find("LoadingBar").GetComponent<UISceneManager>();
+        sceneManagerUI = GameObject.FindGameObjectWithTag(Tags.UISceneLoading).gameObject.GetComponent<UISceneManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-
     }
 
     public void OnNewButtonClick()

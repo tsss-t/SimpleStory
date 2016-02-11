@@ -34,12 +34,21 @@ public class NPCManager : MonoBehaviour {
     void LoadData()
     {
         GameObject[] NPClist = GameObject.FindGameObjectsWithTag(Tags.NPC);
-        for (int i =0; i < NPClist.Length; i++)
+        for (int i = 0; i < NPClist.Length; i++)
         {
             NPCDictionary.Add(NPClist[i].GetComponent<NPCInfomation>().NPCID, NPClist[i]);
 
         }
-        npcsType = GameController._instance.LoadNpcType();
+        try
+        {
+            npcsType = GameController._instance.LoadNpcType(GameObject.Find(Tags.sceneManager).GetComponent<SceneManager>().floorNum);
+
+        }
+        catch
+        {
+            Debug.LogError("You must put the SceneManager in Scene!");
+        }
+        
         foreach (KeyValuePair<int,Dictionary<CommunicationType,bool>> npc in npcsType)
         {
             NPCDictionary[npc.Key].GetComponent<NPCInfomation>().SetNPCType(npc.Value);

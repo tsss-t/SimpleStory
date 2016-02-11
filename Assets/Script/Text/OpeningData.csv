@@ -1,0 +1,12 @@
+﻿eventid,tab,effect,info
+0,text,foi,私の名はカンマ
+0,text,foi,一流の剣士だ
+0,text,foi,「この世すべての悪を排除する」のは私の信条
+0,text,foi,だが
+0,text,foi,10日前
+0,text,foi,子供と妻は行方不明になった。
+0,text,foi,仕事から帰った私は、テーブルの上に一通の手紙を発見し、その内容は……
+0,picture,in,手紙
+0,textArea,foi,カンマ\n\n結構余計なことやるのは好きだようが、今の気分はどうですか。\n子供と妻の命が欲しいなら。XX日XXXXXに来い！一人で500万円でな！
+0,picture,out,
+0,text,foi,二人を助けるため、私は友人から借金し、XXXXXに出発した。
