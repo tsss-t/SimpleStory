@@ -7,7 +7,7 @@ using System.Collections;
 /// </summary>
 public enum PlayerStateChangeType
 {
-    EXP, LEVEL, STATE, HP, energy, money, all, bag, equep
+    EXP, LEVEL, STATE,Action, HP, energy, money, all, bag, equep
 }
 public enum PlayerType
 {
@@ -17,7 +17,7 @@ public class PlayerState
 {
     public enum PlayerAction
     {
-        Free, Died, Shopping, Talking
+        Free, Died, Shopping, Talking,AutoMoving,Locked,NULL
     }
     //シングルトン
     private static PlayerState _instance;
@@ -47,7 +47,7 @@ public class PlayerState
     {
         get
         {
-            if (playerActionNow == PlayerAction.Free)
+            if (playerActionNow != PlayerAction.Died)
             {
                 return true;
             }
@@ -300,6 +300,7 @@ public class PlayerState
     public void ChangeAction(PlayerAction action)
     {
         this.playerActionNow = action;
+        PlayerStateChanged(PlayerStateChangeType.Action);
     }
     public void UseEnergy(int count)
     {

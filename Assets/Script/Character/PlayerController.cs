@@ -9,8 +9,9 @@ public class PlayerController : MonoBehaviour
 
     #region para
     public static PlayerController _instance;
-
+    Rigidbody playerRigidbody;
     PlayerState playerState;
+    NavMeshAgent playerAgent;
     private Animator anim;
     private HashIDs hash;
     private float timerEnergy = 0f;
@@ -29,7 +30,8 @@ public class PlayerController : MonoBehaviour
     {
         _instance = this;
         playerState = PlayerState.GamePlayerState;
-
+        playerRigidbody = GetComponent<Rigidbody>();
+        playerAgent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         hash = this.GetComponent<HashIDs>();
         anim.SetLayerWeight(1, 1f);
@@ -66,11 +68,15 @@ public class PlayerController : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (playerState.PlayerAliveNow)
+        if (playerState.GetActionInfoNow() == PlayerState.PlayerAction.Free)
         {
             float h = Input.GetAxis("Horizontal") == 0f ? ETCInput.GetAxis("Horizontal") : Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical") == 0f ? ETCInput.GetAxis("Vertical") : Input.GetAxis("Vertical");
             MovementManagement(h, v);
+        }
+        else if (playerState.GetActionInfoNow() == PlayerState.PlayerAction.AutoMoving)
+        {
+            AutoMovementManagement();
         }
         else
         {
@@ -98,7 +104,16 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    #region 移動
+    #region 移動操作
+    void AutoMovementManagement()
+    {
+        anim.SetFloat(hash.speedFloat,7f);
+        if (playerAgent.velocity != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(playerAgent.velocity);
+        }
+    }
+
     /// <summary>
     /// 主人公の移動
     /// </summary>
@@ -111,27 +126,27 @@ public class PlayerController : MonoBehaviour
         //Debug.Log(anim.GetCurrentAnimatorStateInfo(1).IsName("Attack Layer.Empty"));
         if (anim.GetCurrentAnimatorStateInfo(1).IsName("Attack Layer.Empty"))
         {
-            Vector3 nowVel = GetComponent<Rigidbody>().velocity;
+            Vector3 nowVel = playerRigidbody.velocity;
             if (Mathf.Abs(horizontal) > 0.05f || Mathf.Abs(vertical) > 0.05f)
             {
                 Rotating(horizontal, vertical);
 
 
-                GetComponent<Rigidbody>().velocity = new Vector3(velocity * horizontal, nowVel.y, vertical * velocity);
-                anim.SetFloat(hash.speedFloat, GetComponent<Rigidbody>().velocity.magnitude);
+                playerRigidbody.velocity = new Vector3(velocity * horizontal,nowVel.y, vertical * velocity);
+                anim.SetFloat(hash.speedFloat, playerRigidbody.velocity.magnitude);
                 transform.LookAt(new Vector3(horizontal, 0, vertical) + transform.position);
 
             }
             else
             {
                 anim.SetFloat(hash.speedFloat, 0f);
-                GetComponent<Rigidbody>().velocity = new Vector3(0, nowVel.y, 0);
+                playerRigidbody.velocity = new Vector3(0, nowVel.y, 0);
             }
         }
         else
         {
 
-            GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+            playerRigidbody.velocity = new Vector3(0f, 0f, 0f);
         }
 
     }
@@ -144,8 +159,8 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 targetDirection = new Vector3(horizontal, 0f, vertical);
         Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
-        Quaternion newRotation = Quaternion.Lerp(GetComponent<Rigidbody>().rotation, targetRotation, turnSmoothing * Time.deltaTime);
-        GetComponent<Rigidbody>().MoveRotation(newRotation);
+        Quaternion newRotation = Quaternion.Lerp(playerRigidbody.rotation, targetRotation, turnSmoothing * Time.deltaTime);
+        playerRigidbody.MoveRotation(newRotation);
     }
     #endregion
 

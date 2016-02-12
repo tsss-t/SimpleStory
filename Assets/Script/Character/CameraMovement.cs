@@ -4,8 +4,8 @@ using System.Collections;
 public class CameraMovement : MonoBehaviour
 {
     public float smooth = 1.5f;
-
     private Transform player;
+    public Transform target;
     private Vector3 relCameraPos;
     private float relCameraPosMag;
     private Vector3 newPos;
@@ -13,16 +13,20 @@ public class CameraMovement : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindGameObjectWithTag(Tags.player).transform;
+        target = player ;
 
-
-        relCameraPos = transform.position - player.position;
+        relCameraPos = transform.position - target.position;
         relCameraPosMag = relCameraPos.magnitude - 0.5f;
+    }
+    public void setTarget(Transform target)
+    {
+        this.target = target;
     }
     void FixedUpdate()
     {
 
-        Vector3 standardPos = player.position + relCameraPos;
-        Vector3 abovePos = player.position + Vector3.up * relCameraPosMag;
+        Vector3 standardPos = target.position + relCameraPos;
+        Vector3 abovePos = target.position + Vector3.up * relCameraPosMag;
         Vector3[] checkPoints = new Vector3[5];
         checkPoints[0] = standardPos;
         checkPoints[1] = Vector3.Lerp(standardPos, abovePos, 0.25f);
@@ -44,8 +48,8 @@ public class CameraMovement : MonoBehaviour
     bool ViewingPosCheck(Vector3 checkPos)
     {
         RaycastHit hit;
-        Physics.Raycast(checkPos, player.position - checkPos, out hit, relCameraPosMag);
-        if (hit.transform != player)
+        Physics.Raycast(checkPos, target.position - checkPos, out hit, relCameraPosMag);
+        if (hit.transform != target)
         {
             return false;
         }
@@ -57,7 +61,7 @@ public class CameraMovement : MonoBehaviour
     }
     void SmoothLookAt()
     {
-        Vector3 relPlayerPosition = player.position - transform.position;
+        Vector3 relPlayerPosition = target.position - transform.position;
         Quaternion lookAtRotation = Quaternion.LookRotation(relPlayerPosition, Vector3.up);
         transform.rotation = Quaternion.Lerp(transform.rotation, lookAtRotation, smooth * Time.deltaTime);
     }

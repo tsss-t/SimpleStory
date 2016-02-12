@@ -1,35 +1,65 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AutoMove : MonoBehaviour {
-
+public class AutoMove : MonoBehaviour
+{
+    PlayerState.PlayerAction endAction;
     private NavMeshAgent agent;
-
-    public Transform target;
-	// Use this for initialization
-	void Start () {
+    PlayerState playerState;
+    // Use this for initialization
+    void Start()
+    {
         agent = this.GetComponent<NavMeshAgent>();
         agent.enabled = false;
+        playerState = PlayerState.GamePlayerState;
     }
-	
-	// Update is called once per frame
-	void Update () {
-	    if(agent.enabled)
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (agent.enabled)
         {
-            if(agent.remainingDistance<1)
+            if (agent.remainingDistance < 1)
             {
+                if (this.gameObject.tag.Equals(Tags.player))
+                {
+                    if (endAction != PlayerState.PlayerAction.NULL)
+                    {
+                        playerState.ChangeAction(endAction);
+                    }
+                    else
+                    {
+                        playerState.ChangeAction(PlayerState.PlayerAction.Free);
+                    }
+                }
                 agent.Stop();
                 agent.enabled = false;
             }
         }
-        if(Input.GetMouseButtonDown(0))
-        {
-            SetDestination(target.position);
-        }
-	}
-    public void SetDestination(Vector3 targetPos)
+    }
+    public void StartDestination(Vector3 targetPos)
     {
+        if (this.gameObject.tag.Equals(Tags.player))
+        {
+            this.endAction = PlayerState.PlayerAction.NULL;
+            playerState.ChangeAction(PlayerState.PlayerAction.AutoMoving);
+        }
         agent.enabled = true;
         agent.SetDestination(targetPos);
+
+    }
+    public void StartDestination(Vector3 targetPos, PlayerState.PlayerAction endAction)
+    {
+        if (this.gameObject.tag.Equals(Tags.player))
+        {
+            this.endAction = endAction;
+            playerState.ChangeAction(PlayerState.PlayerAction.AutoMoving);
+        }
+        agent.enabled = true;
+        agent.SetDestination(targetPos);
+    }
+    public bool IsMoveOver()
+    {
+        return !agent.enabled;
     }
 }

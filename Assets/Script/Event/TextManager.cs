@@ -13,7 +13,8 @@ public class TalkText
     public TextType textType;
     public TextEffect textEffect;
     public string textInfo;
-
+    public string iconName;
+    public string speakerName;
 }
 public class TextManager : MonoBehaviour {
 

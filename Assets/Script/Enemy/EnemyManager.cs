@@ -17,7 +17,7 @@ public class EnemyManager : MonoBehaviour
     }
     public int updateFreme = 18000;//1秒30freme
     public EnemyStruct[] enemyList;
-
+    public List<EnemyStruct> managedEnemyList;
     Terrain tr;
 
     Vector3 buildPos;
@@ -28,6 +28,7 @@ public class EnemyManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        managedEnemyList = new List<EnemyStruct>();
         //tr = GameObject.FindGameObjectWithTag(Tags.terrain).GetComponent<Terrain>();
         playerstate = PlayerState.GamePlayerState;
         canAttackEnemy = new List<GameObject>();
@@ -50,24 +51,62 @@ public class EnemyManager : MonoBehaviour
     #region　シーン更新
     void UpdateSence()
     {
-        for (int enemyTypeI = 0; enemyTypeI < enemyList.Length; enemyTypeI++)
+        for (int i = 0; i < enemyList.Length; i++)
         {
-            for (int enemyI = enemyList[enemyTypeI].enemyList.Count; enemyI < enemyList[enemyTypeI].count; enemyI++)
+            for (int j = enemyList[i].enemyList.Count; j < enemyList[i].count; j++)
             {
 
                 buildPos = new Vector3(
-                enemyList[enemyTypeI].width * Random.Range(0.0f, 1.0f) + enemyList[enemyTypeI].topLeft.x,
+                enemyList[i].width * Random.Range(0.0f, 1.0f) + enemyList[i].topLeft.x,
                 0,
-                 enemyList[enemyTypeI].height * Random.Range(0.0f, 1.0f) + enemyList[enemyTypeI].topLeft.y
+                 enemyList[i].height * Random.Range(0.0f, 1.0f) + enemyList[i].topLeft.y
                 );
-                buildPos.y =0;
+                buildPos.y = 0;
 
-                GameObject gameObject = Instantiate(enemyList[enemyTypeI].enemy, buildPos, Quaternion.Euler(0, Random.Range(-180, 180), 0)) as GameObject;
-                enemyList[enemyTypeI].enemyList.Add(gameObject);
+                GameObject gameObject = Instantiate(enemyList[i].enemy, buildPos, Quaternion.Euler(0, Random.Range(-180, 180), 0)) as GameObject;
+
+                enemyList[i].enemyList.Add(gameObject);
+            }
+        }
+
+    }
+    #endregion
+    public void makeEnemyAttackPlayer(Vector3 position, int width, int height, int count, GameObject prefab)
+    {
+        EnemyStruct Estruct = new EnemyStruct();
+        Estruct.count = count;
+        Estruct.enemy = prefab;
+        Estruct.height = height;
+        Estruct.width = width;
+        Estruct.topLeft = position;
+        Estruct.enemyList = new List<GameObject>();
+        for (int j = 0; j < Estruct.count; j++)
+        {
+            buildPos = new Vector3(
+                Estruct.width * Random.Range(0.0f, 1.0f) + Estruct.topLeft.x,
+                0,
+                Estruct.height * Random.Range(0.0f, 1.0f) + Estruct.topLeft.y
+                );
+            buildPos.y = 0;
+
+            GameObject gameObject = Instantiate(Estruct.enemy, buildPos, Quaternion.Euler(0, Random.Range(-180, 180), 0)) as GameObject;
+            gameObject.GetComponent<EnemyController>().Lock();
+            gameObject.transform.LookAt(GameObject.FindGameObjectWithTag(Tags.player).transform.position);
+            Estruct.enemyList.Add(gameObject);
+
+        }
+        managedEnemyList.Add(Estruct);
+    }
+    public void UnLockManagedEnemy()
+    {
+        for (int i = 0; i < managedEnemyList.Count; i++)
+        {
+            for (int j = 0; j < managedEnemyList[i].enemyList.Count; j++)
+            {
+                managedEnemyList[i].enemyList[j].GetComponent<EnemyController>().UnLock();
             }
         }
     }
-    #endregion
 
 
     public GameObject[] getAttackEnemy()
@@ -80,11 +119,25 @@ public class EnemyManager : MonoBehaviour
             {
                 for (int j = 0; j < enemyList[i].enemyList.Count; j++)
                 {
-                    canAttackEnemy.Add(enemyList[i].enemyList[j]);
+                    if (enemyList[i].enemyList[j] != null)
+                    {
+                        canAttackEnemy.Add(enemyList[i].enemyList[j]);
+                    }
+                
                 }
-
             }
         }
+        for (int i = 0; i < managedEnemyList.Count; i++)
+        {
+            foreach (GameObject item in managedEnemyList[i].enemyList)
+            {
+                if (item != null)
+                {
+                    canAttackEnemy.Add(item);
+                }
+            }
+        }
+
         return canAttackEnemy.ToArray();
     }
     public bool destroyEnemy(GameObject enemy)
@@ -101,7 +154,6 @@ public class EnemyManager : MonoBehaviour
                         return true;
                     }
                 }
-
             }
             else
             {
@@ -138,7 +190,6 @@ public class EnemyManager : MonoBehaviour
             }
         }
         return "未知目標";
-
     }
 
 

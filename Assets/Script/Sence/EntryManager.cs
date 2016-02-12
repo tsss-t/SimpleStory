@@ -10,7 +10,7 @@ public class EntryManager : MonoBehaviour
     void Awake()
     {
         sceneManagerUI = GameObject.FindGameObjectWithTag(Tags.UISceneLoading).GetComponent<UISceneManager>();
-        goToFloorNum = goToFloorNum ==- 1000? GameObject.FindGameObjectWithTag(Tags.sceneManager).GetComponent<SceneManager>().floorNum + 1:goToFloorNum;
+        goToFloorNum = goToFloorNum ==- 1000? GameObject.FindGameObjectWithTag(Tags.sceneManager).GetComponent<SceneManager>().floorNum:goToFloorNum;
     }    // Update is called once per frame
     void Update()
     {

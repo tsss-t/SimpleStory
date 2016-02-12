@@ -8,7 +8,7 @@ public enum ActionType
 }
 public enum ActionState
 {
-    foundPlayer, notFoundPlayer, goBack, die
+    foundPlayer, notFoundPlayer, goBack, die, locked
 }
 public class EnemyController : MonoBehaviour
 {
@@ -51,7 +51,7 @@ public class EnemyController : MonoBehaviour
     private Vector3 playerPosition;
     private PlayerController charaControler;
 
-    private ActionState nowState;
+    public ActionState nowState;
     private ActionType nowAction;
 
     private Vector3 positionStart;
@@ -63,12 +63,12 @@ public class EnemyController : MonoBehaviour
     private GameObject hpBar;
     private UISlider hpSlider;
 
-    
+
 
     #endregion
     #region start
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         positionStart = new Vector3(transform.position.x, transform.position.y, transform.position.z); ;
         playerState = PlayerState.GamePlayerState;
@@ -95,51 +95,54 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (nowState != ActionState.die)
+        if (nowState != ActionState.locked)
         {
-            HPBarSee();
-            switch (nowState)
+            if (nowState != ActionState.die)
             {
-                case ActionState.notFoundPlayer:
-                    {
-
-                        //TODO:監視コード animation:なし
-                        //    public float fieldDistance;監視距離
-                        //    public float fieldAngle;監視範囲
-                        See();
-
-
-                        //TODO：行動ランダムコード　animation:random
-                        Action();
-
-                        break;
-                    }
-                case ActionState.foundPlayer:
-                    {
-                        if (!playerState.PlayerAliveNow)
+                HPBarSee();
+                switch (nowState)
+                {
+                    case ActionState.notFoundPlayer:
                         {
-                            nowState = ActionState.notFoundPlayer;
+
+                            //TODO:監視コード animation:なし
+                            //    public float fieldDistance;監視距離
+                            //    public float fieldAngle;監視範囲
+                            See();
+
+
+                            //TODO：行動ランダムコード　animation:random
+                            Action();
+
                             break;
                         }
-                        playerPosition = playerState.playerTransform.position;
-                        //TODO:追撃コード animation:run
-                        Follow();
-                        //TODO:攻撃コード animation:attack
-                        Attack();
+                    case ActionState.foundPlayer:
+                        {
+                            if (!playerState.PlayerAliveNow)
+                            {
+                                nowState = ActionState.notFoundPlayer;
+                                break;
+                            }
+                            playerPosition = playerState.playerTransform.position;
+                            //TODO:追撃コード animation:run
+                            Follow();
+                            //TODO:攻撃コード animation:attack
+                            Attack();
 
-                        break;
-                    }
-                case ActionState.goBack:
-                    {
-                        GoBack();
-                        //TODO:追撃停止
-                        break;
-                    }
-            }
-            //BUG防止
-            if (gameObject.transform.position.y < -100)
-            {
-                BugDie();
+                            break;
+                        }
+                    case ActionState.goBack:
+                        {
+                            GoBack();
+                            //TODO:追撃停止
+                            break;
+                        }
+                }
+                //BUG防止
+                if (gameObject.transform.position.y < -100)
+                {
+                    BugDie();
+                }
             }
         }
     }
@@ -436,7 +439,14 @@ public class EnemyController : MonoBehaviour
         }
     }
     #endregion
-
+    public void Lock()
+    {
+        this.nowState = ActionState.locked;
+    }
+    public void UnLock()
+    {
+        this.nowState = ActionState.foundPlayer;
+    }
     #region 被攻撃
     ActionEvent hitAction;
     ActionEvent dieAction;
@@ -481,7 +491,7 @@ public class EnemyController : MonoBehaviour
 
     }
 
-    private void Die( )
+    private void Die()
     {
         HP = 0;
 
@@ -497,7 +507,7 @@ public class EnemyController : MonoBehaviour
         }
         anim.SetTrigger(dieAction.actionTrigerName);
 
-        playerState.KillEnemy(enemyID,EXP,level);
+        playerState.KillEnemy(enemyID, EXP, level);
 
 
 
@@ -507,7 +517,10 @@ public class EnemyController : MonoBehaviour
     }
     private void BugDie()
     {
+        HP = 0;
         nowState = ActionState.die;
+        dieAction = dieActionList[0];
+        anim.SetTrigger(dieAction.actionTrigerName);
         StartCoroutine(AfterDie());
         this.GetComponent<CharacterController>().enabled = false;
     }
@@ -515,16 +528,16 @@ public class EnemyController : MonoBehaviour
     #endregion
 
     #region Die
-    float height = 5;
+    float height = 3;
     Vector3 targetPos;
     IEnumerator AfterDie()
     {
-        
+
         hpBarManager.DestoryHpBar(hpBar);
         targetPos = new Vector3(transform.position.x, transform.position.y - height, transform.position.z);
         for (float timer = 0; timer < 10f; timer += Time.deltaTime)
             yield return 0;
-        while (transform.position.y - 5f > targetPos.y)
+        while (transform.position.y - 1f > targetPos.y)
         {
             transform.position = Vector3.Lerp(transform.position, targetPos, 0.1f * Time.deltaTime);
 
