@@ -54,13 +54,13 @@ public class OpeningEvent : MonoBehaviour {
                     playText = textTweener;
                     break;
                 case TextType.textArea:
-                    textArea.text = textList[i].textInfo.Replace("\\n","\n");
+                    textArea.text = textList[i].textInfo;
                     playText = textAreaTweener;
                     break;
                 case TextType.picture:
-                    if (!textList[i].textInfo.Replace("\r", "").Equals(""))
+                    if (!textList[i].textInfo.Equals(""))
                     {
-                        picture.spriteName = textList[i].textInfo.Replace("\r", "");
+                        picture.spriteName = textList[i].textInfo;
                     }
                     break;
                 default:

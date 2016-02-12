@@ -3,24 +3,29 @@ using System.Collections.Generic;
 
 public enum CommunicationType
 {
-    Talk,Quest, Shop
+    Talk, Quest, Shop
 }
 
-public class NPCManager : MonoBehaviour {
+public class NPCManager : MonoBehaviour
+{
+    public static NPCManager _instans;
 
     #region para
-    private Dictionary<int, GameObject> NPCDictionary;
+    private Dictionary<int, NPCDATA> NPCDictionary;
+    Dictionary<int, GameObject> floorNPCDictionary;
     #endregion
 
     #region test data
-    public GameObject NPC1;
-    public GameObject NPC2;
+    public GameObject[] NPCprefabList;
+
     #endregion
 
     #region Start
     // Use this for initialization
-    void Start () {
-        NPCDictionary = new Dictionary<int, GameObject>();
+    void Start()
+    {
+        _instans = this;
+        NPCDictionary = new Dictionary<int, NPCDATA>();
 
         Init();
     }
@@ -30,29 +35,28 @@ public class NPCManager : MonoBehaviour {
     {
         LoadData();
     }
-    Dictionary<int, Dictionary<CommunicationType, bool>> npcsType;
+    public GameObject npcTemp;
     void LoadData()
     {
-        GameObject[] NPClist = GameObject.FindGameObjectsWithTag(Tags.NPC);
-        for (int i = 0; i < NPClist.Length; i++)
-        {
-            NPCDictionary.Add(NPClist[i].GetComponent<NPCInfomation>().NPCID, NPClist[i]);
+        floorNPCDictionary = new Dictionary<int, GameObject>();
+        //GameObject.Find(Tags.sceneManager).GetComponent<SceneManager>().floorNum
+        NPCDictionary = GameController._instance.LoadNPCData();
 
-        }
-        try
-        {
-            npcsType = GameController._instance.LoadNpcType(GameObject.Find(Tags.sceneManager).GetComponent<SceneManager>().floorNum);
 
-        }
-        catch
+
+        foreach (NPCDATA npc in NPCDictionary.Values)
         {
-            Debug.LogError("You must put the SceneManager in Scene!");
-        }
-        
-        foreach (KeyValuePair<int,Dictionary<CommunicationType,bool>> npc in npcsType)
-        {
-            NPCDictionary[npc.Key].GetComponent<NPCInfomation>().SetNPCType(npc.Value);
-            NPCDictionary[npc.Key].GetComponent<NPCInfomation>().SetQuest(GameController._instance.LoadNpcQuest(npc.Key));
+            if(npc.FloorNum== GameObject.Find(Tags.sceneManager).GetComponent<SceneManager>().floorNum)
+            {
+                npcTemp = Instantiate(NPCprefabList[npc.PrefabID], npc.Position, Quaternion.Euler(0,npc.Euler, 0)) as GameObject;
+                npcTemp.name = npc.Name;
+                npcTemp.GetComponent<NPCInfomation>().NPCID = npc.Id;
+                npcTemp.GetComponent<NPCInfomation>().talkInfomation = npc.TalkInfo;
+                npcTemp.GetComponent<NPCInfomation>().SetNPCType(npc.NPCtype1);
+                npcTemp.GetComponent<NPCInfomation>().SetQuest(npc.QuestList);
+                npcTemp.tag = Tags.NPC;
+                floorNPCDictionary.Add(npc.Id, npcTemp);
+            }
         }
     }
     #endregion
@@ -60,13 +64,183 @@ public class NPCManager : MonoBehaviour {
     #region 外部API
     public Dictionary<int, GameObject> GetNPCDctionary()
     {
-        return NPCDictionary;
+        return floorNPCDictionary;
     }
-    public NPCInfomation GetNPCInfo(int NPCID)
+    public NPCInfomation GetFloorNPCInfo(int NPCID)
     {
         GameObject NPC;
-        NPCDictionary.TryGetValue(NPCID, out NPC);
+        floorNPCDictionary.TryGetValue(NPCID, out NPC);
         return NPC.GetComponent<NPCInfomation>();
     }
+    public NPCDATA GetNPCInfo(int NPCID)
+    {
+        return NPCDictionary[NPCID];
+    }
+
+    public Dictionary<int , Item> getShopItem(int shopID)
+    {
+        return NPCDictionary[shopID].SellItemList;
+    }
     #endregion
+}
+public class NPCDATA
+{
+    int id;
+    string name;
+    int prefabID;
+    Dictionary<CommunicationType, bool> NPCtype;
+    Vector3 position;
+    int floorNum;
+    string talkInfo;
+    List<QuestInfo> questList;
+    Dictionary<int, Item> sellItemList;
+    int euler;
+
+    public int Id
+    {
+        get
+        {
+            return id;
+        }
+
+        set
+        {
+            id = value;
+        }
+    }
+
+
+
+    public Dictionary<CommunicationType, bool> NPCtype1
+    {
+        get
+        {
+            return NPCtype;
+        }
+
+        set
+        {
+            NPCtype = value;
+        }
+    }
+
+    public Vector3 Position
+    {
+        get
+        {
+            return position;
+        }
+
+        set
+        {
+            position = value;
+        }
+    }
+
+    public int FloorNum
+    {
+        get
+        {
+            return floorNum;
+        }
+
+        set
+        {
+            floorNum = value;
+        }
+    }
+
+    public string TalkInfo
+    {
+        get
+        {
+            return talkInfo;
+        }
+
+        set
+        {
+            talkInfo = value;
+        }
+    }
+
+    public List<QuestInfo> QuestList
+    {
+        get
+        {
+            return questList;
+        }
+
+        set
+        {
+            questList = value;
+        }
+    }
+
+    public Dictionary<int, Item> SellItemList
+    {
+        get
+        {
+            return sellItemList;
+        }
+
+        set
+        {
+            sellItemList = value;
+        }
+    }
+
+    public int Euler
+    {
+        get
+        {
+            return euler;
+        }
+
+        set
+        {
+            euler = value;
+        }
+    }
+
+    public int PrefabID
+    {
+        get
+        {
+            return prefabID;
+        }
+
+        set
+        {
+            prefabID = value;
+        }
+    }
+
+    public string Name
+    {
+        get
+        {
+            return name;
+        }
+
+        set
+        {
+            name = value;
+        }
+    }
+
+    public NPCDATA(int id,string name,int prefabID ,Dictionary<CommunicationType, bool> nPCtype, Vector3 position, int floorNum, string talkInfo, List<QuestInfo> questList, Dictionary<int, Item> sellItemList,int euler)
+    {
+        this.id = id;
+        this.name = name;
+        this.prefabID = prefabID;
+        NPCtype = nPCtype;
+        this.position = position;
+        this.floorNum = floorNum;
+        this.talkInfo = talkInfo;
+        this.questList = questList;
+        this.sellItemList = sellItemList;
+        this.euler = euler;
+    }
+
+
 }

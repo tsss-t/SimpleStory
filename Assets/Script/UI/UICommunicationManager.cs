@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 public class UICommunicationManager : MonoBehaviour
 {
+    public static UICommunicationManager _instans;
     #region para
     bool isShowPanel;
     private PlayerState playerState;
@@ -28,6 +29,7 @@ public class UICommunicationManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        _instans = this;
         isShowPanel = false;
         npcManager = GameObject.FindGameObjectWithTag(Tags.NPCManager).GetComponent<NPCManager>();
         NPCDictionary = npcManager.GetNPCDctionary();
@@ -55,13 +57,13 @@ public class UICommunicationManager : MonoBehaviour
     }
     #endregion
     #region delegate
-    void CommunicationTalk(int NPCNumber)
+    public void CommunicationTalk(int NPCNumber)
     {
         selectNPCID = NPCNumber;
         npcQuestManagerUI.SetSelectedShopID(selectNPCID);
         if (NPCDictionary[selectNPCID].GetComponent<NPCInfomation>().GetNPCType()[CommunicationType.Talk])
         {
-            showTalk(npcManager.GetNPCInfo(selectNPCID).talkInfomation);
+            showTalk(npcManager.GetFloorNPCInfo(selectNPCID).talkInfomation);
             if (NPCDictionary[selectNPCID].GetComponent<NPCInfomation>().GetNPCType()[CommunicationType.Shop])
             {
                 shopButton.gameObject.SetActive(true);
@@ -174,4 +176,5 @@ public class UICommunicationManager : MonoBehaviour
         npcQuestManagerUI.OnOpenButtonClick();
     }
     #endregion
+
 }

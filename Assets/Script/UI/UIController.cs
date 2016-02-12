@@ -17,6 +17,7 @@ public class UIController : MonoBehaviour
     private Transform containerSkill;
     private Transform containerMove;
 
+    private UIButton toolBarChangeButton;
     private UISlider sliderEnergy;
     private UILabel labelEnergy;
     private UISlider sliderHP;
@@ -47,6 +48,8 @@ public class UIController : MonoBehaviour
         containerSkill = transform.Find("SkillContainer");
         containerMove = transform.Find("MoveContainer");
         spriteAllow = containerMap.Find("miniMap/spriteAllow");
+
+        toolBarChangeButton = transform.Find("ToolBarChangeButton").GetComponent<UIButton>();
         sliderEnergy = containerPlayerState.Find("sliderEnergy").GetComponent<UISlider>();
         labelEnergy = sliderEnergy.gameObject.transform.Find("labelEnergy").GetComponent<UILabel>();
         sliderHP = containerPlayerState.Find("sliderHP").GetComponent<UISlider>();
@@ -137,6 +140,12 @@ public class UIController : MonoBehaviour
                 {
                     break;
                 }
+            case PlayerStateChangeType.Action:
+                {
+                     OnActionChanged();
+                    
+                    break;
+                }
         }
 
     }
@@ -161,6 +170,26 @@ public class UIController : MonoBehaviour
     {
 
         sliderExp.value = (float)(playerState.EXP - 50 * (playerState.level * (playerState.level - 1)) / 2) / (playerState.level * 50);
+    }
+    void OnActionChanged()
+    {
+        if (!playerState.PlayerAliveNow||playerState.GetActionInfoNow()== PlayerState.PlayerAction.AutoMoving|| playerState.GetActionInfoNow() == PlayerState.PlayerAction.Locked|| playerState.GetActionInfoNow() == PlayerState.PlayerAction.Shopping)
+        {
+            toolBarChangeButton.enabled = false;
+            containerToolBar.GetComponent<UITweener>().PlayForward();
+            containerSkill.GetComponent<UITweener>().PlayReverse();
+            containerMove.GetComponent<UITweener>().PlayReverse();
+        }
+        else
+        {
+            toolBarChangeButton.enabled = true;
+            containerToolBar.GetComponent<UITweener>().PlayForward();
+            containerSkill.GetComponent<UITweener>().PlayForward();
+            containerMove.GetComponent<UITweener>().PlayForward();
+            isToolbarShow = false;
+
+        }
+
     }
 
     #endregion
@@ -216,4 +245,10 @@ public class UIController : MonoBehaviour
         skillManagerUI.OnCloseButtonClick();
     }
     #endregion
+
+    void OnDestroy()
+    {
+        playerState.OnPlayerStateChanged -= OnStateChanged;
+    }
+
 }

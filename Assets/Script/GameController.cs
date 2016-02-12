@@ -51,12 +51,13 @@ public class GameController : MonoBehaviour
     {
         _instance = this;
         //Application.targetFrameRate = 45;
-
         xs = new XmlSaver();
         gameData = new GameData();
         gameData.key = SystemInfo.deviceUniqueIdentifier;
         InitSave();
         Load();
+        PlayerState.GamePlayerState.playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
+
     }
     #endregion
     #region Save
@@ -69,7 +70,7 @@ public class GameController : MonoBehaviour
     void Save()
     {
         SaveAcceptQuest();
-        SaveBag();  
+        SaveBag();
         SavePlayerState();
         WriteData();
     }
@@ -84,10 +85,10 @@ public class GameController : MonoBehaviour
     const string bagUper = "ID,isEqueped,cout,itemID";
     void SaveBag()
     {
-        saveString= "";
-        foreach (KeyValuePair<int,Item> item in PlayerState.GamePlayerState.GetPlayerBag().dictionBag)
+        saveString = "";
+        foreach (KeyValuePair<int, Item> item in PlayerState.GamePlayerState.GetPlayerBag().dictionBag)
         {
-            saveString+=string.Format("{0},{1},{2},{3}\n",item.Key,item.Value.isEqueped?"1":"0",item.Value.count,item.Value.info.id);
+            saveString += string.Format("{0},{1},{2},{3}\n", item.Key, item.Value.isEqueped ? "1" : "0", item.Value.count, item.Value.info.id);
         }
         gameData.PlayerBag = string.Format("{0}\n{1}", bagUper, saveString);
     }
@@ -97,9 +98,9 @@ public class GameController : MonoBehaviour
     void SaveAcceptQuest()
     {
         saveString = "";
-        foreach (KeyValuePair<int,Quest> item in PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList())
+        foreach (KeyValuePair<int, Quest> item in PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList())
         {
-            saveString += string.Format("{0},{1},{2},{3},{4},{5}\n", item.Key,item.Value.stepNow,item.Value.count,item.Value.ID,item.Value.isOver?"1":"0",item.Value.isAccept?"1":"0");
+            saveString += string.Format("{0},{1},{2},{3},{4},{5}\n", item.Key, item.Value.stepNow, item.Value.count, item.Value.ID, item.Value.isOver ? "1" : "0", item.Value.isAccept ? "1" : "0");
         }
         gameData.PlayerAcceptData = string.Format("{0}\n{1}", questUper, saveString);
     }
@@ -272,7 +273,7 @@ public class GameController : MonoBehaviour
                 for (int i = minIndex; i < maxIndex; i++)
                 {
                     proArray = dataArray[i].Split(',');
-                    stepList.Add(QuestInfo.makeStep(proArray[3], (QuestType)int.Parse(proArray[4]), int.Parse(proArray[5]), int.Parse(proArray[6]), int.Parse(proArray[7]), int.Parse(proArray[8]),int.Parse(proArray[9])));
+                    stepList.Add(QuestInfo.makeStep(proArray[3], (QuestType)int.Parse(proArray[4]), int.Parse(proArray[5]), int.Parse(proArray[6]), int.Parse(proArray[7]), int.Parse(proArray[8]), int.Parse(proArray[9])));
                 }
                 proArray = dataArray[minIndex].Split(',');
                 info = new QuestInfo(int.Parse(proArray[0]), proArray[1], proArray[2], stepList);
@@ -308,91 +309,63 @@ public class GameController : MonoBehaviour
     #endregion
     #region NPC
     Dictionary<int, Item> shopItemList;
-    Item shopItem;
-    public Dictionary<int, Item> LoadShopItem(int shopID)
+    List<QuestInfo> npcQuestList;
+    NPCDATA npc;
+    Dictionary<int, NPCDATA> npcDiction;
+    public Dictionary<int, NPCDATA> LoadNPCData()
     {
+        npcDiction = new Dictionary<int, NPCDATA>();
+        string[] questArray;
         string[] itemArray;
         string[] proArray;
         string[] dataArray = NPCData.ToString().Split('\n');
-        shopItemList = new Dictionary<int, Item>();
         for (int i = 1; i < dataArray.Length; i++)
         {
+
             if (dataArray[i] != "")
             {
                 proArray = dataArray[i].Split(',');
-                if (int.Parse(proArray[0]) == shopID)
+                npcQuestList = new List<QuestInfo>();
+                shopItemList = new Dictionary<int, Item>();
+                questArray = proArray[11].Split('|');
+                itemArray = proArray[12].Split('|');
+
+                for (int j = 0; j < questArray.Length; j++)
                 {
-                    itemArray = proArray[6].Split('|');
-                    for (int j = 0; j < itemArray.Length; j++)
+                    npcQuestList.Add(QuestList.getQuest(int.Parse(questArray[j])));
+                }
+                for (int j = 0; j < itemArray.Length; j++)
+                {
+                    if (ItemInfo.IsEquep(ItemList.getItem(int.Parse(itemArray[j])).type))
                     {
-                        if (ItemInfo.IsEquep(ItemList.getItem(int.Parse(itemArray[j])).type))
-                        {
-                            item = new Item(j + 1, false, ItemList.getItem(int.Parse(itemArray[j])));
-                        }
-                        else
-                        {
-                            item = new Item(j + 1, 1, ItemList.getItem(int.Parse(itemArray[j])));
-                        }
-                        shopItemList.Add(item.id, item);
+                        item = new Item(j + 1, false, ItemList.getItem(int.Parse(itemArray[j])));
                     }
-                }
-            }
-        }
-        return shopItemList;
-    }
-
-
-    List<QuestInfo> npcQuestList;
-    public List<QuestInfo> LoadNpcQuest(int NpcID)
-    {
-        string[] questArray;
-        string[] proArray;
-        string[] dataArray = NPCData.ToString().Split('\n');
-        npcQuestList = new List<QuestInfo>();
-
-        for (int i = 1; i < dataArray.Length; i++)
-        {
-            if (dataArray[i] != "")
-            {
-                proArray = dataArray[i].Split(',');
-                if (int.Parse(proArray[0]) == NpcID)
-                {
-                    questArray = proArray[5].Split('|');
-                    for (int j = 0; j < questArray.Length; j++)
+                    else
                     {
-                        npcQuestList.Add(QuestList.getQuest(int.Parse(questArray[j])));
+                        item = new Item(j + 1, 1, ItemList.getItem(int.Parse(itemArray[j])));
                     }
+                    shopItemList.Add(item.id, item);
                 }
+                npc = new NPCDATA(
+                    int.Parse(proArray[0]),
+                    proArray[1],
+                    int.Parse(proArray[2]),
+                     new Dictionary<CommunicationType, bool>() {
+                    { CommunicationType.Talk, proArray[7] == "0" ? false : true },
+                    { CommunicationType.Shop,proArray[8]=="0"?false: true },
+                    { CommunicationType.Quest,proArray[9]=="0"?false:true } },
+                         new Vector3(int.Parse(proArray[4]), int.Parse(proArray[5]), int.Parse(proArray[6])),
+                         int.Parse(proArray[3]),
+                         proArray[10],
+                         npcQuestList,
+                         shopItemList,
+                         int.Parse(proArray[13])
+                         );
+                npcDiction.Add(npc.Id, npc);
             }
         }
-        return npcQuestList;
+        return npcDiction;
     }
-    Dictionary<int, Dictionary<CommunicationType, bool>> npcsType;
-    public Dictionary<int, Dictionary<CommunicationType, bool>> LoadNpcType(int floorNum)
-    {
-        string[] proArray;
-        string[] dataArray = NPCData.ToString().Split('\n');
-        npcsType = new Dictionary<int, Dictionary<CommunicationType, bool>>();
-        for (int i = 1; i < dataArray.Length; i++)
-        {
-            if (dataArray[i] != "" )
-            {
-
-                proArray = dataArray[i].Split(',');
-                if (proArray[1].EndsWith(floorNum.ToString()))
-                {
-                    npcsType.Add(int.Parse(proArray[0]), new Dictionary<CommunicationType, bool>() {
-                    { CommunicationType.Talk, proArray[2] == "0" ? false : true },
-                    { CommunicationType.Shop,proArray[3]=="0"?false: true },
-                    { CommunicationType.Quest,proArray[4]=="0"?false:true }
-                });
-                }
-
-            }
-        }
-        return npcsType;
-    }
-
     #endregion
     #region PlayerState
     public PlayerStateData LoadPlayerState()
@@ -403,7 +376,7 @@ public class GameController : MonoBehaviour
         state.EXP = int.Parse(proArray[0]);
         state.Money = int.Parse(proArray[1]);
         state.IsWalk = proArray[2] == "0" ? false : true;
-        state.Type = (PlayerType) int.Parse(proArray[3]);
+        state.Type = (PlayerType)int.Parse(proArray[3]);
 
         dataArray = playerTypeData.ToString().Split('\n');
         for (int i = 0; i < dataArray.Length; i++)
@@ -429,13 +402,13 @@ public class GameController : MonoBehaviour
         string[] dataArray = openingData.ToString().Split('\n');
         for (int i = 1; i < dataArray.Length; i++)
         {
-            if(dataArray[i]!="")
+            if (dataArray[i] != "")
             {
                 proArray = dataArray[i].Split(',');
-                if(proArray[0].EndsWith(eventID.ToString()))
+                if (proArray[0].EndsWith(eventID.ToString()))
                 {
                     TalkText text = new TalkText();
-                    switch(proArray[1])
+                    switch (proArray[1])
                     {
                         case "text":
                             {
@@ -471,7 +444,9 @@ public class GameController : MonoBehaviour
                                 break;
                             }
                     }
-                    text.textInfo = proArray[3];
+                    text.textInfo = proArray[3].Replace("\\n", "\n").Replace("\r", "");
+                    text.iconName = proArray[4];
+                    text.speakerName = proArray[5];
                     textList.Add(text);
                 }
             }

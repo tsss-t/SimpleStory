@@ -337,4 +337,9 @@ public class UIBagManager : MonoBehaviour
     }
     #endregion
     #endregion
+
+    void OnDestroy()
+    {
+        playerState.OnPlayerStateChanged -= OnStatesChanged;
+    }
 }

@@ -104,7 +104,7 @@ public class UIQuestManager : MonoBehaviour
                     case QuestType.findNPC:
                         goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}と話してください。{2}",
                             selectQuest.info.GetStep(i).description,
-                            npcManager.GetNPCInfo(selectQuest.info.GetStep(i).targetID).name,
+                            npcManager.GetNPCInfo(selectQuest.info.GetStep(i).targetID).Name,
                             selectQuest.info.GetStep(i).count == selectQuest.count ? "(完成)" : "");
                         break;
                     case QuestType.findItem:

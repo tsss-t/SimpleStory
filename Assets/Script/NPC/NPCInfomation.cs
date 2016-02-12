@@ -8,15 +8,16 @@ public class NPCInfomation : MonoBehaviour
 {
     public int NPCID;
     public string talkInfomation;
-    private List<QuestInfo> questList;
+    public List<QuestInfo> questList;
 
     public delegate void Comunication(int NPCID);
     public event Comunication CommunicationStart;
     public Dictionary<CommunicationType,bool> NPCType;
-    void Start()
+    void Awake()
     {
         NPCType = new Dictionary<CommunicationType, bool>() { { CommunicationType.Talk, true }, { CommunicationType.Shop, false }, { CommunicationType.Quest, false } };
         questList = new List<QuestInfo>();
+        talkInfomation = "";
     }
 
     public void SetQuest(List<QuestInfo> questList)
@@ -42,5 +43,8 @@ public class NPCInfomation : MonoBehaviour
         return questList;
     }
 
-
+    void OnDestroy()
+    {
+        this.CommunicationStart -= UICommunicationManager._instans.CommunicationTalk;
+    }
 }
