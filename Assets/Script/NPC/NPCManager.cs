@@ -228,13 +228,13 @@ public class NPCDATA
         }
     }
 
-    public NPCDATA(int id,string name,int prefabID ,Dictionary<CommunicationType, bool> nPCtype, Vector3 position, int floorNum, string talkInfo, List<QuestInfo> questList, Dictionary<int, Item> sellItemList,int euler)
+    public NPCDATA(int id,string name,int prefabID ,Dictionary<CommunicationType, bool> nPCtype, int positionX,int  positionY,int positionZ, int floorNum, string talkInfo, List<QuestInfo> questList, Dictionary<int, Item> sellItemList,int euler)
     {
         this.id = id;
         this.name = name;
         this.prefabID = prefabID;
         NPCtype = nPCtype;
-        this.position = position;
+        this.position = new Vector3(positionX,positionY,positionZ);
         this.floorNum = floorNum;
         this.talkInfo = talkInfo;
         this.questList = questList;

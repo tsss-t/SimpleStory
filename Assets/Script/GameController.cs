@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 /// <summary>
 /// セーブデータクラス
@@ -24,9 +23,55 @@ public class GameData
         this.PlayerState = PlayerState;
     }
 }
-public class GameController : MonoBehaviour
+public class GameController
 {
-
+    private static GameController gameController;
+    public static GameController _instance
+    {
+        get
+        {
+            if (gameController == null)
+            {
+                gameController = new GameController();
+                return gameController;
+            }
+            else
+            {
+                return gameController;
+            }
+        }
+        set
+        {
+            gameController = value;
+        }
+    }
+    string playerStateData;
+    string playerTypeData;
+    string bagData;
+    string itemListData;
+    string playerQuestData;
+    string questListData;
+    string NPCData;
+    string skillData;
+    string openingData;
+    private GameController()
+    {
+        playerStateData = GameManager._instans.playerStateData.text;
+        playerTypeData = GameManager._instans.playerTypeData.text;
+        bagData = GameManager._instans.bagData.text;
+        itemListData = GameManager._instans.itemListData.text;
+        playerQuestData = GameManager._instans.playerQuestData.text;
+        questListData = GameManager._instans.questListData.text;
+        NPCData = GameManager._instans.NPCData.text;
+        skillData = GameManager._instans.skillData.text;
+        openingData = GameManager._instans.openingData.text;
+        //Application.targetFrameRate = 45;
+        xs = new XmlSaver();
+        gameData = new GameData();
+        gameData.key = GameManager._instans.gameDataKey;
+        InitSave();
+        Load();
+    }
 
     #region paramater
     private const string dataFileName = "tankyWarData.dat";//セーブデータの名前
@@ -35,35 +80,12 @@ public class GameController : MonoBehaviour
     public GameData gameData;
     string saveString;
     //PlayerState playerState;
-    public TextAsset playerStateData;
-    public TextAsset playerTypeData;
-    public TextAsset bagData;
-    public TextAsset itemListData;
-    public TextAsset playerQuestData;
-    public TextAsset questListData;
-    public TextAsset NPCData;
-    public TextAsset skillData;
-    public TextAsset openingData;
-    #endregion
-    #region Awake
-    public static GameController _instance;
-    void Awake()
-    {
-        _instance = this;
-        //Application.targetFrameRate = 45;
-        xs = new XmlSaver();
-        gameData = new GameData();
-        gameData.key = SystemInfo.deviceUniqueIdentifier;
-        InitSave();
-        Load();
-        PlayerState.GamePlayerState.playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
 
-    }
     #endregion
     #region Save
     public void WriteData()
     {
-        string gameDataFile = GetDataPath() + "/" + dataFileName;
+        string gameDataFile = GameManager.GetDataPath() + "/" + dataFileName;
         string dataString = xs.SerializeObject(gameData, typeof(GameData));
         xs.CreateXML(gameDataFile, dataString);
     }
@@ -123,7 +145,7 @@ public class GameController : MonoBehaviour
     #region Load
     public void Load()
     {
-        string gameDataFile = GetDataPath() + "/" + dataFileName;
+        string gameDataFile = GameManager.GetDataPath() + "/" + dataFileName;
         if (xs.hasFile(gameDataFile))
         {
             string dataString = xs.LoadXML(gameDataFile);
@@ -158,6 +180,12 @@ public class GameController : MonoBehaviour
     /// <returns></returns>
     public Dictionary<int, ItemInfo> LoadItemList()
     {
+        //if(itemList!=null)
+        //{
+        //    return itemList;
+        //}
+        //else
+        //{
         string[] proArray;
         string[] dataArray = itemListData.ToString().Split('\n');
 
@@ -202,6 +230,8 @@ public class GameController : MonoBehaviour
             }
         }
         return itemList;
+        //}
+
     }
 
     Dictionary<int, Item> bagList;
@@ -223,19 +253,7 @@ public class GameController : MonoBehaviour
                 proArray = dataArray[i].Split(',');
                 if (ItemInfo.IsEquep(ItemList.getItem(int.Parse(proArray[3])).type))
                 {
-                    try
-                    {
-                        item = new Item(int.Parse(proArray[0]), proArray[1] == "0" ? false : true, ItemList.getItem(int.Parse(proArray[3])));
-                    }
-                    catch
-                    {
-                        Debug.Log(dataArray[i]);
-                        Debug.Log(int.Parse(proArray[0]));
-                        Debug.Log(proArray[1] == "0" ? false : true);
-                        Debug.Log(int.Parse(proArray[3]));
-
-                    }
-
+                    item = new Item(int.Parse(proArray[0]), proArray[1] == "0" ? false : true, ItemList.getItem(int.Parse(proArray[3])));
                 }
                 else
                 {
@@ -253,6 +271,12 @@ public class GameController : MonoBehaviour
     Dictionary<int, QuestInfo> questList;
     public Dictionary<int, QuestInfo> LoadQuestList()
     {
+        //if(questList!=null)
+        //{
+        //    return questList;
+        //}
+        //else
+        //{
         string[] proArray;
         string[] dataArray = questListData.ToString().Split('\n');
         questList = new Dictionary<int, QuestInfo>();
@@ -282,6 +306,8 @@ public class GameController : MonoBehaviour
             }
         }
         return questList;
+        //}
+
     }
     Dictionary<int, Quest> acceptQuestList;
     public Dictionary<int, Quest> LoadAcceptQuest()
@@ -354,7 +380,7 @@ public class GameController : MonoBehaviour
                     { CommunicationType.Talk, proArray[7] == "0" ? false : true },
                     { CommunicationType.Shop,proArray[8]=="0"?false: true },
                     { CommunicationType.Quest,proArray[9]=="0"?false:true } },
-                         new Vector3(int.Parse(proArray[4]), int.Parse(proArray[5]), int.Parse(proArray[6])),
+                         int.Parse(proArray[4]), int.Parse(proArray[5]), int.Parse(proArray[6]),
                          int.Parse(proArray[3]),
                          proArray[10],
                          npcQuestList,
@@ -458,6 +484,12 @@ public class GameController : MonoBehaviour
     List<Skill> skillList;
     public List<Skill> LoadSkill()
     {
+        //if (skillList != null)
+        //{
+        //    return skillList;
+        //}
+        //else
+        //{
         skillList = new List<Skill>();
         string[] proArray;
         string[] dataArray = skillData.ToString().Split('\n');
@@ -512,28 +544,33 @@ public class GameController : MonoBehaviour
             skillList.Add(skill);
         }
         return skillList;
+
+
+        //}
+
+
     }
     #endregion
     #endregion
 
-    #region Path
+    //#region Path
 
-    //获取路径//
-    private static string GetDataPath()
-    {
-        // Your game has read+write access to /var/mobile/Applications/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/Documents
-        // Application.dataPath returns ar/mobile/Applications/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/myappname.app/Data             
-        // Strip "/Data" from path
-        if (Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-            string path = Application.dataPath.Substring(0, Application.dataPath.Length - 5);
-            // Strip application name
-            path = path.Substring(0, path.LastIndexOf('/'));
-            return path + "/Documents";
-        }
-        else
-            //    return Application.dataPath + "/Resources";
-            return Application.dataPath;
-    }
-    #endregion
+    ////获取路径//
+    //private static string GetDataPath()
+    //{
+    //    // Your game has read+write access to /var/mobile/Applications/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/Documents
+    //    // Application.dataPath returns ar/mobile/Applications/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/myappname.app/Data             
+    //    // Strip "/Data" from path
+    //    if (Application.platform == RuntimePlatform.IPhonePlayer)
+    //    {
+    //        string path = Application.dataPath.Substring(0, Application.dataPath.Length - 5);
+    //        // Strip application name
+    //        path = path.Substring(0, path.LastIndexOf('/'));
+    //        return path + "/Documents";
+    //    }
+    //    else
+    //        //    return Application.dataPath + "/Resources";
+    //        return Application.dataPath;
+    //}
+    //#endregion
 }
