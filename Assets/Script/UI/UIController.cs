@@ -9,6 +9,8 @@ public class UIController : MonoBehaviour
 
     bool isToolbarShow;
 
+    private GameObject portalButton;
+
     private Transform containerPlayerState;
     private Transform containerMap;
     private Transform containerToolBar;
@@ -29,6 +31,8 @@ public class UIController : MonoBehaviour
     private UINPCQuestManager npcQuestManagerUI;
     private UICommunicationManager communicationPanelUI;
     private UISkillManager skillManagerUI;
+    private UIPortalManager portalManagerUI;
+
     #endregion
     #region Start/Update
     // Use this for initialization
@@ -49,6 +53,8 @@ public class UIController : MonoBehaviour
         containerMove = transform.Find("MoveContainer");
         spriteAllow = containerMap.Find("miniMap/spriteAllow");
 
+        portalButton = transform.Find("PortalButton").gameObject;
+
         toolBarChangeButton = transform.Find("ToolBarChangeButton").GetComponent<UIButton>();
         sliderEnergy = containerPlayerState.Find("sliderEnergy").GetComponent<UISlider>();
         labelEnergy = sliderEnergy.gameObject.transform.Find("labelEnergy").GetComponent<UILabel>();
@@ -56,14 +62,23 @@ public class UIController : MonoBehaviour
         sliderExp = containerToolBar.Find("ExpBar").GetComponent<UISlider>();
         labelHP = sliderHP.transform.Find("labelHP").GetComponent<UILabel>();
         labelLevel = containerPlayerState.Find("labelLevel").GetComponent<UILabel>();
+
         playerState.OnPlayerStateChanged += OnStateChanged;
+        if(PortalManager._instans!=null)
+        {
+            PortalManager._instans.playerStateChange += InOutPortal;
+        }
+
 
         bagManagerUI = containerEquepMenu.GetComponent<UIBagManager>();
         questManagerUI = transform.Find("QuestMenu").GetComponent<UIQuestManager>();
         npcQuestManagerUI = transform.Find("NPCQuestPanel").GetComponent<UINPCQuestManager>();
         communicationPanelUI = transform.Find("CommunicationPanel").GetComponent<UICommunicationManager>();
         skillManagerUI = transform.Find("SkillPanel").GetComponent<UISkillManager>();
+        portalManagerUI = transform.Find("PortalPanel").GetComponent<UIPortalManager>();
 
+
+        //portalButton.SetActive(false);
         ToolBarInit();
     }
 
@@ -142,8 +157,8 @@ public class UIController : MonoBehaviour
                 }
             case PlayerStateChangeType.Action:
                 {
-                     OnActionChanged();
-                    
+                    OnActionChanged();
+
                     break;
                 }
         }
@@ -173,7 +188,7 @@ public class UIController : MonoBehaviour
     }
     void OnActionChanged()
     {
-        if (!playerState.PlayerAliveNow||playerState.GetActionInfoNow()== PlayerState.PlayerAction.AutoMoving|| playerState.GetActionInfoNow() == PlayerState.PlayerAction.Locked|| playerState.GetActionInfoNow() == PlayerState.PlayerAction.Shopping)
+        if (!playerState.PlayerAliveNow || playerState.GetActionInfoNow() == PlayerState.PlayerAction.AutoMoving || playerState.GetActionInfoNow() == PlayerState.PlayerAction.Locked || playerState.GetActionInfoNow() == PlayerState.PlayerAction.Shopping)
         {
             toolBarChangeButton.enabled = false;
             containerToolBar.GetComponent<UITweener>().PlayForward();
@@ -183,16 +198,30 @@ public class UIController : MonoBehaviour
         else
         {
             toolBarChangeButton.enabled = true;
-            containerToolBar.GetComponent<UITweener>().PlayForward();
-            containerSkill.GetComponent<UITweener>().PlayForward();
-            containerMove.GetComponent<UITweener>().PlayForward();
-            isToolbarShow = false;
+            containerToolBar.GetComponent<UITweener>().PlayReverse();
+            containerSkill.GetComponent<UITweener>().PlayReverse();
+            containerMove.GetComponent<UITweener>().PlayReverse();
+            isToolbarShow = true;
 
         }
 
     }
 
+    void InOutPortal(bool isIn)
+    {
+        if (isIn)
+        {
+            portalButton.SetActive(true);
+        }
+        else
+        {
+            portalButton.SetActive(false);
+        }
+    }
+
+
     #endregion
+    #region UI Event
     #region Toolbar
 
     private void ToolBarInit()
@@ -200,7 +229,7 @@ public class UIController : MonoBehaviour
     }
     public void ToolBarToggle()
     {
-        if(isToolbarShow)
+        if (isToolbarShow)
         {
             containerToolBar.GetComponent<UITweener>().PlayForward();
             containerSkill.GetComponent<UITweener>().PlayForward();
@@ -211,13 +240,11 @@ public class UIController : MonoBehaviour
             containerToolBar.GetComponent<UITweener>().PlayReverse();
             containerSkill.GetComponent<UITweener>().PlayReverse();
             containerMove.GetComponent<UITweener>().PlayReverse();
-
-
         }
         isToolbarShow = !isToolbarShow;
 
     }
-    
+
     public void OnSkillButtonClicked()
     {
         skillManagerUI.OnToggleButtonClick();
@@ -232,6 +259,13 @@ public class UIController : MonoBehaviour
     }
 
     #endregion
+    public void OnPortalButtonClick()
+    {
+        portalManagerUI.OnToggleButtonClick();
+    }
+
+    #endregion
+
     #region 外部API
     /// <summary>
     /// 全部のウィンドウを閉じる
@@ -243,12 +277,18 @@ public class UIController : MonoBehaviour
         npcQuestManagerUI.OnCloseButtonClick();
         communicationPanelUI.OnCloseButtonClick();
         skillManagerUI.OnCloseButtonClick();
+        portalManagerUI.OnCloseButtonClick();
     }
     #endregion
 
     void OnDestroy()
     {
         playerState.OnPlayerStateChanged -= OnStateChanged;
+
+        if (PortalManager._instans != null)
+        {
+            PortalManager._instans.playerStateChange -= InOutPortal;
+        }
     }
 
 }

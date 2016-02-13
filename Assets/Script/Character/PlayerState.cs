@@ -7,17 +7,17 @@ using System.Collections;
 /// </summary>
 public enum PlayerStateChangeType
 {
-    EXP, LEVEL, STATE,Action, HP, energy, money, all, bag, equep
+    EXP, LEVEL, STATE, Action, HP, energy, money, all, bag, equep, inPortal
 }
 public enum PlayerType
 {
-    warrior=0, assassin=1
+    warrior = 0, assassin = 1
 }
 public class PlayerState
 {
     public enum PlayerAction
     {
-        Free, Died, Shopping, Talking,AutoMoving,Locked,NULL
+        Free, Died, Shopping, Talking, AutoMoving, Locked, NULL
     }
     //シングルトン
     private static PlayerState _instance;
@@ -41,6 +41,7 @@ public class PlayerState
         }
     }
     #region para
+    bool inPortal;
     public Transform playerTransform;
     private PlayerAction playerActionNow;
     public bool PlayerAliveNow
@@ -306,6 +307,21 @@ public class PlayerState
     {
         energy -= count;
     }
+    public void InPortal()
+    {
+        this.inPortal = true;
+        PlayerStateChanged(PlayerStateChangeType.inPortal);
+    }
+    public void OutPortal()
+    {
+        this.inPortal = false;
+        PlayerStateChanged(PlayerStateChangeType.inPortal);
+    }
+    public bool IsInPortal
+    {
+        get { return inPortal; }
+    }
+
 
     #endregion
 
