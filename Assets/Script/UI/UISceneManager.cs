@@ -3,6 +3,7 @@ using System.Collections;
 
 public class UISceneManager : MonoBehaviour {
 
+
     public static UISceneManager _instance;
     private GameObject BG;
     private UISlider progressBar;
@@ -39,6 +40,10 @@ public class UISceneManager : MonoBehaviour {
     }
     void Hide()
     {
-        gameObject.SetActive(false);
+        BG.SetActive(false);
+    }
+    void OnDestroy()
+    {
+        Destroy(this);
     }
 }

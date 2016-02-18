@@ -14,7 +14,7 @@ public class UIEquepButtonEvent : MonoBehaviour
     void Awake()
     {
         ItemInfoPanel = GameObject.FindGameObjectWithTag(Tags.UIRoot).transform.Find("EquepMenu").Find("ItemInfoPanel").GetComponent<UIItemInfoPanel>();
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
         OnEquepChanged();
         playerState.OnPlayerStateChanged += OnStateChanged;
     }

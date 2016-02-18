@@ -3,6 +3,7 @@ using System.Collections;
 
 public class UIController : MonoBehaviour
 {
+    public static UIController _instance;
     #region para
     private PlayerState playerState;
     private PlayerController player;
@@ -38,10 +39,10 @@ public class UIController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        _instance = this;
 
         player = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<PlayerController>();
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
 
         isToolbarShow = false;
 
@@ -78,7 +79,7 @@ public class UIController : MonoBehaviour
         portalManagerUI = transform.Find("PortalPanel").GetComponent<UIPortalManager>();
 
 
-        //portalButton.SetActive(false);
+        portalButton.SetActive(false);
         ToolBarInit();
     }
 

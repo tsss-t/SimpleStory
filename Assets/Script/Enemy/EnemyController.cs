@@ -71,7 +71,7 @@ public class EnemyController : MonoBehaviour
     void Awake()
     {
         positionStart = new Vector3(transform.position.x, transform.position.y, transform.position.z); ;
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
         nowState = ActionState.notFoundPlayer;
         playerPosition = playerState.playerTransform.position;
         normalActionList = actionList.GetNormalActionEvents();
@@ -85,7 +85,7 @@ public class EnemyController : MonoBehaviour
         hash = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<HashIDs>();
         charaControler = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<PlayerController>();
         moveForward = new Vector2(transform.forward.x, transform.forward.z);
-        enemyManager = GameObject.FindGameObjectWithTag(Tags.enemyManager).GetComponent<EnemyManager>();
+        enemyManager = EnemyManager._instance;
         hpBarManager = UIHpBarManager.hpBarManager;
         hpBar = hpBarManager.CreateHpBar(transform.Find("HpBarPoint").gameObject);
         hpSlider = hpBar.transform.GetComponentInChildren<UISlider>();

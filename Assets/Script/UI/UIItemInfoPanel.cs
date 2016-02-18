@@ -23,7 +23,7 @@ public class UIItemInfoPanel : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
         bagManager = transform.parent.GetComponent<UIBagManager>();
         ItemInfoBG = transform.Find("ItemInfoBG").gameObject;
         equepSprite = ItemInfoBG.transform.Find("Item").Find("Sprite").GetComponent<UISprite>();

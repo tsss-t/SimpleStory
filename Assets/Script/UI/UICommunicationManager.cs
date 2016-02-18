@@ -31,11 +31,10 @@ public class UICommunicationManager : MonoBehaviour
     {
         _instans = this;
         isShowPanel = false;
-        npcManager = GameObject.FindGameObjectWithTag(Tags.NPCManager).GetComponent<NPCManager>();
+        npcManager =NPCManager._instance;
         NPCDictionary = npcManager.GetNPCDctionary();
-        playerState = PlayerState.GamePlayerState;
-
-        mainControllerUI = GameObject.FindGameObjectWithTag(Tags.UIRoot).GetComponent<UIController>();
+        playerState = PlayerState._instance;
+        mainControllerUI = UIController._instance;
 
         foreach (KeyValuePair<int, GameObject> item in NPCDictionary)
         {

@@ -15,6 +15,7 @@ public class EnemyManager : MonoBehaviour
         public float height;
         public List<GameObject> enemyList;
     }
+    public static EnemyManager _instance;
     public int updateFreme = 18000;//1秒30freme
     public EnemyStruct[] enemyList;
     public List<EnemyStruct> managedEnemyList;
@@ -28,9 +29,10 @@ public class EnemyManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        _instance = this;
         managedEnemyList = new List<EnemyStruct>();
         //tr = GameObject.FindGameObjectWithTag(Tags.terrain).GetComponent<Terrain>();
-        playerstate = PlayerState.GamePlayerState;
+        playerstate = PlayerState._instance;
         canAttackEnemy = new List<GameObject>();
         buildPos = new Vector3(0, 0, 0);
 

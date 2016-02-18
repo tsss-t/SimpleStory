@@ -12,11 +12,39 @@ public class CameraMovement : MonoBehaviour
 
     void Awake()
     {
+        Transform StartPosition = this.transform;
+        switch (GameController._instance.GetLastChangeSceneType())
+        {
+            case EntryType.Up:
+                {
+                    StartPosition = GameObject.FindGameObjectWithTag(Tags.UpPosition).transform;
+                    break;
+                }
+            case EntryType.Down:
+                {
+                    StartPosition = GameObject.FindGameObjectWithTag(Tags.DownPosition).transform;
+                    break;
+                }
+            case EntryType.Portal:
+                {
+                    StartPosition = GameObject.FindGameObjectWithTag(Tags.PortalPosition).transform;
+                    break;
+                }
+        }
+
+
         player = GameObject.FindGameObjectWithTag(Tags.player).transform;
         target = player ;
 
-        relCameraPos = transform.position - target.position;
+        //相机偏移
+        //relCameraPos = transform.position - target.position;
+        relCameraPos = new Vector3(0,9,-4);
+
         relCameraPosMag = relCameraPos.magnitude - 0.5f;
+
+        this.transform.position = StartPosition.position + relCameraPos;
+
+
     }
     public void setTarget(Transform target)
     {

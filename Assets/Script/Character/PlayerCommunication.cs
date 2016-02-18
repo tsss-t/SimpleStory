@@ -18,7 +18,7 @@ public class PlayerCommunication : MonoBehaviour
     void Start()
     {
         timer = 0f;
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
         colliderList = new List<GameObject>();
     }
     void Update()
@@ -26,7 +26,7 @@ public class PlayerCommunication : MonoBehaviour
         timer += Time.deltaTime;
         if (playerState.PlayerAliveNow)
         {
-            if (Input.GetButtonDown("Comunication") && targetObject != null && timer > 0.5f)
+            if (Input.GetButtonDown("Comunication") && targetObject != null && timer > 0.5f&&playerState.GetActionInfoNow()==PlayerState.PlayerAction.Free )
             {
                 playerState.DoQuest(QuestType.findNPC, targetObject.GetComponent<NPCInfomation>().Communication());
                 timer = 0f;

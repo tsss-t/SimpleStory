@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UIPortalManager : MonoBehaviour
 {
     public GameObject protalPrefab;
     public GameObject protalPrefabOn;
     bool isShowPanel;
-    UIController mainControllerUI;
     UITweener tweener;
 
 
@@ -15,7 +15,6 @@ public class UIPortalManager : MonoBehaviour
     void Start()
     {
         isShowPanel = false;
-        mainControllerUI = GameObject.FindGameObjectWithTag(Tags.UIRoot).GetComponent<UIController>();
         tweener = transform.Find("PortalContainer").GetComponent<UITweener>();
         portalGrid = transform.Find("PortalContainer/Scroll View/Items").gameObject;
         if (PortalManager._instans != null)
@@ -29,28 +28,37 @@ public class UIPortalManager : MonoBehaviour
     GameObject go;
     void LoadData()
     {
-        for (int i = 0; i < 40; i++)
+        foreach (KeyValuePair<int, bool> item in GameController._instance.getPortalList())
         {
-            if (i == 0)
+            if (item.Key == SceneManager._instance.floorNum)
             {
                 go = NGUITools.AddChild(portalGrid, protalPrefabOn);
                 go.transform.Find("mark").GetComponent<UISprite>().spriteName = "pic_星星";
             }
             else
             {
-                go = NGUITools.AddChild(portalGrid, protalPrefab);
-                go.transform.Find("mark").GetComponent<UISprite>().spriteName = "";
-                go.transform.Find("BG").GetComponent<UIButton>().enabled = false;
+                if (item.Value)
+                {
+                    go = NGUITools.AddChild(portalGrid, protalPrefabOn);
+                    go.transform.Find("mark").GetComponent<UISprite>().spriteName = "";
+                }
+                else
+                {
+                    go = NGUITools.AddChild(portalGrid, protalPrefab);
+                    go.transform.Find("mark").GetComponent<UISprite>().spriteName = "";
+                    go.transform.Find("BG").GetComponent<UIButton>().enabled = false;
+                }
+
             }
-            go.transform.Find("FloorNumber").GetComponent<UILabel>().text = i.ToString();
-            go.GetComponent<UIPortalButtonEvent>().foolNumber = i;
+            go.transform.Find("FloorNumber").GetComponent<UILabel>().text = (-item.Key).ToString();
+            go.GetComponent<UIPortalButtonEvent>().floorNumber = -item.Key;
             portalGrid.GetComponent<UIGrid>().enabled = true;
         }
     }
 
     void PlayerPositionChange(bool isIn)
     {
-        if(isIn)
+        if (isIn)
         {
 
         }
@@ -90,7 +98,7 @@ public class UIPortalManager : MonoBehaviour
         if (!isShowPanel)
         {
             tweener.gameObject.SetActive(true);
-            mainControllerUI.CloseAllWindows();
+            UIController._instance.CloseAllWindows();
             StartCoroutine(ShowPanel());
         }
     }

@@ -20,7 +20,6 @@ public class UINPCQuestManager : MonoBehaviour
     private NPCManager npcManager;
     private Dictionary<int, GameObject> questDictionary;
     #region UI
-    GameObject containRoot;
 
     GameObject containQuestList;
     GameObject containQuestInfo;
@@ -38,15 +37,11 @@ public class UINPCQuestManager : MonoBehaviour
     void Start()
     {
         isShowPanel = false;
-        playerState = PlayerState.GamePlayerState;
-        npcManager = GameObject.FindGameObjectWithTag(Tags.NPCManager).GetComponent<NPCManager>();
+        playerState = PlayerState._instance;
+        npcManager =NPCManager._instance;
 
         questDictionary = new Dictionary<int, GameObject>();
-
-
-        containRoot = GameObject.FindGameObjectWithTag(Tags.UIRoot);
-        mainControllerUI = containRoot.GetComponent<UIController>();
-
+        mainControllerUI = UIController._instance;
 
         containQuestList = transform.Find("QuestList").Find("Scroll View").Find("Items").gameObject;
         containQuestInfo = transform.Find("QuestInfo").Find("Scroll View").Find("Items").gameObject;
@@ -117,7 +112,7 @@ public class UINPCQuestManager : MonoBehaviour
             //新規クエスト
             if (!CheckQuest(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID))
             {
-                if (PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID, out quest))
+                if (PlayerState._instance.GetPlayerQuest().GetAcceptQuestList().TryGetValue(npcManager.GetNPCDctionary()[selectShopID].GetComponent<NPCInfomation>().GetQuestList()[selectQuestID].ID, out quest))
                 {
                     questInfoLabel.text = quest.GetStepNow().description;
                 }
@@ -151,7 +146,7 @@ public class UINPCQuestManager : MonoBehaviour
     /// <returns></returns>
     bool CheckQuest(int questID)
     {
-        if (PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(questID, out quest))
+        if (PlayerState._instance.GetPlayerQuest().GetAcceptQuestList().TryGetValue(questID, out quest))
         {
             if(quest.isAccept)
             {
@@ -174,7 +169,7 @@ public class UINPCQuestManager : MonoBehaviour
     /// <returns></returns>
     bool IsOverStep(int questID)
     {
-        PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(questID, out quest);
+        PlayerState._instance.GetPlayerQuest().GetAcceptQuestList().TryGetValue(questID, out quest);
         if (!quest.isOver)
         {
             if (quest.GetStepNow().count <= quest.count)
@@ -228,7 +223,7 @@ public class UINPCQuestManager : MonoBehaviour
             this.gameObject.SetActive(true);
             Init();
             mainControllerUI.CloseAllWindows();
-            PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Talking);
+            PlayerState._instance.ChangeAction(PlayerState.PlayerAction.Talking);
             StartCoroutine(ShowPanel());
         }
     }
@@ -236,7 +231,7 @@ public class UINPCQuestManager : MonoBehaviour
     {
         if (isShowPanel)
         {
-            PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Free);
+            PlayerState._instance.ChangeAction(PlayerState.PlayerAction.Free);
             StartCoroutine(HidePanel());
         }
     }

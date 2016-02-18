@@ -96,7 +96,7 @@ public class PlayerQuest
     {
         if (questAcceptList[questID].GetStepNow().questType == QuestType.findItem)
         {
-            questAcceptList[questID].count = PlayerState.GamePlayerState.GetPlayerBag().GetItemCount(questAcceptList[questID].GetStepNow().targetID);
+            questAcceptList[questID].count = PlayerState._instance.GetPlayerBag().GetItemCount(questAcceptList[questID].GetStepNow().targetID);
         }
     }
     /// <summary>
@@ -109,7 +109,7 @@ public class PlayerQuest
         {
             if (item.Value.GetStepNow().questType == QuestType.findItem && item.Value.GetStepNow().targetID == itemID)
             {
-                item.Value.count = PlayerState.GamePlayerState.GetPlayerBag().GetItemCount(item.Value.GetStepNow().targetID);
+                item.Value.count = PlayerState._instance.GetPlayerBag().GetItemCount(item.Value.GetStepNow().targetID);
             }
         }
     }
@@ -139,7 +139,7 @@ public class PlayerQuest
     {
         if(questAcceptList[questID].GetStepNow().questType== QuestType.findItem)
         {
-            PlayerState.GamePlayerState.GetPlayerBag().UseItemToOverQuest(questAcceptList[questID].GetStepNow().targetID, questAcceptList[questID].GetStepNow().count);
+            PlayerState._instance.GetPlayerBag().UseItemToOverQuest(questAcceptList[questID].GetStepNow().targetID, questAcceptList[questID].GetStepNow().count);
         }
         if (questAcceptList[questID].stepNow < questAcceptList[questID].info.GetStepCount())
         {

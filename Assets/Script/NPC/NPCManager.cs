@@ -8,7 +8,7 @@ public enum CommunicationType
 
 public class NPCManager : MonoBehaviour
 {
-    public static NPCManager _instans;
+    public static NPCManager _instance;
 
     #region para
     private Dictionary<int, NPCDATA> NPCDictionary;
@@ -24,7 +24,7 @@ public class NPCManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _instans = this;
+        _instance = this;
         NPCDictionary = new Dictionary<int, NPCDATA>();
 
         Init();
@@ -35,7 +35,7 @@ public class NPCManager : MonoBehaviour
     {
         LoadData();
     }
-    public GameObject npcTemp;
+    private GameObject npcTemp;
     void LoadData()
     {
         floorNPCDictionary = new Dictionary<int, GameObject>();
@@ -46,7 +46,7 @@ public class NPCManager : MonoBehaviour
 
         foreach (NPCDATA npc in NPCDictionary.Values)
         {
-            if(npc.FloorNum== GameObject.Find(Tags.sceneManager).GetComponent<SceneManager>().floorNum)
+            if(npc.FloorNum== SceneManager._instance.floorNum)
             {
                 npcTemp = Instantiate(NPCprefabList[npc.PrefabID], npc.Position, Quaternion.Euler(0,npc.Euler, 0)) as GameObject;
                 npcTemp.name = npc.Name;
