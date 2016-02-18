@@ -11,7 +11,7 @@ public class AutoMove : MonoBehaviour
     {
         agent = this.GetComponent<NavMeshAgent>();
         agent.enabled = false;
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
     }
 
     // Update is called once per frame

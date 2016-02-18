@@ -23,13 +23,36 @@ public class PlayerController : MonoBehaviour
     public float runSpeed = 5.5f;
     public float walkSpeed = 3f;
 
+    public PlayerState.PlayerAction typeNow;
     #endregion
     #region start
     // Use this for initialization
     void Start()
     {
+        Transform StartPosition = this.transform;
+        switch (GameController._instance.GetLastChangeSceneType())
+        {
+            case EntryType.Up:
+                {
+                    StartPosition = GameObject.FindGameObjectWithTag(Tags.UpPosition).transform;
+                    break;
+                }
+            case EntryType.Down:
+                {
+                    StartPosition = GameObject.FindGameObjectWithTag(Tags.DownPosition).transform;
+                    break;
+                }
+            case EntryType.Portal:
+                {
+                    StartPosition = GameObject.FindGameObjectWithTag(Tags.PortalPosition).transform;
+                    break;
+                }
+        }
+
+        this.transform.position = StartPosition.position;
+
         _instance = this;
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
         playerRigidbody = GetComponent<Rigidbody>();
         playerAgent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
@@ -44,7 +67,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        typeNow = playerState.GetActionInfoNow();
         if (playerState.PlayerAliveNow)
         {
             playerState.playerTransform = transform;
@@ -107,7 +130,7 @@ public class PlayerController : MonoBehaviour
     #region 移動操作
     void AutoMovementManagement()
     {
-        anim.SetFloat(hash.speedFloat,7f);
+        anim.SetFloat(hash.speedFloat, 7f);
         if (playerAgent.velocity != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(playerAgent.velocity);
@@ -132,7 +155,7 @@ public class PlayerController : MonoBehaviour
                 Rotating(horizontal, vertical);
 
 
-                playerRigidbody.velocity = new Vector3(velocity * horizontal,nowVel.y, vertical * velocity);
+                playerRigidbody.velocity = new Vector3(velocity * horizontal, nowVel.y, vertical * velocity);
                 anim.SetFloat(hash.speedFloat, playerRigidbody.velocity.magnitude);
                 transform.LookAt(new Vector3(horizontal, 0, vertical) + transform.position);
 

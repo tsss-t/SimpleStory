@@ -42,7 +42,7 @@ public class UISkillManager : MonoBehaviour
         skillNameLabel.text = string.Format("{0} Lv.{1}", selectedSkill.Name, selectedSkill.Level);
         skillDesLabel.text = string.Format("スキルの攻撃力は{0}、次のレベルの攻撃力は{1}、レベルアップ必要なコインは{2}", selectedSkill.Damage * selectedSkill.Level, selectedSkill.Damage * (selectedSkill.Level + 1), selectedSkill.needMoney());
 
-        if (PlayerState.GamePlayerState.money > selectedSkill.needMoney())
+        if (PlayerState._instance.money > selectedSkill.needMoney())
         {
             EnableUpgradeButton();
         }
@@ -78,7 +78,7 @@ public class UISkillManager : MonoBehaviour
     }
     public void OnUpgradeButtonClick()
     {
-        if (PlayerState.GamePlayerState.SkillUp(selectedSkill.needMoney()))
+        if (PlayerState._instance.SkillUp(selectedSkill.needMoney()))
         {
             selectedSkill.Level += 1;
             UpdatePanel();

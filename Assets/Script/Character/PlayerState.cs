@@ -20,24 +20,24 @@ public class PlayerState
         Free, Died, Shopping, Talking, AutoMoving, Locked, NULL
     }
     //シングルトン
-    private static PlayerState _instance;
-    public static PlayerState GamePlayerState
+    private static PlayerState playerState;
+    public static PlayerState _instance
     {
         get
         {
-            if (_instance == null)
+            if (playerState == null)
             {
-                _instance = new PlayerState();
-                return _instance;
+                playerState = new PlayerState();
+                return playerState;
             }
             else
             {
-                return _instance;
+                return playerState;
             }
         }
         set
         {
-            _instance = value;
+            playerState = value;
         }
     }
     #region para

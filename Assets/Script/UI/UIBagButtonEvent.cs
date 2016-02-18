@@ -11,7 +11,7 @@ public class UIBagButtonEvent : MonoBehaviour {
     Item item;
     // Use this for initialization
     void Start () {
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
 
         ItemInfoPanel = GameObject.FindGameObjectWithTag(Tags.UIRoot).transform.Find("EquepMenu").Find("ItemInfoPanel").GetComponent<UIItemInfoPanel>();
         switch (from)

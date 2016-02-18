@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
     public TextAsset playerStateData;
     public TextAsset playerTypeData;
@@ -12,16 +13,18 @@ public class GameManager : MonoBehaviour {
     public TextAsset NPCData;
     public TextAsset skillData;
     public TextAsset openingData;
+    public TextAsset eventData;
     public TextAsset portalData;
     public string gameDataKey;
 
     public static GameManager _instans;
     // Use this for initialization
-    void Awake () {
+    void Awake()
+    {
         _instans = this;
-        if(GameObject.FindGameObjectWithTag(Tags.player)!=null)
+        if (GameObject.FindGameObjectWithTag(Tags.player) != null)
         {
-            PlayerState.GamePlayerState.playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
+            PlayerState._instance.playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
 
         }
         gameDataKey = SystemInfo.deviceUniqueIdentifier;

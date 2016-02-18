@@ -21,7 +21,7 @@ public class OpeningEvent : MonoBehaviour {
     UITweener playText;
 	// Use this for initialization
 	void Start () {
-        loadingUI = GameObject.FindGameObjectWithTag(Tags.UISceneLoading).GetComponent<UISceneManager>();
+        loadingUI = UISceneManager._instance;
 
         text = transform.Find("Panel/Text").GetComponent<UILabel>();
         textTweener = text.gameObject.GetComponent<UITweener>();

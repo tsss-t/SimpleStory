@@ -4,16 +4,9 @@ using System.Collections;
 public class SceneManager : MonoBehaviour {
 
     public int floorNum=-1000;
-	// Use this for initialization
-	void Start () {
-	    
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	    if(floorNum == -1000)
-        {
-            Debug.LogError("You must set the floorNumber in SceneManager");
-        }
-	}
+    public static SceneManager _instance;
+    // Use this for initialization
+    void Start () {
+        _instance = this;
+    }
 }

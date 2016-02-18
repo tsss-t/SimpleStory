@@ -12,7 +12,6 @@ public class PlayerAttack : MonoBehaviour
     AttackEffect[] normalAttackEffects;
     public AttackEffect[] specialAttackEffects;
     GameObject[] canAttackEnemy;
-    EnemyManager enemyManager;
     private Animator anim;
     private HashIDs hash;
     bool isAttack;
@@ -21,10 +20,9 @@ public class PlayerAttack : MonoBehaviour
     void Awake()
     {
         _instance = this;
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
         AttackEffectDictinary = new Dictionary<string, AttackEffect>();
         normalAttackEffects = this.GetComponentsInChildren<AttackEffect>();
-        enemyManager = GameObject.FindGameObjectWithTag(Tags.enemyManager).GetComponent<EnemyManager>();
         anim = GetComponent<Animator>();
         hash = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<HashIDs>();
         foreach (AttackEffect attackEffect in normalAttackEffects)
@@ -67,7 +65,7 @@ public class PlayerAttack : MonoBehaviour
 
         getEffect.ShowAttack();
         //攻撃判定
-        canAttackEnemy = enemyManager.getAttackEnemy();
+        canAttackEnemy = EnemyManager._instance.getAttackEnemy();
         switch (type)
         {
             case PosType.basic:
@@ -278,7 +276,7 @@ public class PlayerAttack : MonoBehaviour
     {
         AttackEffect effect;
         AttackEffectDictinary.TryGetValue(effectName,out effect);
-        canAttackEnemy = enemyManager.getAttackEnemy();
+        canAttackEnemy = EnemyManager._instance.getAttackEnemy();
         foreach (GameObject go in canAttackEnemy)
         {
             GameObject goEffect = (GameObject.Instantiate(effect) as AttackEffect).gameObject;

@@ -38,13 +38,11 @@ public class UIQuestManager : MonoBehaviour
         isShowPanel = false;
         questShowList = new List<GameObject>();
         stepShowList = new List<GameObject>();
-        playerQuest = PlayerState.GamePlayerState.GetPlayerQuest();
+        playerQuest = PlayerState._instance.GetPlayerQuest();
 
-        npcManager = GameObject.FindGameObjectWithTag(Tags.NPCManager).GetComponent<NPCManager>();
-
-        enemyManager = GameObject.FindGameObjectWithTag(Tags.enemyManager).GetComponent<EnemyManager>();
-
-        mainControllerUI = GameObject.FindGameObjectWithTag(Tags.UIRoot).GetComponent<UIController>();
+        npcManager =NPCManager._instance;
+        enemyManager = EnemyManager._instance;
+        mainControllerUI =UIController._instance;
 
 
         containQuestGrid = transform.Find("QuestBG").Find("Scroll View").Find("Items").gameObject;
@@ -58,7 +56,7 @@ public class UIQuestManager : MonoBehaviour
     void UpdateQuest()
     {
         selectQuest = null;
-        playerQuest = PlayerState.GamePlayerState.GetPlayerQuest();
+        playerQuest = PlayerState._instance.GetPlayerQuest();
         for (int i = 0; i < questShowList.Count; i++)
         {
             NGUITools.Destroy(questShowList[i]);
@@ -111,7 +109,7 @@ public class UIQuestManager : MonoBehaviour
                         goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1}  :  {2}/{3}",
                             selectQuest.info.GetStep(i).description,
                             ItemList.getItem(selectQuest.info.GetStep(i).targetID).name,
-                            PlayerState.GamePlayerState.GetPlayerBag().GetItemCount(selectQuest.info.GetStep(i).targetID),
+                            PlayerState._instance.GetPlayerBag().GetItemCount(selectQuest.info.GetStep(i).targetID),
                             selectQuest.info.GetStep(i).count);
                         break;
                     case QuestType.killEnemy:

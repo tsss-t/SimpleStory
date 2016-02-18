@@ -7,7 +7,7 @@ public class UIStartMenuManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        sceneManagerUI = GameObject.FindGameObjectWithTag(Tags.UISceneLoading).gameObject.GetComponent<UISceneManager>();
+        sceneManagerUI = UISceneManager._instance;
     }
 
     // Update is called once per frame

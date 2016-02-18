@@ -10,7 +10,7 @@ public class UIQuestButtonEvent : MonoBehaviour
     void Start()
     {
         questManager = GameObject.FindGameObjectWithTag(Tags.UIRoot).transform.Find("QuestMenu").GetComponent<UIQuestManager>();
-        PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList().TryGetValue(int.Parse(transform.parent.name), out quest);
+        PlayerState._instance.GetPlayerQuest().GetAcceptQuestList().TryGetValue(int.Parse(transform.parent.name), out quest);
     }
 
 

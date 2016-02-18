@@ -23,7 +23,7 @@ public class UIShopManager : MonoBehaviour
         //TODO:データベースからデータ読み取り
 
         //test用
-        shopItemsDictionary = NPCManager._instans.getShopItem(shopID);
+        shopItemsDictionary = NPCManager._instance.getShopItem(shopID);
     }
     public void UpdateShop(int shopID)
     {

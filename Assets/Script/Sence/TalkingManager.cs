@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class TalkingManager : MonoBehaviour
 {
-    EventManager eventManager;
+    public static TalkingManager _instance;
     List<TalkText> talkList;
 
     GameObject talkContainer;
@@ -14,11 +14,11 @@ public class TalkingManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        _instance = this;
         talkContainer = transform.Find("TalkContainer").gameObject;
         talkList = new List<TalkText>();
         icon = talkContainer.transform.Find("IconContainer/Icon").GetComponent<UISprite>();
         talk = talkContainer.transform.Find("TalkContainer/Talk").GetComponent<UILabel>();
-        eventManager = GameObject.FindGameObjectWithTag(Tags.sceneManager).GetComponent<EventManager>();
 
         talkContainer.SetActive(false);
     }
@@ -56,7 +56,7 @@ public class TalkingManager : MonoBehaviour
             }
             yield return new WaitForSeconds(0.5f);
         }
-        eventManager.SetEventOver();
+        EventManager._instance.SetEventOver();
         talkContainer.SetActive(false);
     }
 }

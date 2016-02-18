@@ -12,19 +12,25 @@ public class GameData
     public string PlayerAcceptData;
     public string PlayerBag;
     public string PlayerState;
+    public string PlayerEventProcess;
+    public string PlayerPortalPorcess;
     public GameData()
     {
 
     }
-    public GameData(string PlayerAcceptData, string PlayerBag, string PlayerState)
+    public GameData(string PlayerAcceptData, string PlayerBag, string PlayerState, string PlayerEventProcess, string PlayerPortalPorcess)
     {
         this.PlayerAcceptData = PlayerAcceptData;
         this.PlayerBag = PlayerBag;
         this.PlayerState = PlayerState;
+        this.PlayerEventProcess = PlayerEventProcess;
+        this.PlayerPortalPorcess = PlayerPortalPorcess;
     }
 }
 public class GameController
 {
+
+
     private static GameController gameController;
     public static GameController _instance
     {
@@ -54,6 +60,8 @@ public class GameController
     string NPCData;
     string skillData;
     string openingData;
+    string eventData;
+    string portalData;
     private GameController()
     {
         playerStateData = GameManager._instans.playerStateData.text;
@@ -65,12 +73,17 @@ public class GameController
         NPCData = GameManager._instans.NPCData.text;
         skillData = GameManager._instans.skillData.text;
         openingData = GameManager._instans.openingData.text;
+        eventData = GameManager._instans.eventData.text;
+        portalData = GameManager._instans.portalData.text;
         //Application.targetFrameRate = 45;
         xs = new XmlSaver();
         gameData = new GameData();
         gameData.key = GameManager._instans.gameDataKey;
         InitSave();
         Load();
+        LoadEventProcess();
+        LoadPortalList();
+        lastChangeSceneType = EntryType.Down;
     }
 
     #region paramater
@@ -94,6 +107,8 @@ public class GameController
         SaveAcceptQuest();
         SaveBag();
         SavePlayerState();
+        SaveEventProcess();
+        SavePortalProcess();
         WriteData();
     }
     void InitSave()
@@ -101,6 +116,8 @@ public class GameController
         gameData.PlayerAcceptData = playerQuestData.ToString();
         gameData.PlayerBag = bagData.ToString();
         gameData.PlayerState = playerStateData.ToString();
+        gameData.PlayerEventProcess = eventData.ToString();
+        gameData.PlayerPortalPorcess = portalData.ToString();
         WriteData();
     }
     #region Item
@@ -108,7 +125,7 @@ public class GameController
     void SaveBag()
     {
         saveString = "";
-        foreach (KeyValuePair<int, Item> item in PlayerState.GamePlayerState.GetPlayerBag().dictionBag)
+        foreach (KeyValuePair<int, Item> item in PlayerState._instance.GetPlayerBag().dictionBag)
         {
             saveString += string.Format("{0},{1},{2},{3}\n", item.Key, item.Value.isEqueped ? "1" : "0", item.Value.count, item.Value.info.id);
         }
@@ -120,7 +137,7 @@ public class GameController
     void SaveAcceptQuest()
     {
         saveString = "";
-        foreach (KeyValuePair<int, Quest> item in PlayerState.GamePlayerState.GetPlayerQuest().GetAcceptQuestList())
+        foreach (KeyValuePair<int, Quest> item in PlayerState._instance.GetPlayerQuest().GetAcceptQuestList())
         {
             saveString += string.Format("{0},{1},{2},{3},{4},{5}\n", item.Key, item.Value.stepNow, item.Value.count, item.Value.ID, item.Value.isOver ? "1" : "0", item.Value.isAccept ? "1" : "0");
         }
@@ -131,7 +148,7 @@ public class GameController
     const string playerStateUper = "EXP,money,isWalk,Type";
     void SavePlayerState()
     {
-        gameData.PlayerState = string.Format("{0}\n{1},{2},{3},{4}\n", playerStateUper, PlayerState.GamePlayerState.EXP, PlayerState.GamePlayerState.money, PlayerState.GamePlayerState.isWalk ? 1 : 0, (int)PlayerState.GamePlayerState.type);
+        gameData.PlayerState = string.Format("{0}\n{1},{2},{3},{4}\n", playerStateUper, PlayerState._instance.EXP, PlayerState._instance.money, PlayerState._instance.isWalk ? 1 : 0, (int)PlayerState._instance.type);
     }
     #endregion
     #region Skill
@@ -140,6 +157,32 @@ public class GameController
 
     }
 
+    #endregion
+    #region event
+    const string playerEventProcessUper = "eventID,eventDone";
+    void SaveEventProcess()
+    {
+        saveString = "";
+        foreach (KeyValuePair<int, bool> item in eventDictionary)
+        {
+            gameData.PlayerEventProcess = string.Format("{0},{1}", item.Key, item.Value ? "1" : "0");
+
+        }
+        gameData.PlayerAcceptData = string.Format("{0}\n{1}", playerEventProcessUper, saveString);
+    }
+    #endregion
+    #region protal
+    const string playerPortalProcessUper = "floorNumber,isOpen";
+    void SavePortalProcess()
+    {
+        saveString = "";
+        foreach (KeyValuePair<int, bool> item in portalDictionary)
+        {
+            gameData.PlayerEventProcess = string.Format("{0},{1}", item.Key, item.Value ? "1" : "0");
+
+        }
+        gameData.PlayerAcceptData = string.Format("{0}\n{1}", playerPortalProcessUper, saveString);
+    }
     #endregion
     #endregion
     #region Load
@@ -420,6 +463,7 @@ public class GameController
         return state;
     }
     #endregion
+    #region TextEvent
     List<TalkText> textList;
     public List<TalkText> LoadText(int eventID)
     {
@@ -479,7 +523,7 @@ public class GameController
         }
         return textList;
     }
-
+    #endregion 
     #region Skill
     List<Skill> skillList;
     public List<Skill> LoadSkill()
@@ -551,8 +595,102 @@ public class GameController
 
     }
     #endregion
+    #region EventList
+    Dictionary<int, bool> eventDictionary;
+    void LoadEventProcess()
+    {
+        if (eventDictionary == null)
+        {
+            string[] proArray;
+            string[] dataArray = gameData.PlayerEventProcess.ToString().Split('\n');
+            eventDictionary = new Dictionary<int, bool>();
+            for (int i = 1; i < dataArray.Length; i++)
+            {
+                if (dataArray[i] != "")
+                {
+                    proArray = dataArray[i].Split(',');
+                    //1==true==done
+                    eventDictionary.Add(int.Parse(proArray[0]), proArray[1].Replace("\r", "") == "1");
+                }
+            }
+        }
+    }
+    public bool getEventIsDone(int eventID)
+    {
+        bool eventDone;
+        eventDictionary.TryGetValue(eventID, out eventDone);
+        return eventDone;
+    }
+    public void doneEvent(int eventID)
+    {
+        bool eventDone;
+        if (eventDictionary.TryGetValue(eventID, out eventDone))
+        {
+            eventDictionary[eventID] = true;
+        }
+    }
+    #endregion
+    #region PortalList 
+    Dictionary<int, bool> portalDictionary;
+    void LoadPortalList()
+    {
+        if (portalDictionary == null)
+        {
+            string[] proArray;
+            string[] dataArray = gameData.PlayerPortalPorcess.ToString().Split('\n');
+            portalDictionary = new Dictionary<int, bool>();
+            for (int i = 1; i < dataArray.Length; i++)
+            {
+                if (dataArray[i] != "")
+                {
+                    proArray = dataArray[i].Split(',');
+                    portalDictionary.Add(int.Parse(proArray[0]), proArray[1].Replace("\r", "") == "1");
+                }
+            }
+        }
+    }
+    public Dictionary<int, bool> getPortalList()
+    {
+        return portalDictionary;
+    }
+    public void makePortalOpen(int floorNumber)
+    {
+        try
+        {
+            portalDictionary[floorNumber] = true;
+        }
+        catch
+        {
+
+        }
+    }
+    public void makePortalClose(int floorNumber)
+    {
+        try
+        {
+            portalDictionary[floorNumber] = false;
+        }
+        catch
+        {
+            
+        }
+    }
+
     #endregion
 
+    #endregion
+
+    #region temp Data
+    private EntryType lastChangeSceneType;
+    public void SetLastChangeSceneType(EntryType type)
+    {
+        this.lastChangeSceneType = type;
+    }
+    public EntryType GetLastChangeSceneType()
+    {
+        return this.lastChangeSceneType; 
+    }
+    #endregion
     //#region Path
 
     ////获取路径//

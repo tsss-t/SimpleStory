@@ -62,7 +62,7 @@ public class UIBagManager : MonoBehaviour
     #region start
     void Start()
     {
-        playerState = PlayerState.GamePlayerState;
+        playerState = PlayerState._instance;
         playerBag = playerState.GetPlayerBag();
         isShowPanel = false;
         //equepInfo = plyerState.getPlayerEquep();
@@ -130,7 +130,7 @@ public class UIBagManager : MonoBehaviour
     /// </summary>
     private void updateBag()
     {
-        playerBag = PlayerState.GamePlayerState.GetPlayerBag();
+        playerBag = PlayerState._instance.GetPlayerBag();
         for (int i = 1; i <= dictionaryUIBagItem.Count; i++)
         {
             dictionaryUIBagItem.TryGetValue(i, out go);
@@ -192,7 +192,7 @@ public class UIBagManager : MonoBehaviour
     #region Menu Event
     public void OnCloseButtonClick()
     {
-        PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Free);
+        PlayerState._instance.ChangeAction(PlayerState.PlayerAction.Free);
         OnEquepInfoPanelCloseButtonClick();
         Hide();
     }
@@ -206,7 +206,7 @@ public class UIBagManager : MonoBehaviour
         {
             shopManagerUI.SetSelectShop(shopID);
             MenuButtonClick(BagMode.Shop);
-            PlayerState.GamePlayerState.ChangeAction(PlayerState.PlayerAction.Shopping);
+            PlayerState._instance.ChangeAction(PlayerState.PlayerAction.Shopping);
         }
     }
 
