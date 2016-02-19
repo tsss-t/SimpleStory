@@ -25,7 +25,7 @@ public class AreaInfo
 
 public class SceneMaker : MonoBehaviour
 {
-    bool connect = false;
+    //bool connect = false;
     public GameObject temp;
     public int length = 0;
     public GameObject[] UpPrefab;
@@ -132,22 +132,22 @@ public class SceneMaker : MonoBehaviour
         tempAreaOut = areaOut;
         List<AngleFix> canSetDirection = new List<AngleFix>();
 
-        if (checkRotation(position, virtualSize, areaOut))
+        if (checkRotation(position, virtualSize, tempAreaOut))
         {
             canSetDirection.Add(AngleFix.Angle0);
         }
         tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle90);
-        if (checkRotation(position, virtualSize, areaOut))
+        if (checkRotation(position, virtualSize, tempAreaOut))
         {
             canSetDirection.Add(AngleFix.Angle90);
         }
         tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle180);
-        if (checkRotation(position, virtualSize, areaOut))
+        if (checkRotation(position, virtualSize, tempAreaOut))
         {
             canSetDirection.Add(AngleFix.Angle180);
         }
         tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle270);
-        if (checkRotation(position, virtualSize, areaOut))
+        if (checkRotation(position, virtualSize, tempAreaOut))
         {
             canSetDirection.Add(AngleFix.Angle270);
         }

@@ -50,8 +50,8 @@ public class UIPortalManager : MonoBehaviour
                 }
 
             }
-            go.transform.Find("FloorNumber").GetComponent<UILabel>().text = (-item.Key).ToString();
-            go.GetComponent<UIPortalButtonEvent>().floorNumber = -item.Key;
+            go.transform.Find("FloorNumber").GetComponent<UILabel>().text = (item.Key).ToString();
+            go.GetComponent<UIPortalButtonEvent>().floorNumber = item.Key;
             portalGrid.GetComponent<UIGrid>().enabled = true;
         }
     }

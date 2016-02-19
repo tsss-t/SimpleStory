@@ -255,7 +255,8 @@ public class GameController
                         int.Parse(proArray[13]),
                         int.Parse(proArray[14]),
                         int.Parse(proArray[15]),
-                        int.Parse(proArray[16])
+                        int.Parse(proArray[16]),
+                        proArray[17]
                         );
                 }
                 else
@@ -266,7 +267,8 @@ public class GameController
                         proArray[3],
                         int.Parse(proArray[9]),
                         int.Parse(proArray[10]),
-                        int.Parse(proArray[16])
+                        int.Parse(proArray[16]),
+                        proArray[17]
                         );
                 }
                 itemList.Add(itemInfo.id, itemInfo);

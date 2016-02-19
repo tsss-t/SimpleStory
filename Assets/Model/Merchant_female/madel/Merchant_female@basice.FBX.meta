@@ -117,6 +117,7 @@ ModelImporter:
     4300006: Object017
     4300008: Object018
     4300010: Object019
+    9500000: //RootNode
     11100000: //RootNode
     13700000: Object019
     13700002: Object018
@@ -137,7 +138,7 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
@@ -182,7 +183,7 @@ ModelImporter:
     rootMotionBoneName: 
     hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 1
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 1
   userData: 

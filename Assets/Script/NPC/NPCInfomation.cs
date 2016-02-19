@@ -12,7 +12,7 @@ public class NPCInfomation : MonoBehaviour
 
     public delegate void Comunication(int NPCID);
     public event Comunication CommunicationStart;
-    public Dictionary<CommunicationType,bool> NPCType;
+    public Dictionary<CommunicationType, bool> NPCType;
     void Awake()
     {
         NPCType = new Dictionary<CommunicationType, bool>() { { CommunicationType.Talk, true }, { CommunicationType.Shop, false }, { CommunicationType.Quest, false } };
@@ -45,6 +45,7 @@ public class NPCInfomation : MonoBehaviour
 
     void OnDestroy()
     {
-        this.CommunicationStart -= UICommunicationManager._instans.CommunicationTalk;
+        CommunicationStart -= UICommunicationManager._instans.CommunicationTalk;
     }
+
 }

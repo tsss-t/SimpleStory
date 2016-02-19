@@ -175,5 +175,14 @@ public class UICommunicationManager : MonoBehaviour
         npcQuestManagerUI.OnOpenButtonClick();
     }
     #endregion
-
+    void OnDestroy()
+    {
+        foreach (KeyValuePair<int, GameObject> item in NPCDictionary)
+        {
+            if (item.Value != null)
+            {
+                item.Value.GetComponent<NPCInfomation>().CommunicationStart -= CommunicationTalk;
+            }
+        }
+    }
 }

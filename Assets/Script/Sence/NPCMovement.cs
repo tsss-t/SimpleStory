@@ -4,12 +4,12 @@ using System.Collections;
 public class NPCMovement : MonoBehaviour
 {
     NavMeshAgent NPCAgent;
-    Animation NPCanimation;
+    Animator anim;
     // Use this for initialization
     void Start()
     {
         NPCAgent = this.GetComponent<NavMeshAgent>();
-        NPCanimation = this.GetComponent<Animation>();
+        anim = this.GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -19,13 +19,13 @@ public class NPCMovement : MonoBehaviour
         if (NPCAgent.enabled)
         {
             transform.rotation = Quaternion.LookRotation(NPCAgent.velocity);
-            NPCanimation.CrossFade("Walk");
+            anim.SetBool("Walk",true);
         }
         else
         {
-            if (!NPCanimation.IsPlaying("Idle"))
+            if (!anim.GetBool("Walk"))
             {
-                NPCanimation.Play("Idle");
+                anim.SetBool("Walk",false);
             }
         }
     }

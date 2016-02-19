@@ -117,7 +117,7 @@ ModelImporter:
     4300006: Object017
     4300008: Object018
     4300010: Object019
-    7400000: Take 001
+    7400000: Talk
     9500000: //RootNode
     11100000: //RootNode
     13700000: Object017
@@ -139,13 +139,172 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Talk
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 120
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Merchant
+        weight: 1
+      - path: Merchant/Merchant Footsteps
+        weight: 1
+      - path: Merchant/Merchant Pelvis
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant L Thigh
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant L Thigh/Merchant L
+          Calf
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant L Thigh/Merchant L
+          Calf/Merchant L Foot
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant L Thigh/Merchant L
+          Calf/Merchant L Foot/Merchant L Toe0
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant L Thigh/Merchant L
+          Calf/Merchant L Foot/Merchant L Toe0/Merchant L Toe0Nub
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant R Thigh
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant R Thigh/Merchant R
+          Calf
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant R Thigh/Merchant R
+          Calf/Merchant R Foot
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant R Thigh/Merchant R
+          Calf/Merchant R Foot/Merchant R Toe0
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant R Thigh/Merchant R
+          Calf/Merchant R Foot/Merchant R Toe0/Merchant R Toe0Nub
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/L_chest
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/M_bag01
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/M_bag01/M_bag02
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/M_bag01/M_bag02/M_bag_end
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant Head
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant Head/L_ear
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant Head/Merchant HeadNub
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant Head/R_ear
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant L Clavicle
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant L Clavicle/Merchant L UpperArm
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant L Clavicle/Merchant L UpperArm/Merchant L Forearm
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant L Clavicle/Merchant L UpperArm/Merchant L Forearm/Merchant
+          L Hand
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant R Clavicle
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant R Clavicle/Merchant R UpperArm
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant R Clavicle/Merchant R UpperArm/Merchant R Forearm
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/Merchant
+          Neck/Merchant R Clavicle/Merchant R UpperArm/Merchant R Forearm/Merchant
+          R Hand
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Spine1/Merchant Spine2/R_chest
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Tail
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Tail/Merchant Tail1
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Tail/Merchant Tail1/Merchant
+          Tail2
+        weight: 1
+      - path: Merchant/Merchant Pelvis/Merchant Spine/Merchant Tail/Merchant Tail1/Merchant
+          Tail2/Merchant TailNub
+        weight: 1
+      - path: Merchant_body
+        weight: 1
+      - path: Object01
+        weight: 1
+      - path: Object015
+        weight: 1
+      - path: Object016
+        weight: 1
+      - path: Object017
+        weight: 1
+      - path: Object018
+        weight: 1
+      - path: Object019
+        weight: 1
+      - path: Particle VADSiew 01
+        weight: 1
+      - path: Particle VieADw 01
+        weight: 1
+      - path: Particle VieDSw 01
+        weight: 1
+      - path: Particle View 0ASD1
+        weight: 1
+      - path: Particle View 01
+        weight: 1
+      - path: Particle View 01 1
+        weight: 1
+      - path: Particle View 01 2
+        weight: 1
+      - path: Particle View 01 3
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -184,7 +343,7 @@ ModelImporter:
     rootMotionBoneName: 
     hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 1
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 1
   userData: 

@@ -3,11 +3,9 @@ using System.Collections;
 
 public class UIStartMenuManager : MonoBehaviour
 {
-    UISceneManager sceneManagerUI;
     // Use this for initialization
     void Start()
     {
-        sceneManagerUI = UISceneManager._instance;
     }
 
     // Update is called once per frame
@@ -17,7 +15,7 @@ public class UIStartMenuManager : MonoBehaviour
 
     public void OnNewButtonClick()
     {
-        sceneManagerUI.Show(Application.LoadLevelAsync(1));
+        UISceneManager._instance.Show(Application.LoadLevelAsync(SceneName.Opening));
     }
     public void OnContinueButtonClick()
     {

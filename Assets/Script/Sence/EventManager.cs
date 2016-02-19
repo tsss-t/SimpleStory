@@ -56,7 +56,7 @@ public class EventManager : MonoBehaviour
         }
     }
     #region Event---- name format:  Event_scene_eventID_eventStepID
-    #region Town Evet
+    #region Town Evet (後で全て変更)
     //移动到指定位置
     public void EventOneOne()
     {
@@ -150,6 +150,7 @@ public class EventManager : MonoBehaviour
     {
         EventDelegate makePlayerFree = new EventDelegate(this, "MakePlayerFree");
         Talk(5, makePlayerFree);
+        GameController._instance.doneEvent(1);
     }
     /// <summary>
     /// 入口から脱出禁止のイベント
@@ -252,7 +253,6 @@ public class EventManager : MonoBehaviour
 
     void CameraLookAt(Transform targetPosition,  float camaraWaitTime, EventDelegate nextmethod)
     {
-        Debug.Log("??");
         playerState.ChangeAction(PlayerState.PlayerAction.Locked);
         GameObject.FindGameObjectWithTag(Tags.mainCamera).GetComponent<CameraMovement>().setTarget(targetPosition);
         StartCoroutine(Wait(camaraWaitTime));
@@ -303,8 +303,8 @@ public class EventManager : MonoBehaviour
             iTween.FadeTo(tufei.transform.Find("Object018").gameObject, 0, 2f);
             iTween.FadeTo(tufei.transform.Find("Object019").gameObject, 0, 2f);
         }
-        catch { }
-        yield return new WaitForSeconds(3f);
+        catch { Debug.Log("error"); }
+        yield return new WaitForSeconds(1.5f);
         thisEventIsOver = true;
         Destroy(tufei);
     }

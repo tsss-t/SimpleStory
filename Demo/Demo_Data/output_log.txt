@@ -1,0 +1,168 @@
+Mono path[0] = 'C:/Users/tianhang/SimpleStory/Demo/Demo_Data/Managed'
+Mono path[1] = 'C:/Users/tianhang/SimpleStory/Demo/Demo_Data/Mono'
+Mono config path = 'C:/Users/tianhang/SimpleStory/Demo/Demo_Data/Mono/etc'
+PlayerConnection initialized from C:/Users/tianhang/SimpleStory/Demo/Demo_Data (debug = 0)
+PlayerConnection initialized network socket : 0.0.0.0 55399
+Multi-casting "[IP] 192.168.11.1 [Port] 55399 [Flags] 2 [Guid] 3626504562 [EditorId] 184006477 [Version] 1048832 [Id] WindowsPlayer(totenko-NPC) [Debug] 0" to [225.0.0.222:54997]...
+PlayerConnection already initialized - listening to [192.168.11.1:55399]
+Initialize engine version: 5.2.3f1 (f3d16a1fa2dd)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: Intel(R) HD Graphics 4600 (ID=0x416)
+    Vendor:   Intel
+    VRAM:     128 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\Assembly-UnityScript.dll (this message is harmless)
+Loading C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\System.Core.dll (this message is harmless)
+- Completed reload, in  0.179 seconds
+desktop: 1920x1080 59Hz; virtual: 3286x1080 at -1366,0
+<RI> Initializing input.
+XInput1_3.dll not found. Trying XInput9_1_0.dll instead...
+<RI> Input initialized.
+<RI> Initialized touch support.
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\System.dll (this message is harmless)
+Setting up 1 worker threads for Enlighten.
+  Thread -> id: 31fc -> priority: 1 
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 6.894820 ms
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\System.Xml.dll (this message is harmless)
+System memory in use before: 27.9 MB.
+System memory in use after: 27.9 MB.
+
+Unloading 6 unused Assets to reduce memory usage. Loaded Objects now: 592.
+Total: 0.635953 ms (FindLiveObjects: 0.053292 ms CreateObjectMapping: 0.055265 ms MarkObjects: 0.499761 ms  DeleteObjects: 0.026053 ms)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.554633 ms
+System memory in use before: 61.3 MB.
+System memory in use after: 61.5 MB.
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 5145.
+Total: 14.540467 ms (FindLiveObjects: 0.493051 ms CreateObjectMapping: 0.210405 ms MarkObjects: 13.794377 ms  DeleteObjects: 0.041449 ms)
+
+Look rotation viewing vector is zero
+UnityEngine.Quaternion:INTERNAL_CALL_LookRotation(Vector3&, Vector3&)
+UnityEngine.Quaternion:LookRotation(Vector3) (at C:\buildslave\unity\build\artifacts\generated\common\runtime\MathBindings.gen.cs:914)
+NPCMovement:Update() (at C:\Users\tianhang\SimpleStory\Assets\Script\Sence\NPCMovement.cs:21)
+
+[C:/buildslave/unity/build/artifacts/generated/common/runtime/MathBindings.gen.cpp line 78] 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/MathBindings.gen.cs Line: 914)
+
+Look rotation viewing vector is zero
+UnityEngine.Quaternion:INTERNAL_CALL_LookRotation(Vector3&, Vector3&)
+UnityEngine.Quaternion:LookRotation(Vector3) (at C:\buildslave\unity\build\artifacts\generated\common\runtime\MathBindings.gen.cs:914)
+NPCMovement:Update() (at C:\Users\tianhang\SimpleStory\Assets\Script\Sence\NPCMovement.cs:21)
+
+[C:/buildslave/unity/build/artifacts/generated/common/runtime/MathBindings.gen.cpp line 78] 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/MathBindings.gen.cs Line: 914)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 22.608110 ms
+Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\Boo.Lang.dll (this message is harmless)
+System memory in use before: 58.7 MB.
+System memory in use after: 59.0 MB.
+
+Unloading 33 unused Assets to reduce memory usage. Loaded Objects now: 9180.
+Total: 12.573789 ms (FindLiveObjects: 1.028735 ms CreateObjectMapping: 0.290540 ms MarkObjects: 10.887389 ms  DeleteObjects: 0.363176 ms)
+
+-100
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+UIPortalButtonEvent:OnButtonClick() (at C:\Users\tianhang\SimpleStory\Assets\Script\UI\UIPortalButtonEvent.cs:33)
+EventDelegate:Execute() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Internal\EventDelegate.cs:472)
+EventDelegate:Execute(List`1) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Internal\EventDelegate.cs:636)
+UIButton:OnClick() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Interaction\UIButton.cs:248)
+UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
+UICamera:Notify(GameObject, String, Object) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1509)
+UICamera:ProcessRelease(Boolean, Single) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2393)
+UICamera:ProcessTouch(Boolean, Boolean) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2443)
+UICamera:ProcessMouse() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1894)
+UICamera:ProcessTouches() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2008)
+UICamera:Update() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1695)
+ 
+(Filename: C:/Users/tianhang/SimpleStory/Assets/Script/UI/UIPortalButtonEvent.cs Line: 33)
+
+Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 33.017448 ms
+System memory in use before: 58.6 MB.
+System memory in use after: 58.2 MB.
+
+Unloading 31 unused Assets to reduce memory usage. Loaded Objects now: 8687.
+Total: 14.006756 ms (FindLiveObjects: 0.476471 ms CreateObjectMapping: 0.121585 ms MarkObjects: 12.287987 ms  DeleteObjects: 1.119135 ms)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 35.596394 ms
+System memory in use before: 57.3 MB.
+System memory in use after: 55.5 MB.
+
+Unloading 32 unused Assets to reduce memory usage. Loaded Objects now: 6994.
+Total: 25.311403 ms (FindLiveObjects: 1.280590 ms CreateObjectMapping: 0.610688 ms MarkObjects: 22.802330 ms  DeleteObjects: 0.610688 ms)
+
+Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 15.557755 ms
+System memory in use before: 58.7 MB.
+System memory in use after: 58.9 MB.
+
+Unloading 24 unused Assets to reduce memory usage. Loaded Objects now: 8678.
+Total: 22.531527 ms (FindLiveObjects: 1.315329 ms CreateObjectMapping: 0.381729 ms MarkObjects: 20.449581 ms  DeleteObjects: 0.381729 ms)
+
+-1
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+UIPortalButtonEvent:OnButtonClick() (at C:\Users\tianhang\SimpleStory\Assets\Script\UI\UIPortalButtonEvent.cs:33)
+EventDelegate:Execute() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Internal\EventDelegate.cs:472)
+EventDelegate:Execute(List`1) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Internal\EventDelegate.cs:636)
+UIButton:OnClick() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Interaction\UIButton.cs:248)
+UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
+UICamera:Notify(GameObject, String, Object) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1509)
+UICamera:ProcessRelease(Boolean, Single) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2393)
+UICamera:ProcessTouch(Boolean, Boolean) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2443)
+UICamera:ProcessMouse() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1894)
+UICamera:ProcessTouches() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2008)
+UICamera:Update() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1695)
+ 
+(Filename: C:/Users/tianhang/SimpleStory/Assets/Script/UI/UIPortalButtonEvent.cs Line: 33)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 26.357115 ms
+System memory in use before: 58.9 MB.
+System memory in use after: 58.4 MB.
+
+Unloading 23 unused Assets to reduce memory usage. Loaded Objects now: 9181.
+Total: 17.721811 ms (FindLiveObjects: 0.941889 ms CreateObjectMapping: 0.241196 ms MarkObjects: 16.395035 ms  DeleteObjects: 0.141717 ms)
+
+-100
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+UIPortalButtonEvent:OnButtonClick() (at C:\Users\tianhang\SimpleStory\Assets\Script\UI\UIPortalButtonEvent.cs:33)
+EventDelegate:Execute() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Internal\EventDelegate.cs:472)
+EventDelegate:Execute(List`1) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Internal\EventDelegate.cs:636)
+UIButton:OnClick() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\Interaction\UIButton.cs:248)
+UnityEngine.GameObject:SendMessage(String, Object, SendMessageOptions)
+UICamera:Notify(GameObject, String, Object) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1509)
+UICamera:ProcessRelease(Boolean, Single) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2393)
+UICamera:ProcessTouch(Boolean, Boolean) (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2443)
+UICamera:ProcessMouse() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1894)
+UICamera:ProcessTouches() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:2008)
+UICamera:Update() (at C:\Users\tianhang\SimpleStory\Assets\NGUI\Scripts\UI\UICamera.cs:1695)
+ 
+(Filename: C:/Users/tianhang/SimpleStory/Assets/Script/UI/UIPortalButtonEvent.cs Line: 33)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 22.327438 ms
+System memory in use before: 58.9 MB.
+System memory in use after: 58.5 MB.
+
+Unloading 27 unused Assets to reduce memory usage. Loaded Objects now: 8687.
+Total: 13.413042 ms (FindLiveObjects: 0.849121 ms CreateObjectMapping: 0.229353 ms MarkObjects: 11.982049 ms  DeleteObjects: 0.351333 ms)
+

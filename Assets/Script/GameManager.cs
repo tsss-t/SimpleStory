@@ -25,9 +25,9 @@ public class GameManager : MonoBehaviour
         if (GameObject.FindGameObjectWithTag(Tags.player) != null)
         {
             PlayerState._instance.playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
-
         }
         gameDataKey = SystemInfo.deviceUniqueIdentifier;
+        //DEBUG
     }
 
     #region Path
