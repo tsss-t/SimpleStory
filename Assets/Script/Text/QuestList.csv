@@ -1,5 +1,5 @@
-ID,name,description,step description,quest type,targetID,count,exp,money,awardItemID
-1,Kill Boss,this is the frist quest,You must find the NPC right,0,1,1,100,100,-1
+﻿ID,name,description,step description,quest type,targetID,count,exp,money,awardItemID
+1,二人の行方,姿を消えた二人の居場所を探すために、カンマは盗賊の洞窟に行き、二人の行方を探します,二人行方の手がかりを探します,0,1,1,100,100,-1
 1,Kill Boss,this is the frist quest,You must kill the boss,2,1,1,1000,1000,5
 2,Find NPC,this is the second quest,You must find the NPC left,0,2,1,100,100,-1
 3,Find Item,quest3,You must find the Item,1,1,5,100,100,-1

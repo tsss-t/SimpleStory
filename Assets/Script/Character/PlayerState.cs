@@ -241,11 +241,11 @@ public class PlayerState
         }
         if (equep.dictionaryEquep[ItemType.weapon] != null)
         {
-            equepSTR = equep.dictionaryEquep[ItemType.weapon].info.STR;
-            equepDEX = equep.dictionaryEquep[ItemType.weapon].info.DEX;
-            equepINT = equep.dictionaryEquep[ItemType.weapon].info.INT;
-            equepCON = equep.dictionaryEquep[ItemType.weapon].info.CON;
-            equepLUK = equep.dictionaryEquep[ItemType.weapon].info.LUK;
+            equepSTR += equep.dictionaryEquep[ItemType.weapon].info.STR;
+            equepDEX += equep.dictionaryEquep[ItemType.weapon].info.DEX;
+            equepINT += equep.dictionaryEquep[ItemType.weapon].info.INT;
+            equepCON += equep.dictionaryEquep[ItemType.weapon].info.CON;
+            equepLUK += equep.dictionaryEquep[ItemType.weapon].info.LUK;
         }
 
     }
@@ -378,8 +378,8 @@ public class PlayerState
             SetdownEquep(itemBagID);
         }
         this.money += bag.dictionBag[itemBagID].info.money;
-        bag.DeleteItem(itemBagID);
         quest.UpdateQuestProcess(bag.BagIDToItemID(itemBagID));
+        bag.DeleteItem(itemBagID);
 
         PlayerStateChanged(PlayerStateChangeType.bag);
         PlayerStateChanged(PlayerStateChangeType.money);

@@ -49,7 +49,7 @@ public class PlayerBag
                 ChangeEquep(part.Key);
             }
         }
-        count = 40;
+        count = dictionBag.Count;
     }
     #endregion
     #region 外部API
@@ -64,7 +64,6 @@ public class PlayerBag
         {
             playerEquep.dictionaryEquep[dictionBag[id].info.type].isEqueped = false;
             playerEquep.SetdownEquep(dictionBag[id].info.type);
-
         }
     }
 
@@ -75,8 +74,6 @@ public class PlayerBag
     public void ChangeEquep(int id)
     {
         //TODO:サーバで、アイテムのisEquepedの値を変更
-
-
         //前のitemのisEquepedの値を変更
         if (playerEquep.dictionaryEquep[dictionBag[id].info.type] != null)
         {
@@ -95,7 +92,7 @@ public class PlayerBag
     public void AddItem(int itemID)
     {
         ItemInfo item = ItemList.getItem(itemID);
-        if (!ItemInfo.IsEquep(item.type)
+        if (ItemInfo.IsEquep(item.type)
         )
         {
             count++;

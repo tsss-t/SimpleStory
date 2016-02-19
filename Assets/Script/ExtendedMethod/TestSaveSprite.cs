@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 
 public class TestSaveSprite
@@ -50,3 +51,4 @@ public class TestSaveSprite
         Debug.Log("SaveSprite Finished");
     }
 }
+#endif

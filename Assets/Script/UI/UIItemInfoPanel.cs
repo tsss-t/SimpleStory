@@ -12,12 +12,16 @@ public class UIItemInfoPanel : MonoBehaviour
     GameObject SellButton;
     GameObject BuyButton;
     GameObject ItemInfoBG;
+    GameObject ConstLabels;
     UISprite equepSprite;
-    UILabel STRLable;
-    UILabel CONLable;
-    UILabel INTLable;
-    UILabel DEXLable;
-    UILabel LUKLable;
+    UILabel STRLabel;
+    UILabel CONLabel;
+    UILabel INTLabel;
+    UILabel DEXLabel;
+    UILabel LUKLabel;
+    UILabel NameLabel;
+    UILabel DescripteLabel;
+
     #endregion
     #region Start
     // Use this for initialization
@@ -27,23 +31,24 @@ public class UIItemInfoPanel : MonoBehaviour
         bagManager = transform.parent.GetComponent<UIBagManager>();
         ItemInfoBG = transform.Find("ItemInfoBG").gameObject;
         equepSprite = ItemInfoBG.transform.Find("Item").Find("Sprite").GetComponent<UISprite>();
-        STRLable = ItemInfoBG.transform.Find("LabelSTRInfo").GetComponent<UILabel>();
-        INTLable = ItemInfoBG.transform.Find("LabelINTInfo").GetComponent<UILabel>();
-        DEXLable = ItemInfoBG.transform.Find("LabelDEXInfo").GetComponent<UILabel>();
-        CONLable = ItemInfoBG.transform.Find("LabelCONInfo").GetComponent<UILabel>();
-        LUKLable = ItemInfoBG.transform.Find("LabelLUKInfo").GetComponent<UILabel>();
-
+        STRLabel = ItemInfoBG.transform.Find("LabelSTRInfo").GetComponent<UILabel>();
+        INTLabel = ItemInfoBG.transform.Find("LabelINTInfo").GetComponent<UILabel>();
+        DEXLabel = ItemInfoBG.transform.Find("LabelDEXInfo").GetComponent<UILabel>();
+        CONLabel = ItemInfoBG.transform.Find("LabelCONInfo").GetComponent<UILabel>();
+        LUKLabel = ItemInfoBG.transform.Find("LabelLUKInfo").GetComponent<UILabel>();
+        NameLabel = ItemInfoBG.transform.Find("LabelName").GetComponent<UILabel>();
+        DescripteLabel = ItemInfoBG.transform.Find("LabelDescript").GetComponent<UILabel>();
         EquepDownButton = ItemInfoBG.transform.Find("EquepDownButton").gameObject;
         EquepUpButton = ItemInfoBG.transform.Find("EquepUpButton").gameObject;
         UseButton = ItemInfoBG.transform.Find("UseButton").gameObject;
         SellButton = ItemInfoBG.transform.Find("SellButton").gameObject;
         BuyButton = ItemInfoBG.transform.Find("BuyButton").gameObject;
+        ConstLabels = ItemInfoBG.transform.Find("ConstLabels").gameObject;
 
-        
     }
     #endregion
     #region show EquepInfoPanel
-    void MakeInfoPanle(Item item,ItemFrom from)
+    void MakeInfoPanle(Item item, ItemFrom from)
     {
         EquepDownButton.SetActive(false);
         EquepUpButton.SetActive(false);
@@ -52,20 +57,17 @@ public class UIItemInfoPanel : MonoBehaviour
         BuyButton.SetActive(false);
 
         equepSprite.spriteName = item.info.adress;
-        if (item.info.type == ItemType.head ||
-            item.info.type == ItemType.necklace ||
-            item.info.type == ItemType.body ||
-            item.info.type == ItemType.foot ||
-            item.info.type == ItemType.bracelet ||
-            item.info.type == ItemType.weapon ||
-            item.info.type == ItemType.wing ||
-            item.info.type == ItemType.ring)
+        NameLabel.text = item.info.name;
+        DescripteLabel.text = item.info.descript;
+
+        if (ItemInfo.IsEquep(item.info.type))
         {
-            STRLable.text = item.info.STR.ToString();
-            INTLable.text = item.info.INT.ToString();
-            DEXLable.text = item.info.DEX.ToString();
-            CONLable.text = item.info.CON.ToString();
-            LUKLable.text = item.info.LUK.ToString();
+            ConstLabels.SetActive(true);
+            STRLabel.text = item.info.STR.ToString();
+            INTLabel.text = item.info.INT.ToString();
+            DEXLabel.text = item.info.DEX.ToString();
+            CONLabel.text = item.info.CON.ToString();
+            LUKLabel.text = item.info.LUK.ToString();
             switch (playerState.GetActionInfoNow())
             {
                 case PlayerState.PlayerAction.Free:
@@ -81,11 +83,11 @@ public class UIItemInfoPanel : MonoBehaviour
                 case PlayerState.PlayerAction.Died:
                     break;
                 case PlayerState.PlayerAction.Shopping:
-                    if(from== ItemFrom.Bag)
+                    if (from == ItemFrom.Bag)
                     {
                         SellButton.SetActive(true);
                     }
-                    else if(from== ItemFrom.Shop)
+                    else if (from == ItemFrom.Shop)
                     {
                         BuyButton.SetActive(true);
                     }
@@ -97,6 +99,12 @@ public class UIItemInfoPanel : MonoBehaviour
         }
         else
         {
+            ConstLabels.SetActive(false);
+            STRLabel.text = string.Empty;
+            INTLabel.text = string.Empty;
+            DEXLabel.text = string.Empty;
+            CONLabel.text = string.Empty;
+            LUKLabel.text = string.Empty;
             switch (playerState.GetActionInfoNow())
             {
                 case PlayerState.PlayerAction.Free:
@@ -120,11 +128,11 @@ public class UIItemInfoPanel : MonoBehaviour
         }
     }
 
-    public void ShowInfo(Item item,ItemFrom from)
+    public void ShowInfo(Item item, ItemFrom from)
     {
         if (item != null)
         {
-            MakeInfoPanle(item,from);
+            MakeInfoPanle(item, from);
             bagManager.SetSelectItem(item);
             bagManager.OnEquepInfoPanelOpenButtonClick();
         }

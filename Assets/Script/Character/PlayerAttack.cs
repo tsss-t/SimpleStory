@@ -14,7 +14,6 @@ public class PlayerAttack : MonoBehaviour
     GameObject[] canAttackEnemy;
     private Animator anim;
     private HashIDs hash;
-    bool isAttack;
 
     // Use this for initialization
     void Awake()
@@ -40,11 +39,14 @@ public class PlayerAttack : MonoBehaviour
     {
         if (playerState.PlayerAliveNow)
         {
-            isAttack = Input.GetButtonDown("Attack");
             //basic Attack
-            if (isAttack)
+            if (Input.GetButtonDown("Attack"))
             {
                 Attack(SkillType.basic, 0);
+            }
+            if(Input.GetButtonDown("Skill1"))
+            {
+                Attack(SkillType.skill, PosType.one);
             }
         }
     }

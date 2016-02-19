@@ -23,7 +23,6 @@ public class PlayerController : MonoBehaviour
     public float runSpeed = 5.5f;
     public float walkSpeed = 3f;
 
-    public PlayerState.PlayerAction typeNow;
     #endregion
     #region start
     // Use this for initialization
@@ -58,8 +57,7 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         hash = this.GetComponent<HashIDs>();
         anim.SetLayerWeight(1, 1f);
-
-        //test
+        //FOR DEBUG
         playerState.PlayerStateChanged(PlayerStateChangeType.all);
     }
     #endregion
@@ -67,7 +65,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        typeNow = playerState.GetActionInfoNow();
+ 
         if (playerState.PlayerAliveNow)
         {
             playerState.playerTransform = transform;
@@ -93,8 +91,8 @@ public class PlayerController : MonoBehaviour
     {
         if (playerState.GetActionInfoNow() == PlayerState.PlayerAction.Free)
         {
-            float h = Input.GetAxis("Horizontal") == 0f ? ETCInput.GetAxis("Horizontal") : Input.GetAxis("Horizontal");
-            float v = Input.GetAxis("Vertical") == 0f ? ETCInput.GetAxis("Vertical") : Input.GetAxis("Vertical");
+            float h = Input.GetAxis("Horizontal");
+            float v = Input.GetAxis("Vertical");
             MovementManagement(h, v);
         }
         else if (playerState.GetActionInfoNow() == PlayerState.PlayerAction.AutoMoving)
@@ -193,6 +191,7 @@ public class PlayerController : MonoBehaviour
         if (playerState.energy < playerState.energyMax)
         {
             playerState.energy += 1;
+            //FOR DEBUG
             playerState.PlayerStateChanged(PlayerStateChangeType.energy);
         }
     }
@@ -208,6 +207,7 @@ public class PlayerController : MonoBehaviour
             {
                 playerState.HP += (int)playerState.health;
             }
+            //FOR DEBUG
             playerState.PlayerStateChanged(PlayerStateChangeType.HP);
 
         }

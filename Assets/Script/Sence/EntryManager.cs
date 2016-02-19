@@ -8,11 +8,17 @@ public enum EntryType {
 
 public class EntryManager : MonoBehaviour
 {
+    public static EntryManager _instance;
     public EntryType entryType;
     public int goToFloorNum=-1000;
+
+    public delegate void OnPlayerInEntry(AsyncOperation ao);
+    public event OnPlayerInEntry onPlayerInEntry;
+
     // Use this for initialization
     void Awake()
     {
+        _instance = this;
         goToFloorNum = goToFloorNum ==- 1000?SceneManager._instance.floorNum:goToFloorNum;
     }    // Update is called once per frame
     void Update()
@@ -22,10 +28,10 @@ public class EntryManager : MonoBehaviour
     {
         if (collider.gameObject.tag.Equals(Tags.player)&&collider.isTrigger==false)
         {
-            Debug.Log("IN!");
             GameController._instance.SetLastChangeSceneType(entryType);
-            UISceneManager._instance.Show(Application.LoadLevelAsync(goToFloorNum));
-
+            //FOR DEBUG
+            onPlayerInEntry(Application.LoadLevelAsync(goToFloorNum));
+            //Application.LoadLevelAsync(goToFloorNum);
         }
     }
 }

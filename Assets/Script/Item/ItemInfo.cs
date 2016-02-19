@@ -17,6 +17,7 @@ public class ItemInfo
     public ItemType type;
     public string adress;
     public string name;
+    public string descript;
     public int STR;//力
     public int DEX;//素早さ
     public int INT;//知恵
@@ -51,7 +52,7 @@ public class ItemInfo
     /// <param name="needCON">装備必要な運</param>
     /// <param name="needLevel">装備必要なレベル</param>
     /// <param name="money">値段</param>
-    public ItemInfo(int id, ItemType type, string picAdress, string name, int STR, int DEX, int INT, int CON, int LUK, int needSTR, int needDEX, int needINT, int needCON, int needLevel, int money)
+    public ItemInfo(int id, ItemType type, string picAdress, string name, int STR, int DEX, int INT, int CON, int LUK, int needSTR, int needDEX, int needINT, int needCON, int needLevel, int money,string descript)
     {
         if (!IsEquep(type))
         {
@@ -76,6 +77,7 @@ public class ItemInfo
             this.needCON = needCON;
             this.needLevel = needLevel;
             this.money = money;
+            this.descript = descript;
         }
 
     }
@@ -89,7 +91,7 @@ public class ItemInfo
     /// <param name="HP">HP回復点数</param>
     /// <param name="energy">体力回復点数</param>
     /// <param name="money">値段</param>
-    public ItemInfo(int id, string picAress, string name, int HP, int energy, int money)
+    public ItemInfo(int id, string picAress, string name, int HP, int energy, int money,string descript)
     {
         this.id = id;
         this.adress = picAress;
@@ -98,6 +100,7 @@ public class ItemInfo
         this.HP = HP;
         this.energy = energy;
         this.money = money;
+        this.descript = descript;
     }
     #endregion
     public static bool IsEquep(ItemType type)
@@ -105,6 +108,7 @@ public class ItemInfo
         if (type != ItemType.head &&
             type != ItemType.body &&
             type != ItemType.necklace &&
+             type != ItemType.foot &&
             type != ItemType.ring &&
             type != ItemType.bracelet &&
             type != ItemType.weapon &&

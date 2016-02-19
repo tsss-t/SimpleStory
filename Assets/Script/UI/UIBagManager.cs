@@ -106,7 +106,7 @@ public class UIBagManager : MonoBehaviour
         {
             updateState();
         }
-        if (type == PlayerStateChangeType.equep || type == PlayerStateChangeType.bag)
+        if (type == PlayerStateChangeType.all || type == PlayerStateChangeType.equep || type == PlayerStateChangeType.bag)
         {
             if (gameObject.activeSelf)
             {

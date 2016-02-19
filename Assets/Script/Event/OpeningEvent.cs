@@ -99,6 +99,6 @@ public class OpeningEvent : MonoBehaviour {
             }
         }
         yield return new WaitForSeconds(3.0f);
-        loadingUI.Show(Application.LoadLevelAsync(2));
+        loadingUI.Show( Application.LoadLevelAsync(SceneName.Town));
     }
 }

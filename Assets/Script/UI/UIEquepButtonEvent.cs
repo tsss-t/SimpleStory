@@ -91,4 +91,9 @@ public class UIEquepButtonEvent : MonoBehaviour
         ItemInfoPanel.ShowInfo(this.item, ItemFrom.Equep);
     }
     #endregion
+
+    void OnDestroy()
+    {
+        playerState.OnPlayerStateChanged -= OnStateChanged;
+    }
 }

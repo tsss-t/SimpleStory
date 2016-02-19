@@ -18,7 +18,6 @@ public class UIController : MonoBehaviour
     private Transform containerEquepMenu;
     private Transform spriteAllow;
     private Transform containerSkill;
-    private Transform containerMove;
 
     private UIButton toolBarChangeButton;
     private UISlider sliderEnergy;
@@ -51,7 +50,6 @@ public class UIController : MonoBehaviour
         containerMap = transform.Find("GameMap");
         containerEquepMenu = transform.Find("EquepMenu");
         containerSkill = transform.Find("SkillContainer");
-        containerMove = transform.Find("MoveContainer");
         spriteAllow = containerMap.Find("miniMap/spriteAllow");
 
         portalButton = transform.Find("PortalButton").gameObject;
@@ -65,7 +63,7 @@ public class UIController : MonoBehaviour
         labelLevel = containerPlayerState.Find("labelLevel").GetComponent<UILabel>();
 
         playerState.OnPlayerStateChanged += OnStateChanged;
-        if(PortalManager._instans!=null)
+        if (PortalManager._instans!=null)
         {
             PortalManager._instans.playerStateChange += InOutPortal;
         }
@@ -194,14 +192,12 @@ public class UIController : MonoBehaviour
             toolBarChangeButton.enabled = false;
             containerToolBar.GetComponent<UITweener>().PlayForward();
             containerSkill.GetComponent<UITweener>().PlayReverse();
-            containerMove.GetComponent<UITweener>().PlayReverse();
         }
         else
         {
             toolBarChangeButton.enabled = true;
             containerToolBar.GetComponent<UITweener>().PlayReverse();
             containerSkill.GetComponent<UITweener>().PlayReverse();
-            containerMove.GetComponent<UITweener>().PlayReverse();
             isToolbarShow = true;
 
         }
@@ -234,13 +230,11 @@ public class UIController : MonoBehaviour
         {
             containerToolBar.GetComponent<UITweener>().PlayForward();
             containerSkill.GetComponent<UITweener>().PlayForward();
-            containerMove.GetComponent<UITweener>().PlayForward();
         }
         else
         {
             containerToolBar.GetComponent<UITweener>().PlayReverse();
             containerSkill.GetComponent<UITweener>().PlayReverse();
-            containerMove.GetComponent<UITweener>().PlayReverse();
         }
         isToolbarShow = !isToolbarShow;
 
