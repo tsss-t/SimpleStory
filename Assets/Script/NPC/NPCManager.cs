@@ -46,7 +46,7 @@ public class NPCManager : MonoBehaviour
 
         foreach (NPCDATA npc in NPCDictionary.Values)
         {
-            if(npc.FloorNum== SceneManager._instance.floorNum)
+            if(npc.FloorNum== SceneInfomation._instance.floorNum)
             {
                 npcTemp = Instantiate(NPCprefabList[npc.PrefabID], npc.Position, Quaternion.Euler(0,npc.Euler, 0)) as GameObject;
                 npcTemp.name = npc.Name;

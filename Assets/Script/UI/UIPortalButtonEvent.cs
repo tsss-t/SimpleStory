@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class UIPortalButtonEvent : MonoBehaviour
@@ -23,11 +24,11 @@ public class UIPortalButtonEvent : MonoBehaviour
 
         if (floorNumber == -1)
         {
-            LoadingBar.Show(Application.LoadLevelAsync(SceneName.FirstFloor));
+            LoadingBar.Show(SceneManager.LoadSceneAsync(SceneName.FirstFloor));
         }
         if (floorNumber == -100)
         {
-            LoadingBar.Show(Application.LoadLevelAsync(SceneName.LastFloor));
+            LoadingBar.Show(SceneManager.LoadSceneAsync(SceneName.LastFloor));
         }
         GameController._instance.SetLastChangeSceneType(EntryType.Portal);
         Debug.Log(floorNumber);

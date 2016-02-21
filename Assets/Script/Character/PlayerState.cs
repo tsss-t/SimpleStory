@@ -390,11 +390,16 @@ public class PlayerState
     /// <param name="itemBagID">Bag中のid</param>
     public void UseItem(int itemBagID)
     {
-        HP += bag.dictionBag[itemBagID].info.HP;
-        energy += bag.dictionBag[itemBagID].info.energy;
-        bag.DeleteItem(itemBagID);
+        HP=  HP+ bag.dictionBag[itemBagID].info.HP>=HPMax? HPMax: HP + bag.dictionBag[itemBagID].info.HP;
+        energy=energy + bag.dictionBag[itemBagID].info.energy>=energyMax?energyMax: energy + bag.dictionBag[itemBagID].info.energy;
+        
+
         quest.UpdateQuestProcess(bag.BagIDToItemID(itemBagID));
+        bag.DeleteItem(itemBagID);
         PlayerStateChanged(PlayerStateChangeType.bag);
+        PlayerStateChanged(PlayerStateChangeType.HP);
+        PlayerStateChanged(PlayerStateChangeType.energy);
+
     }
     /// <summary>
     /// 装備交換

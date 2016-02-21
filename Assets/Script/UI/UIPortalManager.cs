@@ -30,7 +30,7 @@ public class UIPortalManager : MonoBehaviour
     {
         foreach (KeyValuePair<int, bool> item in GameController._instance.getPortalList())
         {
-            if (item.Key == SceneManager._instance.floorNum)
+            if (item.Key == SceneInfomation._instance.floorNum)
             {
                 go = NGUITools.AddChild(portalGrid, protalPrefabOn);
                 go.transform.Find("mark").GetComponent<UISprite>().spriteName = "pic_星星";
@@ -113,14 +113,14 @@ public class UIPortalManager : MonoBehaviour
     IEnumerator HidePanel()
     {
 
-        tweener.PlayForward();
+        tweener.PlayReverse();
         yield return new WaitForSeconds(tweener.duration);
         tweener.gameObject.SetActive(false);
         isShowPanel = false;
     }
     IEnumerator ShowPanel()
     {
-        tweener.PlayReverse();
+        tweener.PlayForward();
         yield return new WaitForSeconds(tweener.duration);
         isShowPanel = true;
     }

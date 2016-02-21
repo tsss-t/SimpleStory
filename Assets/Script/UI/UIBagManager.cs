@@ -324,14 +324,14 @@ public class UIBagManager : MonoBehaviour
     IEnumerator HidePanel()
     {
 
-        this.GetComponent<UITweener>().PlayForward();
+        this.GetComponent<UITweener>().PlayReverse();
         yield return new WaitForSeconds(this.transform.GetComponent<UITweener>().duration);
         this.gameObject.SetActive(false);
         isShowPanel = false;
     }
     IEnumerator ShowPanel()
     {
-        this.GetComponent<UITweener>().PlayReverse();
+        this.GetComponent<UITweener>().PlayForward();
         yield return new WaitForSeconds(this.transform.GetComponent<UITweener>().duration);
         isShowPanel = true;
     }

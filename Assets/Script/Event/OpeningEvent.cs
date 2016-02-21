@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -99,6 +100,6 @@ public class OpeningEvent : MonoBehaviour {
             }
         }
         yield return new WaitForSeconds(3.0f);
-        loadingUI.Show( Application.LoadLevelAsync(SceneName.Town));
+        loadingUI.Show( SceneManager.LoadSceneAsync(SceneName.Town));
     }
 }

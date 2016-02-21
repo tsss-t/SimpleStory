@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class UIStartMenuManager : MonoBehaviour
@@ -15,7 +16,7 @@ public class UIStartMenuManager : MonoBehaviour
 
     public void OnNewButtonClick()
     {
-        UISceneManager._instance.Show(Application.LoadLevelAsync(SceneName.Opening));
+        UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.Opening));
     }
     public void OnContinueButtonClick()
     {

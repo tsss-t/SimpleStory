@@ -13,7 +13,7 @@ public class UIHpBarManager : MonoBehaviour
 
     public GameObject CreateHpBar(GameObject enemy)
     {
-        GameObject go = NGUITools.AddChild(this.gameObject, HpBar);
+        GameObject go = NGUITools.AddChild(this.gameObject, HpBar); 
         go.GetComponent<UIFollowTarget>().target = enemy.transform;
         return go;
     }
