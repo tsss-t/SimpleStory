@@ -1,9 +1,9 @@
-# ˆÈ‰º‚Ìƒvƒ‰ƒOƒCƒ“‚Í—L—¿‚Ì‚½‚ßBŒöŠJ‚µ‚È‚¢F
-Assets/Plugin/EasyTouchBundle@
-Assets/Plugin/Weapon Effects FX@
-Assets/Plugin/IGSoft_Resources@
-Assets/Plugin/IGSoft_Tools@
-Assets/Plugin/NGUI@
-@
-@
-ƒfƒ‚‚ğ—˜—p‚·‚éÛAGitƒtƒ@ƒCƒ‹ƒTƒCƒY‚ª‚P‚O‚O‚‚‚‚É§ŒÀ‚³‚ê‚Ä‚¢‚é‚½‚ßAƒfƒ‚ƒtƒHƒ‹ƒ_’†‚ÌZIPƒtƒ@ƒCƒ‹‚ğ‰ğ“€‚µ‚Ä‚­‚¾‚³‚¢B
+# å…¬é–‹ã—ãªã„æœ‰æ–™ã¯ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ï¼š
+ã€€Assets/Plugin/EasyTouchBundle
+ã€€Assets/Plugin/Weapon Effects FX
+ã€€Assets/Plugin/IGSoft_Resourcesã€€
+ã€€Assets/Plugin/IGSoft_Toolsã€€
+ã€€Assets/Plugin/NGUIã€€
+ã€€
+# ãƒ‡ãƒ¢ã«ã¤ã„ã¦
+ã€€ãƒ‡ãƒ¢ã‚’åˆ©ç”¨ã™ã‚‹éš›ã€Gitãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºãŒï¼‘ï¼ï¼ï½ï½‚ã«åˆ¶é™ã•ã‚Œã¦ã„ã‚‹ãŸã‚ã€ãƒ‡ãƒ¢ãƒ•ã‚©ãƒ«ãƒ€ä¸­ã®ZIPãƒ•ã‚¡ã‚¤ãƒ«ã‚’è§£å‡ã—ã¦ãã ã•ã„ã€‚
