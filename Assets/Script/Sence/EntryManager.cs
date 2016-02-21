@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public enum EntryType {
@@ -19,7 +20,7 @@ public class EntryManager : MonoBehaviour
     void Awake()
     {
         _instance = this;
-        goToFloorNum = goToFloorNum ==- 1000?SceneManager._instance.floorNum:goToFloorNum;
+        goToFloorNum = goToFloorNum ==- 1000?SceneInfomation._instance.floorNum:goToFloorNum;
     }    // Update is called once per frame
     void Update()
     {
@@ -30,8 +31,9 @@ public class EntryManager : MonoBehaviour
         {
             GameController._instance.SetLastChangeSceneType(entryType);
             //FOR DEBUG
-            onPlayerInEntry(Application.LoadLevelAsync(goToFloorNum));
-            //Application.LoadLevelAsync(goToFloorNum);
+            
+            onPlayerInEntry(SceneManager.LoadSceneAsync(goToFloorNum));
+            //SceneManager.LoadSceneAsync(goToFloorNum);
         }
     }
 }
