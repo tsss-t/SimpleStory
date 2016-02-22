@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEditor;
 using System.Collections.Generic;
 
 public enum UnitType
@@ -18,22 +18,25 @@ public class AreaInfo
     {
 
     }
-
-
-
 }
 
 public class SceneMaker : MonoBehaviour
 {
+    GameObject areaContainer;
     //bool connect = false;
     public GameObject temp;
-    public int length = 0;
+    public int mapwidth = 0;//地图大小 mapwidth x mapheigth
+    public int mapheigth = 0;
     public GameObject[] UpPrefab;
     public GameObject[] DownPrefab;
     public GameObject[] PortalPrefab;
     public GameObject[] RoadPrefab;
     public GameObject[] RoomPrefab;
     public GameObject[] EndPrefab;
+
+    #region Editor
+    public GameObject[] normalPrefab;
+    #endregion
     //#region onePoint
     //public GameObject[] OnePointEndPrefab;
     //public GameObject[] OnePointRoadPrefab;
@@ -60,10 +63,12 @@ public class SceneMaker : MonoBehaviour
     Dictionary<UnitType, GameObject[]> areaPrefabDictionary;
 
     Dictionary<Vector2, GameObject> mapDictionary;
+
+    #region 初期化
     // Use this for initialization
     void Start()
     {
-        //Debug.Log(temp.transform.collider.);
+        //Debug.Log("start!");
         mapDictionary = new Dictionary<Vector2, GameObject>();
         InitDictionary();
     }
@@ -77,179 +82,327 @@ public class SceneMaker : MonoBehaviour
         areaPrefabDictionary.Add(UnitType.Room, RoomPrefab);
         areaPrefabDictionary.Add(UnitType.End, EndPrefab);
     }
+    #endregion
     #region Random Method
-    Vector2 RandomVirtualMapPoiot()
+    /// <summary>
+    /// 取地图上随机点
+    /// </summary>
+    /// <returns>生成的随机点坐标</returns>
+    Vector2 RandomMapPoiot()
     {
-        int x = (int)Random.value * length;
-        int y = (int)Random.value * length;
-        x = x == length ? length - 1 : x;
-        y = y == length ? length - 1 : y;
+        int x = Random.Range(0, mapwidth);
+        int y = Random.Range(0, mapheigth);
         return new Vector2(x, y);
     }
+    /// <summary>
+    /// 取0到indexMax的随机值
+    /// </summary>
+    /// <param name="indexMax">随机值上限</param>
+    /// <returns>生成的随机值</returns>
     int RandomIndex(int indexMax)
     {
-        int x = (int)Random.value * indexMax;
-        return x == indexMax ? indexMax - 1 : x;
+        int x = Random.Range(0, indexMax);
+        Debug.Log(indexMax);
+        Debug.Log(x);
+        return x;
     }
-    void RandomArea()
+    /// <summary>
+    /// 从ROAD,ROOM,POTAL,END等场景中随机抽选场景
+    /// </summary>
+    /// <returns>随机普通场景</returns>
+    GameObject RandomNormalArea()
     {
-
+        return normalPrefab[Random.Range(0, normalPrefab.Length)];
     }
+    /// <summary>
+    /// 在规定范围内产生随机方向
+    /// </summary>
+    /// <param name="position">生成的位置</param>
+    /// <param name="areaInfo">需要生成的区域信息</param>
+    /// <returns>方向的Int值（）</returns>
+    AngleFix RandomMapRotation(Vector2 position, AreaManager areaInfo)
+    {
+        List<AngleFix> canSetDirection = new List<AngleFix>();
+        if (checkSize(position, areaInfo.width, areaInfo.height))
+        {
+            canSetDirection.Add(AngleFix.Angle0);
+            canSetDirection.Add(AngleFix.Angle180);
+        }
+        if (checkSize(position, areaInfo.height, areaInfo.width))
+        {
+            canSetDirection.Add(AngleFix.Angle90);
+            canSetDirection.Add(AngleFix.Angle270);
+        }
+        return canSetDirection.Count == 0 ? AngleFix.none : canSetDirection[RandomIndex(canSetDirection.Count)];
+        //AreaOut[] tempAreaOut;1
+
+        //tempAreaOut = areaOut;
+        //List<AngleFix> canSetDirection = new List<AngleFix>();
+
+        //if (checkRotation(position, virtualSize, tempAreaOut))
+        //{
+        //    canSetDirection.Add(AngleFix.Angle0);
+        //}
+        //tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle90);
+        //if (checkRotation(position, virtualSize, tempAreaOut))
+        //{
+        //    canSetDirection.Add(AngleFix.Angle90);
+        //}
+        //tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle180);
+        //if (checkRotation(position, virtualSize, tempAreaOut))
+        //{
+        //    canSetDirection.Add(AngleFix.Angle180);
+        //}
+        //tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle270);
+        //if (checkRotation(position, virtualSize, tempAreaOut))
+        //{
+        //    canSetDirection.Add(AngleFix.Angle270);
+        //}
+        //return canSetDirection.Count == 0 ? -1 : (int)canSetDirection[Random.Range(0, canSetDirection.Count - 1)];
+    }
+
+    /// <summary>
+    /// 打乱数组(用于随机完全遍历)
+    /// </summary>
+    /// <param name="areaOutList"></param>
+    /// <returns></returns>
+    AreaOut[] RandomAreaOut(AreaOut[] areaOutList)
+    {
+        AreaOut[] tempAreaOutList = new AreaOut[areaOutList.Length];
+        int x;
+        for (int i = 0; i < tempAreaOutList.Length; i++)
+        {
+            x = Random.Range(0, tempAreaOutList.Length);
+            tempAreaOutList[i] = areaOutList[x];
+            tempAreaOutList[x] = areaOutList[i];
+        }
+        return tempAreaOutList;
+    }
+
     #endregion
-    #region MakeUpStair
-    void MakeUpPoint()
+    #region makeScene
+    public void MakeUpPoint()
     {
         Vector2 upPoint;
         GameObject area;
         AreaManager areaManager;
+        AngleFix angle;
         do
         {
-            upPoint = RandomVirtualMapPoiot();
+            upPoint = RandomMapPoiot();
             area = UpPrefab[RandomIndex(UpPrefab.Length)];
             areaManager = area.GetComponent<AreaManager>();
+            angle = RandomMapRotation(upPoint, areaManager);
         }
-        while (RandomMapRotation(upPoint, new Vector2(areaManager.width / 10, areaManager.height / 10), areaManager.areaOut) == -1);
+        while (angle == AngleFix.none);
 
-        for (int i = 0; i < areaManager.areaOut.Length; i++)
-        {
-            MakeNextArea(new Vector2(areaManager.areaOut[i].virtualPosition.x + upPoint.x, areaManager.areaOut[i].virtualPosition.y + upPoint.y), (int)areaManager.areaOut[i].direction + 2 > 4 ? areaManager.areaOut[i].direction - 2 : areaManager.areaOut[i].direction + 2);
-        }
+
+        CreateArea(area, upPoint, angle);
+
+        //for (int i = 0; i < areaManager.areaOut.Length; i++)
+        //{
+        //    MakeNormalArea(areaManager.areaOut[i].Rot(angle), areaManager.areaOut[i].direction.TureBack() );
+        //}
     }
+
+
     /// <summary>
     /// 生成下一个地区
     /// </summary>
     /// <param name="entryPoint">生成的入口点</param>
     /// <param name="needDirection">入口点的方向</param>
-    void MakeNextArea(Vector2 entryPoint, OutDirection needDirection)
+    void MakeNormalArea(Vector2 entryPoint, OutDirection needDirection)
     {
+        GameObject areaPrefab;
+        //GameObject changedPrefab;
+        AreaManager areaManager;
+        AreaOut[] areaOutList;
+        Vector3 areaPostion = Vector3.zero;
+
+        AngleFix angle = AngleFix.none;
+
+        bool checkRes = false;
+        do
+        {
+            areaPrefab = RandomNormalArea();
+
+            areaManager = areaPrefab.GetComponent<AreaManager>();
+            areaOutList = RandomAreaOut(areaManager.areaOut);
+            for (int i = 0; i < areaOutList.Length; i++)
+            {
+                angle = areaOutList[i].direction.getAngleFromTargetDirection(needDirection);
+
+                areaPostion = new Vector3(entryPoint.x, 0, entryPoint.y) - areaOutList[i].Rot(angle);
+
+                if (angle == AngleFix.Angle90 || angle == AngleFix.Angle270)
+                {
+                    checkRes = CheckArea(areaPostion, areaManager, true);
+                }
+                else
+                {
+                    checkRes = CheckArea(areaPostion, areaManager, false);
+                }
+                //changedPrefab = areaPrefab.Rot(entryPoint, angle);
+            }
+        } while (checkRes);
+
+        CreateArea(areaPrefab, new Vector2(areaPostion.x, areaPostion.z), angle);
+
         //TODO:生成方法
     }
-
-    int RandomMapRotation(Vector2 position, Vector2 virtualSize, AreaOut[] areaOut)
+    void CreateArea(GameObject go, Vector2 position, AngleFix angle)
     {
-        AreaOut[] tempAreaOut;
-
-        tempAreaOut = areaOut;
-        List<AngleFix> canSetDirection = new List<AngleFix>();
-
-        if (checkRotation(position, virtualSize, tempAreaOut))
+        if (areaContainer == null)
         {
-            canSetDirection.Add(AngleFix.Angle0);
+            areaContainer = new GameObject("Environment");
         }
-        tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle90);
-        if (checkRotation(position, virtualSize, tempAreaOut))
-        {
-            canSetDirection.Add(AngleFix.Angle90);
-        }
-        tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle180);
-        if (checkRotation(position, virtualSize, tempAreaOut))
-        {
-            canSetDirection.Add(AngleFix.Angle180);
-        }
-        tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle270);
-        if (checkRotation(position, virtualSize, tempAreaOut))
-        {
-            canSetDirection.Add(AngleFix.Angle270);
-        }
-        return canSetDirection.Count == 0 ? -1 : (int)canSetDirection[Random.Range(0, canSetDirection.Count - 1)];
+        GameObject gameObject = PrefabUtility.InstantiatePrefab(go) as GameObject;
+        gameObject.transform.parent = areaContainer.transform;
+        gameObject.transform.position = new Vector3(position.x, 0, position.y);
+        gameObject.transform.rotation = Quaternion.Euler(0, (int)angle, 0);
     }
-
-
-    bool checkRotation(Vector2 position, Vector2 virtualSize, AreaOut[] areaOut)
+    #endregion
+    #region check
+    /// <summary>
+    /// 检验是否生成的区域在地图规定大小区域范围内
+    /// </summary>
+    /// <param name="position">生成点坐标</param>
+    /// <param name="width">区域的长度</param>
+    /// <param name="height">区域的宽度</param>
+    /// <returns>是否超出地图设置范围： true=通过检测，不超出</returns>
+    bool checkSize(Vector2 position, int width, int height)
     {
-
-        if (position.x + virtualSize.x - 1 >= length || position.y + virtualSize.y - 1 >= length)
+        if (position.x + width * 0.5 > mapwidth ||
+            position.x - width * 0.5 < 0 ||
+            position.y + height * 0.5 > mapheigth ||
+            position.y - height * 0.5 < 0)
         {
             return false;
         }
-
-        GameObject tempInfo;
-        Vector2 closeAreaPosition;
-        OutDirection needDirection;
-
-        for (int i = 0; i < areaOut.Length; i++)
-        {
-            switch (areaOut[i].direction)
-            {
-                case OutDirection.up:
-                    {
-                        //与该路口的相邻点虚拟（地图）世界坐标
-                        closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x, position.y + areaOut[i].virtualPosition.y - 1);
-                        needDirection = OutDirection.down;
-                        break;
-                    }
-                case OutDirection.down:
-                    {
-                        //与该路口的相邻点虚拟（地图）世界坐标
-                        closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x, position.y + areaOut[i].virtualPosition.y + 1);
-                        needDirection = OutDirection.up;
-                        break;
-                    }
-                case OutDirection.left:
-                    {
-                        closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x - 1, position.y + areaOut[i].virtualPosition.y);
-                        needDirection = OutDirection.right;
-                        break;
-                    }
-                case OutDirection.right:
-                    {
-                        closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x - 1, position.y + areaOut[i].virtualPosition.y);
-                        needDirection = OutDirection.left;
-                        break;
-                    }
-                default:
-                    closeAreaPosition = new Vector2(-1, -1);
-                    needDirection = OutDirection.up;
-                    break;
-            }
-            mapDictionary.TryGetValue(closeAreaPosition, out tempInfo);
-
-            //如果该相邻点安置了任何区域，并且该区域该点的路口设置不能通过连接验证（该点没有路口设置或者路口方向不正确）
-            if (tempInfo != null && !checkRoadCross(closeAreaPosition, tempInfo.GetComponent<AreaManager>(), needDirection))
-            {
-                return false;
-            }
-        }
         return true;
     }
-    /// <summary>
-    /// 验证地图上一个点是否为地图可以接通的方向
-    /// </summary>
-    /// <param name="worldVirtualPosition">验证点的虚拟（地图）世界坐标</param>
-    /// <param name="targetArea">对象区域的信息对象</param>
-    /// <param name="targetNeedDirection">需求该相邻区域的方向</param>
-    /// <returns></returns>
-    bool checkRoadCross(Vector2 worldVirtualPosition, AreaManager targetArea, OutDirection targetNeedDirection)
+
+    bool CheckArea(Vector3 position, AreaManager areaManager, bool roted)
     {
-        Vector2 localAreaPosition = worldVirtualPosition - targetArea.virtualPosition;
-        for (int i = 0; i < targetArea.areaOut.Length; i++)
+        if (roted)
         {
-            //路口位置坐标找到并且该位置上于所需求的方向一致，则通过验证
-            if (localAreaPosition == targetArea.areaOut[i].virtualPosition && targetArea.areaOut[i].direction == targetNeedDirection)
-            {
-                return true;
-            }
+            return !Physics.CapsuleCast(
+                new Vector3(areaManager.centerPointLeftRoted.x, 100, areaManager.centerPointLeftRoted.z),
+                new Vector3(areaManager.centerPointRightRoted.x, 100, areaManager.centerPointRightRoted.z),
+                areaManager.centerPointUpRoted.magnitude / 2,
+                Vector3.down)
+
+                &&
+
+                checkSize(position, areaManager.height, areaManager.width);
         }
-        return false;
-    }
-    #endregion 
-    void MakeDowPoint()
-    {
+        else
+        {
+            return !Physics.CapsuleCast(
+               new Vector3(areaManager.centerPointLeft.x, 100, areaManager.centerPointLeft.z),
+               new Vector3(areaManager.centerPointRight.x, 100, areaManager.centerPointLeft.z),
+                areaManager.centerPointUp.magnitude / 2,
+                Vector3.down)
 
-    }
-    void MakeMap()
-    {
+                &&
 
+                checkSize(position, areaManager.width, areaManager.height);
+        }
     }
-    // Update is called once per frame
-    void Update()
-    {
+    //bool checkRotation(Vector2 position, Vector2 virtualSize, AreaOut[] areaOut)
+    //{
 
-    }
+    //    if (position.x + virtualSize.x - 1 >= length || position.y + virtualSize.y - 1 >= length)
+    //    {
+    //        return false;
+    //    }
 
-    bool CheckArea()
-    {
-        return false;
-    }
+    //    GameObject tempInfo;
+    //    Vector2 closeAreaPosition;
+    //    OutDirection needDirection;
+
+    //    for (int i = 0; i < areaOut.Length; i++)
+    //    {
+    //        switch (areaOut[i].direction)
+    //        {
+    //            case OutDirection.up:
+    //                {
+    //                    //与该路口的相邻点虚拟（地图）世界坐标
+    //                    closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x, position.y + areaOut[i].virtualPosition.y - 1);
+    //                    needDirection = OutDirection.down;
+    //                    break;
+    //                }
+    //            case OutDirection.down:
+    //                {
+    //                    //与该路口的相邻点虚拟（地图）世界坐标
+    //                    closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x, position.y + areaOut[i].virtualPosition.y + 1);
+    //                    needDirection = OutDirection.up;
+    //                    break;
+    //                }
+    //            case OutDirection.left:
+    //                {
+    //                    closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x - 1, position.y + areaOut[i].virtualPosition.y);
+    //                    needDirection = OutDirection.right;
+    //                    break;
+    //                }
+    //            case OutDirection.right:
+    //                {
+    //                    closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x - 1, position.y + areaOut[i].virtualPosition.y);
+    //                    needDirection = OutDirection.left;
+    //                    break;
+    //                }
+    //            default:
+    //                closeAreaPosition = new Vector2(-1, -1);
+    //                needDirection = OutDirection.up;
+    //                break;
+    //        }
+    //        mapDictionary.TryGetValue(closeAreaPosition, out tempInfo);
+
+    //        //如果该相邻点安置了任何区域，并且该区域该点的路口设置不能通过连接验证（该点没有路口设置或者路口方向不正确）
+    //        if (tempInfo != null && !checkRoadCross(closeAreaPosition, tempInfo.GetComponent<AreaManager>(), needDirection))
+    //        {
+    //            return false;
+    //        }
+    //    }
+    //    return true;
+    //}
+    ///// <summary>
+    ///// 验证地图上一个点是否为地图可以接通的方向
+    ///// </summary>
+    ///// <param name="worldVirtualPosition">验证点的虚拟（地图）世界坐标</param>
+    ///// <param name="targetArea">对象区域的信息对象</param>
+    ///// <param name="targetNeedDirection">需求该相邻区域的方向</param>
+    ///// <returns></returns>
+    //bool checkRoadCross(Vector2 worldVirtualPosition, AreaManager targetArea, OutDirection targetNeedDirection)
+    //{
+    //    Vector2 localAreaPosition = worldVirtualPosition - targetArea.centerPosition;
+    //    for (int i = 0; i < targetArea.areaOut.Length; i++)
+    //    {
+    //        //路口位置坐标找到并且该位置上于所需求的方向一致，则通过验证
+    //        if (localAreaPosition == targetArea.areaOut[i].virtualPosition && targetArea.areaOut[i].direction == targetNeedDirection)
+    //        {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    #endregion
+
+
+    //void MakeDownPoint()
+    //{
+
+    //}
+    //void MakeMap()
+    //{
+
+    //}
+    //// Update is called once per frame
+    //void Update()
+    //{
+
+    //}
+
+
 
 }
