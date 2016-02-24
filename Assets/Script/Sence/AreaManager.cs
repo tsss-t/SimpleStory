@@ -11,15 +11,20 @@ public enum AngleFix
 [System.Serializable]
 public struct AreaOut
 {
-    public GameObject position;
+    public Vector3 position;
     public OutDirection direction;
-
-    //
 }
-
-public class AreaManager : MonoBehaviour
+[System.Serializable]
+public struct AreaOutGO
 {
-
+    public GameObject location;
+    public OutDirection direction;
+}
+[System.Serializable]
+public class AreaInfo
+{
+    
+    public GameObject area;
     public int height;
     public int width;
     public Vector3 centerPointUp;
@@ -27,24 +32,51 @@ public class AreaManager : MonoBehaviour
     public Vector3 centerPointLeft;
     public Vector3 centerPointRight;
 
-
-    public Vector3 centerPointUpRoted;
-    public Vector3 centerPointDownRoted;
-    public Vector3 centerPointLeftRoted;
-    public Vector3 centerPointRightRoted;
     public AreaOut[] areaOut;
-    public int[] test;
-
-
+    public AreaInfo()
+    {
+       
+    }
+}
+public class AreaManager : MonoBehaviour
+{
+    public AreaOutGO[] AreaOutGOList;
+    public AreaInfo AreaAngle0 ;
+    public AreaInfo AreaAngle90 ;
+    public AreaInfo AreaAngle180 ;
+    public AreaInfo AreaAngle270 ;
+    //public int height;
+    //public int width;
+    //public Vector3 centerPointUp;
+    //public Vector3 centerPointDown;
+    //public Vector3 centerPointLeft;
+    //public Vector3 centerPointRight;
+    //public AreaOut[] areaOut;
     // Use this for initialization
     void Start()
     {
 
     }
-
     // Update is called once per frame
     void Update()
     {
 
+    }
+    public AreaInfo GetAreaInfo(AngleFix angle)
+    {
+        switch (angle)
+        {
+            case AngleFix.none:
+                return AreaAngle0;
+            case AngleFix.Angle0:
+                return AreaAngle0;
+            case AngleFix.Angle90:
+                return AreaAngle90;
+            case AngleFix.Angle180:
+                return AreaAngle180;
+            case AngleFix.Angle270:
+                return AreaAngle270;
+        }
+        return AreaAngle0;
     }
 }

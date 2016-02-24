@@ -10,15 +10,7 @@ public enum AreaShape
 {
     OnePoint, TowStrike, ThreeStrike, FourStrike, ForSquare
 }
-public class AreaInfo
-{
-    public Vector4 roadOut;
-    GameObject prefab;
-    public AreaInfo(AreaShape areaShape, UnitType unitType, GameObject prefab)
-    {
 
-    }
-}
 
 public class SceneMaker : MonoBehaviour
 {
@@ -33,7 +25,7 @@ public class SceneMaker : MonoBehaviour
     public GameObject[] RoadPrefab;
     public GameObject[] RoomPrefab;
     public GameObject[] EndPrefab;
-
+    public GameObject[] cornerPrefab;
     #region Editor
     public GameObject[] normalPrefab;
     #endregion
@@ -102,8 +94,6 @@ public class SceneMaker : MonoBehaviour
     int RandomIndex(int indexMax)
     {
         int x = Random.Range(0, indexMax);
-        Debug.Log(indexMax);
-        Debug.Log(x);
         return x;
     }
     /// <summary>
@@ -123,12 +113,13 @@ public class SceneMaker : MonoBehaviour
     AngleFix RandomMapRotation(Vector2 position, AreaManager areaInfo)
     {
         List<AngleFix> canSetDirection = new List<AngleFix>();
-        if (checkSize(position, areaInfo.width, areaInfo.height))
+
+        if (checkSize(position, areaInfo.AreaAngle0.width, areaInfo.AreaAngle0.height))
         {
             canSetDirection.Add(AngleFix.Angle0);
             canSetDirection.Add(AngleFix.Angle180);
         }
-        if (checkSize(position, areaInfo.height, areaInfo.width))
+        if (checkSize(position, areaInfo.AreaAngle90.width, areaInfo.AreaAngle90.height))
         {
             canSetDirection.Add(AngleFix.Angle90);
             canSetDirection.Add(AngleFix.Angle270);
@@ -199,10 +190,11 @@ public class SceneMaker : MonoBehaviour
 
         CreateArea(area, upPoint, angle);
 
-        //for (int i = 0; i < areaManager.areaOut.Length; i++)
-        //{
-        //    MakeNormalArea(areaManager.areaOut[i].Rot(angle), areaManager.areaOut[i].direction.TureBack() );
-        //}
+        for (int i = 0; i < areaManager.AreaOutGOList.Length; i++)
+        {
+
+            MakeNormalArea(areaManager.GetAreaInfo(angle).areaOut[i].position + new Vector3(upPoint.x, 0, upPoint.y), areaManager.GetAreaInfo(angle).areaOut[i].direction.TureBack());
+        }
     }
 
 
@@ -211,7 +203,7 @@ public class SceneMaker : MonoBehaviour
     /// </summary>
     /// <param name="entryPoint">生成的入口点</param>
     /// <param name="needDirection">入口点的方向</param>
-    void MakeNormalArea(Vector2 entryPoint, OutDirection needDirection)
+    void MakeNormalArea(Vector3 entryPoint, OutDirection needDirection)
     {
         GameObject areaPrefab;
         //GameObject changedPrefab;
@@ -227,20 +219,25 @@ public class SceneMaker : MonoBehaviour
             areaPrefab = RandomNormalArea();
 
             areaManager = areaPrefab.GetComponent<AreaManager>();
-            areaOutList = RandomAreaOut(areaManager.areaOut);
+            areaOutList = RandomAreaOut(areaManager.AreaAngle0.areaOut);
             for (int i = 0; i < areaOutList.Length; i++)
             {
+
                 angle = areaOutList[i].direction.getAngleFromTargetDirection(needDirection);
 
-                areaPostion = new Vector3(entryPoint.x, 0, entryPoint.y) - areaOutList[i].Rot(angle);
+                areaPostion = entryPoint - areaOutList[i].Rot(angle).position;
 
                 if (angle == AngleFix.Angle90 || angle == AngleFix.Angle270)
                 {
-                    checkRes = CheckArea(areaPostion, areaManager, true);
+                    checkRes = CheckArea(areaPostion, areaManager, angle);
                 }
                 else
                 {
-                    checkRes = CheckArea(areaPostion, areaManager, false);
+                    checkRes = CheckArea(areaPostion, areaManager, angle);
+                }
+                if (checkRes)
+                {
+                    break;
                 }
                 //changedPrefab = areaPrefab.Rot(entryPoint, angle);
             }
@@ -281,33 +278,36 @@ public class SceneMaker : MonoBehaviour
         }
         return true;
     }
-
-    bool CheckArea(Vector3 position, AreaManager areaManager, bool roted)
+    /// <summary>
+    /// 用投影的方式确认该地区是否与其他地区重合
+    /// </summary>
+    /// <param name="position">区域地点</param>
+    /// <param name="areaManager">区域信息</param>
+    /// <param name="roted">是否旋转</param>
+    /// <returns></returns>
+    bool CheckArea(Vector3 position, AreaManager areaManager, AngleFix angle)
     {
-        if (roted)
-        {
-            return !Physics.CapsuleCast(
-                new Vector3(areaManager.centerPointLeftRoted.x, 100, areaManager.centerPointLeftRoted.z),
-                new Vector3(areaManager.centerPointRightRoted.x, 100, areaManager.centerPointRightRoted.z),
-                areaManager.centerPointUpRoted.magnitude / 2,
-                Vector3.down)
+        AreaInfo info = areaManager.GetAreaInfo(angle);
+        //left to right
+        return 
+            !Physics.CapsuleCast(
+          position + new Vector3(0, 100, info.centerPointLeft.z + 2),
+          position + new Vector3(0, 100, info.centerPointRight.z - 2),
+            info.centerPointUp.magnitude / 2,
+            Vector3.down)
 
-                &&
+            &&
 
-                checkSize(position, areaManager.height, areaManager.width);
-        }
-        else
-        {
-            return !Physics.CapsuleCast(
-               new Vector3(areaManager.centerPointLeft.x, 100, areaManager.centerPointLeft.z),
-               new Vector3(areaManager.centerPointRight.x, 100, areaManager.centerPointLeft.z),
-                areaManager.centerPointUp.magnitude / 2,
-                Vector3.down)
+            !Physics.CapsuleCast(
+          position + new Vector3(info.centerPointUp.x + 2, 100, 0),
+          position + new Vector3(info.centerPointDown.x - 2, 100, 0),
+            info.centerPointUp.magnitude / 2,
+            Vector3.down)
 
-                &&
+            &&
 
-                checkSize(position, areaManager.width, areaManager.height);
-        }
+            checkSize(position, info.width, info.height);
+
     }
     //bool checkRotation(Vector2 position, Vector2 virtualSize, AreaOut[] areaOut)
     //{
