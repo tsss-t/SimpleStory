@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 
@@ -12,54 +13,163 @@ public class AreaManagerEditor : Editor
     public override void OnInspectorGUI()
     {
         areaManager = (AreaManager)target;
-        //int pix = 10;
-        //GUILayout.Label(string.Format("World : Map(virtual) = {0} : 1", pix));
-        areaManager.height = EditorGUILayout.IntField("Height", areaManager.height);
-        areaManager.width = EditorGUILayout.IntField("Width", areaManager.width);
-        areaManager.centerPointUp = EditorGUILayout.Vector3Field("centerPointUp", new Vector3(0, 0, areaManager.height / 2));
-        areaManager.centerPointDown = EditorGUILayout.Vector3Field("centerPointDown", new Vector3(0, 0, -areaManager.height / 2));
-        areaManager.centerPointLeft = EditorGUILayout.Vector3Field("centerPointLeft", new Vector3(-areaManager.width / 2, 0, 0));
-        areaManager.centerPointRight = EditorGUILayout.Vector3Field("centerPointRight", new Vector3(areaManager.width / 2, 0, 0));
 
-        areaManager.centerPointUpRoted = EditorGUILayout.Vector3Field("centerPointUpRoted", new Vector3(0, 0, areaManager.width / 2));
-        areaManager.centerPointDownRoted = EditorGUILayout.Vector3Field("centerPointDownRoted", new Vector3(0, 0, -areaManager.width / 2));
-        areaManager.centerPointLeftRoted = EditorGUILayout.Vector3Field("centerPointLeftRoted", new Vector3(-areaManager.height / 2, 0, 0));
-        areaManager.centerPointRightRoted = EditorGUILayout.Vector3Field("centerPointRightRoted", new Vector3(areaManager.height / 2, 0, 0));
+        if (areaManager.AreaOutGOList==null)
+        {
+            areaManager.AreaOutGOList = new AreaOutGO[0];
+        }
+
+        GUILayout.Label(string.Format("Input the data in rota 0°,then put the button to compute other data"));
 
         serializedObject.Update();
-        SerializedProperty areaOutList = serializedObject.FindProperty("areaOut");
-        EditorGUILayout.PropertyField(areaOutList);
-        EditorGUI.indentLevel += 1;
-        if (areaOutList.isExpanded)
+        SerializedProperty areaOutGOList = serializedObject.FindProperty("AreaOutGOList");
+        EditorGUILayout.PropertyField(areaOutGOList);
+        if (areaOutGOList.isExpanded)
         {
-            EditorGUILayout.PropertyField(areaOutList.FindPropertyRelative("Array.size"));
-            for (int i = 0; i < areaOutList.arraySize; i++)
+            EditorGUI.indentLevel += 1;
+            EditorGUILayout.PropertyField(areaOutGOList.FindPropertyRelative("Array.size"));
+            for (int j = 0; j < areaOutGOList.arraySize; j++)
             {
-                SerializedProperty areaOut = areaOutList.GetArrayElementAtIndex(i);
+                SerializedProperty areaOut = areaOutGOList.GetArrayElementAtIndex(j);
                 EditorGUILayout.PropertyField(areaOut);
-                EditorGUI.indentLevel += 1;
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.PropertyField(areaOut.FindPropertyRelative("position"));
-
-                if (GUILayout.Button("Create Entry"))
+                if (areaOut.isExpanded)
                 {
-                    if (areaManager.transform.Find(string.Format("entry{0}", i)) == null)
+                    EditorGUI.indentLevel += 1;
+                    if (GUILayout.Button("Create Entry", GUILayout.Width(300)))
                     {
-                        GameObject entryGameObj = new GameObject(string.Format("entry{0}", i));
-                        entryGameObj.transform.parent = areaManager.transform;
-                        entryGameObj.transform.localPosition = Vector3.zero;
-                        entryGameObj.transform.localScale = Vector3.one;
-                        areaManager.areaOut[i].position = entryGameObj;
+                        if (areaManager.transform.Find(string.Format("entry{0}", j)) == null)
+                        {
+                            GameObject entryGameObj = new GameObject(string.Format("entry{0}", j));
+                            entryGameObj.transform.parent = areaManager.transform;
+                            entryGameObj.transform.localPosition = Vector3.zero;
+                            entryGameObj.transform.localScale = Vector3.one;
+                            areaManager.AreaOutGOList[j].location = entryGameObj;
+                        }
                     }
-                }
-                EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.PropertyField(areaOut.FindPropertyRelative("location"));
+                    EditorGUILayout.PropertyField(areaOut.FindPropertyRelative("direction"));
+                    EditorGUILayout.EndHorizontal();
 
-                EditorGUILayout.PropertyField(areaOut.FindPropertyRelative("direction"));
-                EditorGUI.indentLevel -= 1;
+                    EditorGUI.indentLevel -= 1;
+                }
+
             }
+            EditorGUI.indentLevel -= 1;
+
         }
-        EditorGUI.indentLevel -= 1;
         serializedObject.ApplyModifiedProperties();
+
+
+        for (int angle = 0; angle < 360; angle += 90)
+        {
+            AreaInfo areaInfo = areaManager.AreaAngle0;
+            switch (angle)
+            {
+                case 90:
+                    {
+                        areaInfo = areaManager.AreaAngle90;
+                        break;
+                    }
+                case 180:
+                    {
+                        areaInfo = areaManager.AreaAngle180;
+                        break;
+                    }
+                case 270:
+                    {
+                        areaInfo = areaManager.AreaAngle270;
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+
+            if (angle == 90)
+            {
+                if (GUILayout.Button("Compute other location info"))
+                {
+                    ComputeRotInfo();
+                }
+            }
+            serializedObject.Update();
+            SerializedProperty areaInfoPro = serializedObject.FindProperty(string.Format("AreaAngle{0}", angle));
+            EditorGUILayout.PropertyField(areaInfoPro);
+            EditorGUI.indentLevel += 1;
+
+            if (areaInfoPro.isExpanded)
+            {
+                GUILayout.Label(string.Format("This is the data after rota {0}", angle));
+                areaInfo.height = EditorGUILayout.IntField("Height", areaInfo.height);
+                areaInfo.width = EditorGUILayout.IntField("Width", areaInfo.width);
+                areaInfo.centerPointUp = EditorGUILayout.Vector3Field("centerPointUp", new Vector3(-areaInfo.height / 2, 0, 0));
+                areaInfo.centerPointDown = EditorGUILayout.Vector3Field("centerPointDown", new Vector3(areaInfo.height / 2, 0, 0));
+                areaInfo.centerPointLeft = EditorGUILayout.Vector3Field("centerPointLeft", new Vector3(0, 0, -areaInfo.width / 2));
+                areaInfo.centerPointRight = EditorGUILayout.Vector3Field("centerPointRight", new Vector3(0, 0, areaInfo.width / 2));
+                SerializedProperty areaOutList = areaInfoPro.FindPropertyRelative("areaOut");
+
+                EditorGUILayout.PropertyField(areaOutList);
+                if (areaOutList.isExpanded)
+                {
+                    areaOutList.FindPropertyRelative("Array.size").intValue = areaManager.AreaOutGOList.Length;
+
+                    EditorGUI.indentLevel += 1;
+                    for (int j = 0; j < areaManager.AreaOutGOList.Length; j++)
+                    {
+                        SerializedProperty areaOut = areaOutList.GetArrayElementAtIndex(j);
+                        EditorGUILayout.PropertyField(areaOut);
+                        if (areaOut.isExpanded)
+                        {
+                            EditorGUI.indentLevel += 1;
+                            EditorGUILayout.BeginHorizontal();
+                            SerializedProperty postion = areaOut.FindPropertyRelative("position");
+                            SerializedProperty direction = areaOut.FindPropertyRelative("direction");
+                            if(angle==0)
+                            {
+                                if (areaManager.AreaOutGOList[j].location.Equals(null) || areaManager.AreaOutGOList[j].direction.Equals(null))
+                                {
+                                    postion.vector3Value = Vector3.zero;
+                                    direction.intValue = -1;
+                                }
+                                else
+                                {
+                                    postion.vector3Value = areaManager.AreaOutGOList[j].location.transform.localPosition;
+                                    direction.intValue = (int)areaManager.AreaOutGOList[j].direction;
+                                }
+                            }
+                            EditorGUILayout.LabelField(string.Format("Position:  x:{0} y:{1} z:{2}", postion.vector3Value.x, postion.vector3Value.y, postion.vector3Value.z));
+                            EditorGUILayout.LabelField(string.Format("Direction: {0} ", (OutDirection)direction.intValue));
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUI.indentLevel -= 1;
+                        }
+                    }
+                    EditorGUI.indentLevel -= 1;
+                }
+            }
+            EditorGUI.indentLevel -= 1;
+            serializedObject.ApplyModifiedProperties();
+        }
+        //int pix = 10;
+        //GUILayout.Label(string.Format("World : Map(virtual) = {0} : 1", pix));
+    }
+    public void ComputeRotInfo()
+    {
+        //height
+        areaManager.AreaAngle90.height = areaManager.AreaAngle0.width;
+        areaManager.AreaAngle180.height = areaManager.AreaAngle0.height;
+        areaManager.AreaAngle270.height = areaManager.AreaAngle0.width;
+        //width
+        areaManager.AreaAngle90.width = areaManager.AreaAngle0.height;
+        areaManager.AreaAngle180.width = areaManager.AreaAngle0.width;
+        areaManager.AreaAngle270.width = areaManager.AreaAngle0.height;
+
+        for (int j = 0; j < areaManager.AreaOutGOList.Length; j++)
+        {
+            areaManager.AreaAngle90.areaOut[j] = areaManager.AreaAngle0.areaOut[j].Rot(AngleFix.Angle90);
+            areaManager.AreaAngle180.areaOut[j] = areaManager.AreaAngle90.areaOut[j].Rot(AngleFix.Angle90);
+            areaManager.AreaAngle270.areaOut[j] = areaManager.AreaAngle180.areaOut[j].Rot(AngleFix.Angle90);
+        }
     }
 }
 

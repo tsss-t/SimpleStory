@@ -11,13 +11,29 @@ public static class ExFuction
         rate.constantMax = emissionRate;
         emission.rate = rate;
     }
-    public static Vector3 Rot(this AreaOut areaOut, AngleFix angle)
+    public static AreaOut Rot(this AreaOut areaOut, AngleFix angle)
     {
         AreaOut tempArea;
         tempArea.position = areaOut.position;
         tempArea.direction = areaOut.direction;
-        tempArea.position.transform.Rotate(Vector3.zero, (int)angle);
-        return tempArea.position.transform.position;
+        switch (angle)
+        {
+            case AngleFix.Angle90:
+                tempArea.position = new Vector3(tempArea.position.z, 0, -tempArea.position.x);
+                tempArea.direction = (int)tempArea.direction + 1 > 4 ? tempArea.direction - 3 : tempArea.direction + 1;
+                break;
+            case AngleFix.Angle180:
+                tempArea.position = new Vector3(-tempArea.position.x, 0, -tempArea.position.z);
+                tempArea.direction = (int)tempArea.direction + 2 > 4 ? tempArea.direction - 2 : tempArea.direction + 2;
+                break;
+            case AngleFix.Angle270:
+                tempArea.position = new Vector3(-tempArea.position.z, 0, tempArea.position.x);
+                tempArea.direction = (int)tempArea.direction + 3 > 4 ? tempArea.direction - 1 : tempArea.direction + 3;
+                break;
+            default:
+                break;
+        }
+        return tempArea;
     }
     public static GameObject Rot(this GameObject gameObject, Vector3 referencePoint, AngleFix angle)
     {
@@ -35,7 +51,14 @@ public static class ExFuction
     }
     public static AngleFix getAngleFromTargetDirection(this OutDirection direction, OutDirection targetDirection)
     {
-        return (AngleFix)((((int)targetDirection - (int)direction > 0 ? (int)targetDirection - (int)direction : (int)targetDirection - (int)direction + 4) - 1) * 90);
+        return (AngleFix)(
+            (int)targetDirection - (int)direction > 0
+            ?
+            ((int)targetDirection - (int)direction) * 90
+            :
+            ((int)targetDirection - (int)direction + 4) * 90
+            )
+            ;
     }
 
 }
