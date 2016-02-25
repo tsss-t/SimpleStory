@@ -10,8 +10,23 @@ public enum AreaShape
 {
     OnePoint, TowStrike, ThreeStrike, FourStrike, ForSquare
 }
-
-
+#region data
+[System.Serializable]
+public struct sceneData
+{
+    string areaPrefabName;//使用的prefab名
+    Vector3 position;//区域中心点坐标
+    int height;//区域大小
+    int weidth;//区域大小
+}
+[System.Serializable]
+public struct entryData
+{
+    Vector3 position;//地点坐标
+    OutDirection direction;//方向
+    bool isCrossed;//是否连通
+}
+#endregion
 public class SceneMaker : MonoBehaviour
 {
     GameObject areaContainer;
@@ -28,6 +43,8 @@ public class SceneMaker : MonoBehaviour
     public GameObject[] cornerPrefab;
     #region Editor
     public GameObject[] normalPrefab;
+    public sceneData[] senceDataList;
+    public entryData[] entryDataList;
     #endregion
     //#region onePoint
     //public GameObject[] OnePointEndPrefab;
@@ -97,14 +114,6 @@ public class SceneMaker : MonoBehaviour
         return x;
     }
     /// <summary>
-    /// 从ROAD,ROOM,POTAL,END等场景中随机抽选场景
-    /// </summary>
-    /// <returns>随机普通场景</returns>
-    GameObject RandomNormalArea()
-    {
-        return normalPrefab[Random.Range(0, normalPrefab.Length)];
-    }
-    /// <summary>
     /// 在规定范围内产生随机方向
     /// </summary>
     /// <param name="position">生成的位置</param>
@@ -152,28 +161,11 @@ public class SceneMaker : MonoBehaviour
         //return canSetDirection.Count == 0 ? -1 : (int)canSetDirection[Random.Range(0, canSetDirection.Count - 1)];
     }
 
-    /// <summary>
-    /// 打乱数组(用于随机完全遍历)
-    /// </summary>
-    /// <param name="areaOutList"></param>
-    /// <returns></returns>
-    AreaOut[] RandomAreaOut(AreaOut[] areaOutList)
-    {
-        AreaOut[] tempAreaOutList = new AreaOut[areaOutList.Length];
-        int x;
-        for (int i = 0; i < tempAreaOutList.Length; i++)
-        {
-            x = Random.Range(0, tempAreaOutList.Length);
-            tempAreaOutList[i] = areaOutList[x];
-            tempAreaOutList[x] = areaOutList[i];
-        }
-        return tempAreaOutList;
-    }
-
     #endregion
     #region makeScene
     public void MakeUpPoint()
     {
+        Random.seed = System.DateTime.Now.Millisecond;
         Vector2 upPoint;
         GameObject area;
         AreaManager areaManager;
@@ -205,27 +197,32 @@ public class SceneMaker : MonoBehaviour
     /// <param name="needDirection">入口点的方向</param>
     void MakeNormalArea(Vector3 entryPoint, OutDirection needDirection)
     {
-        GameObject areaPrefab;
+        GameObject areaPrefab=normalPrefab[0];
+        GameObject[] randomNormalPrefabList = normalPrefab.getRandomArray();
         //GameObject changedPrefab;
         AreaManager areaManager;
-        AreaOut[] areaOutList;
+        AreaOut[] areaOutList = null;
         Vector3 areaPostion = Vector3.zero;
+        int entryIndex = 0;
 
         AngleFix angle = AngleFix.none;
 
         bool checkRes = false;
-        do
+        Debug.Log("----------------------------------------------------------------");
+
+        for (int i = 0; i < randomNormalPrefabList.Length && !checkRes; i++)
         {
-            areaPrefab = RandomNormalArea();
+            areaPrefab = randomNormalPrefabList[i];
+            Debug.Log(areaPrefab.name);
 
             areaManager = areaPrefab.GetComponent<AreaManager>();
-            areaOutList = RandomAreaOut(areaManager.AreaAngle0.areaOut);
-            for (int i = 0; i < areaOutList.Length; i++)
+            areaOutList = areaManager.AreaAngle0.areaOut.getRandomArray();
+            for (entryIndex = 0; entryIndex < areaOutList.Length; entryIndex++)
             {
 
-                angle = areaOutList[i].direction.getAngleFromTargetDirection(needDirection);
+                angle = areaOutList[entryIndex].direction.getAngleFromTargetDirection(needDirection);
 
-                areaPostion = entryPoint - areaOutList[i].Rot(angle).position;
+                areaPostion = entryPoint - areaOutList[entryIndex].Rot(angle).position;
 
                 if (angle == AngleFix.Angle90 || angle == AngleFix.Angle270)
                 {
@@ -235,16 +232,31 @@ public class SceneMaker : MonoBehaviour
                 {
                     checkRes = CheckArea(areaPostion, areaManager, angle);
                 }
+                Debug.Log(checkRes);
                 if (checkRes)
                 {
                     break;
                 }
                 //changedPrefab = areaPrefab.Rot(entryPoint, angle);
             }
-        } while (checkRes);
+            Debug.Log(checkRes);
 
+        }
+        Debug.Log(checkRes);
+
+        if (!checkRes)
+        {
+            Debug.Log("OUT!");
+            return;
+        }
         CreateArea(areaPrefab, new Vector2(areaPostion.x, areaPostion.z), angle);
-
+        for (int i = 0; i < areaOutList.Length; i++)
+        {
+            if (i != entryIndex)
+            {
+                MakeNormalArea(areaOutList[i].Rot(angle).position+ areaPostion, areaOutList[i].Rot(angle).direction.TureBack());
+            }
+        }
         //TODO:生成方法
     }
     void CreateArea(GameObject go, Vector2 position, AngleFix angle)
@@ -254,6 +266,7 @@ public class SceneMaker : MonoBehaviour
             areaContainer = new GameObject("Environment");
         }
         GameObject gameObject = PrefabUtility.InstantiatePrefab(go) as GameObject;
+
         gameObject.transform.parent = areaContainer.transform;
         gameObject.transform.position = new Vector3(position.x, 0, position.y);
         gameObject.transform.rotation = Quaternion.Euler(0, (int)angle, 0);
@@ -284,29 +297,36 @@ public class SceneMaker : MonoBehaviour
     /// <param name="position">区域地点</param>
     /// <param name="areaManager">区域信息</param>
     /// <param name="roted">是否旋转</param>
-    /// <returns></returns>
+    /// <returns>返回是否通过检测 TRUE=通过</returns>
     bool CheckArea(Vector3 position, AreaManager areaManager, AngleFix angle)
     {
         AreaInfo info = areaManager.GetAreaInfo(angle);
         //left to right
-        return 
-            !Physics.CapsuleCast(
-          position + new Vector3(0, 100, info.centerPointLeft.z + 2),
-          position + new Vector3(0, 100, info.centerPointRight.z - 2),
-            info.centerPointUp.magnitude / 2,
-            Vector3.down)
+
+        bool physicsLR = Physics.CapsuleCast(
+          position + new Vector3(0, 100, info.centerPointLeft.z + 0.5f+ info.centerPointUp.magnitude>0?0: info.centerPointLeft.z + 0.5f + info.centerPointUp.magnitude),
+          position + new Vector3(0, 100, info.centerPointRight.z - 0.5f- info.centerPointUp.magnitude<0?0: info.centerPointRight.z - 0.5f - info.centerPointUp.magnitude),
+            info.centerPointUp.magnitude ,
+            Vector3.down);
+
+        bool physicsUD = Physics.CapsuleCast(
+          position + new Vector3(info.centerPointUp.x + 0.5f + info.centerPointUp.magnitude>0?0: info.centerPointUp.x + 0.5f + info.centerPointUp.magnitude, 100, 0),
+          position + new Vector3(info.centerPointDown.x - 0.5f- +info.centerPointUp.magnitude < 0?0: info.centerPointDown.x - 0.5f - +info.centerPointUp.magnitude, 100, 0),
+            info.centerPointUp.magnitude ,
+            Vector3.down);
+
+        bool sizeCheck = checkSize(new Vector2(position.x,position.z), info.width, info.height);
+
+        return
+            !physicsLR
 
             &&
 
-            !Physics.CapsuleCast(
-          position + new Vector3(info.centerPointUp.x + 2, 100, 0),
-          position + new Vector3(info.centerPointDown.x - 2, 100, 0),
-            info.centerPointUp.magnitude / 2,
-            Vector3.down)
+            !physicsUD
 
             &&
 
-            checkSize(position, info.width, info.height);
+            sizeCheck;
 
     }
     //bool checkRotation(Vector2 position, Vector2 virtualSize, AreaOut[] areaOut)

@@ -31,7 +31,8 @@ public class SceneMakerEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("RoomPrefab"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("EndPrefab"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("normalPrefab"), true);
-
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("senceDataList"), true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("entryDataList"), true);
         serializedObject.ApplyModifiedProperties();
 
         if (GUILayout.Button("Make Normal Prefab"))
@@ -41,6 +42,9 @@ public class SceneMakerEditor : Editor
         if (GUILayout.Button("Create Up"))
         {
             sceneMaker.MakeUpPoint();
+        }
+        if (GUILayout.Button("Random test"))
+        {
         }
     }
     void makeNormalPrefab()
