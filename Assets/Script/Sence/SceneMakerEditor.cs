@@ -27,34 +27,22 @@ public class SceneMakerEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("DownPrefab"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("PortalPrefab"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("RoadPrefab"), true);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("cornerPrefab"), true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("CornerPrefab"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("RoomPrefab"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("EndPrefab"), true);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("normalPrefab"), true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("WallPrefab"), true);
+
         EditorGUILayout.PropertyField(serializedObject.FindProperty("senceDataList"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("entryDataList"), true);
+
         serializedObject.ApplyModifiedProperties();
 
-        if (GUILayout.Button("Make Normal Prefab"))
+        if (GUILayout.Button("Create Start"))
         {
-            makeNormalPrefab();
-        }
-        if (GUILayout.Button("Create Up"))
-        {
-            sceneMaker.MakeUpPoint();
-        }
-        if (GUILayout.Button("Random test"))
-        {
+            sceneMaker.CreateStart();
         }
     }
-    void makeNormalPrefab()
-    {
-        sceneMaker.normalPrefab = new GameObject[sceneMaker.RoadPrefab.Length + sceneMaker.RoomPrefab.Length + sceneMaker.cornerPrefab.Length];
 
-        sceneMaker.RoadPrefab.CopyTo(sceneMaker.normalPrefab, 0);
-        sceneMaker.RoomPrefab.CopyTo(sceneMaker.normalPrefab, sceneMaker.RoadPrefab.Length);
-        sceneMaker.cornerPrefab.CopyTo(sceneMaker.normalPrefab, sceneMaker.RoadPrefab.Length + sceneMaker.RoomPrefab.Length);
-    }
 
 }
 #endif
