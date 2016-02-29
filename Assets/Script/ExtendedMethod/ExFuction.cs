@@ -52,7 +52,7 @@ public static class ExFuction
     public static AngleFix getAngleFromTargetDirection(this OutDirection direction, OutDirection targetDirection)
     {
         return (AngleFix)(
-            (int)targetDirection - (int)direction > 0
+            (int)targetDirection - (int)direction >= 0
             ?
             ((int)targetDirection - (int)direction) * 90
             :
@@ -60,5 +60,29 @@ public static class ExFuction
             )
             ;
     }
+    /// <summary>
+    /// 原数组顺序不变,返回乱序后的数组
+    /// </summary>
+    /// <typeparam name="T">泛型类型</typeparam>
+    /// <param name="array">泛型数组</param>
+    /// <returns></returns>
+    public static T[] getRandomArray<T>(this T[] array)
+    {
+        T[] tempArray = new T[array.Length];
 
+        for (int i = 0; i < tempArray.Length; i++)
+        {
+            tempArray[i] = array[i];
+        }
+        int x;
+        T temp;
+        for (int i = 0; i < tempArray.Length; i++)
+        {
+            x = Random.Range(0, tempArray.Length);
+            temp = tempArray[i];
+            tempArray[i] = tempArray[x];
+            tempArray[x] = temp;
+        }
+        return tempArray;
+    }
 }
