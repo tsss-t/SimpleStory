@@ -24,7 +24,6 @@ public class AttackAnimation : StateMachineBehaviour {
                 if (stateInfo.fullPathHash == hash.Skill1State)
                 {
                     PlayerAttack._instance.UseEnergy(SkillType.skill, PosType.one);
-                    PlayerAttack._instance.ShowEffectSelfToTarget("FirePhoenixMobile");
                 }
                 else if (stateInfo.fullPathHash == hash.Skill2State)
                 {

@@ -85,4 +85,11 @@ public static class ExFuction
         }
         return tempArray;
     }
+    public static T getRandomOne<T>(this T[] array)
+    {
+        int x = Random.Range(0, array.Length);
+
+        return array[x];
+    }
+
 }

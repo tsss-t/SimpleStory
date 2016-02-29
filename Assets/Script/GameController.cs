@@ -83,7 +83,7 @@ public class GameController
         Load();
         LoadEventProcess();
         LoadPortalList();
-        lastChangeSceneType = EntryType.Down;
+        lastChangeSceneType = EntryType.Portal;
     }
 
     #region paramater

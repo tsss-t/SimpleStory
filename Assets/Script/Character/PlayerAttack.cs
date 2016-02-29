@@ -281,9 +281,12 @@ public class PlayerAttack : MonoBehaviour
         canAttackEnemy = EnemyManager._instance.getAttackEnemy();
         foreach (GameObject go in canAttackEnemy)
         {
-            GameObject goEffect = (GameObject.Instantiate(effect) as AttackEffect).gameObject;
-            goEffect.transform.position = transform.position + Vector3.up;
-            goEffect.GetComponent<EffectSettings>().Target = go;
+            if(AttackAround(go.transform.position))
+            {
+                GameObject goEffect = (GameObject.Instantiate(effect) as AttackEffect).gameObject;
+                goEffect.transform.position = transform.position + Vector3.up;
+                goEffect.GetComponent<EffectSettings>().Target = go;
+            }
         }
     }
 

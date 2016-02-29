@@ -43,6 +43,10 @@ public class SceneMaker : MonoBehaviour
     public UnitType makingAreaType;
     public int makeingCombo;
     public UnitType[] normalTypeArray = { UnitType.Road, UnitType.Room, UnitType.Corner, UnitType.End };
+
+    public bool isDownSet = false;
+    public bool isPorSet = false;
+
     #endregion
 
 
@@ -95,12 +99,20 @@ public class SceneMaker : MonoBehaviour
     /// 取地图上随机点
     /// </summary>
     /// <returns>生成的随机点坐标</returns>
-    Vector2 RandomMapPoiot()
+    Vector2 RandomMapPoint()
     {
         int x = Random.Range(0, mapwidth);
         int y = Random.Range(0, mapheigth);
         return new Vector2(x, y);
     }
+
+    Vector2 RandomMapInnerPoint()
+    {
+        int x = Random.Range((int)(mapwidth * 0.25f), (int)(mapwidth - mapwidth * 0.25f));
+        int y = Random.Range((int)(mapheigth * 0.25f), (int)(mapheigth - mapheigth * 0.25f));
+        return new Vector2(x, y);
+    }
+
     /// <summary>
     /// 取0到indexMax的随机值
     /// </summary>
@@ -132,31 +144,6 @@ public class SceneMaker : MonoBehaviour
             canSetDirection.Add(AngleFix.Angle270);
         }
         return canSetDirection.Count == 0 ? AngleFix.none : canSetDirection[RandomIndex(canSetDirection.Count)];
-        //AreaOut[] tempAreaOut;1
-
-        //tempAreaOut = areaOut;
-        //List<AngleFix> canSetDirection = new List<AngleFix>();
-
-        //if (checkRotation(position, virtualSize, tempAreaOut))
-        //{
-        //    canSetDirection.Add(AngleFix.Angle0);
-        //}
-        //tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle90);
-        //if (checkRotation(position, virtualSize, tempAreaOut))
-        //{
-        //    canSetDirection.Add(AngleFix.Angle90);
-        //}
-        //tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle180);
-        //if (checkRotation(position, virtualSize, tempAreaOut))
-        //{
-        //    canSetDirection.Add(AngleFix.Angle180);
-        //}
-        //tempAreaOut = AreaOut.ChangeDirection(virtualSize, areaOut, AngleFix.Angle270);
-        //if (checkRotation(position, virtualSize, tempAreaOut))
-        //{
-        //    canSetDirection.Add(AngleFix.Angle270);
-        //}
-        //return canSetDirection.Count == 0 ? -1 : (int)canSetDirection[Random.Range(0, canSetDirection.Count - 1)];
     }
 
     #endregion
@@ -186,7 +173,7 @@ public class SceneMaker : MonoBehaviour
     /// <param name="areaManager">区域信息</param>
     /// <param name="roted">是否旋转</param>
     /// <returns>返回是否通过检测 TRUE=通过</returns>
-    bool CheckArea(Vector3 position, AreaManager areaManager, AngleFix angle)
+    bool CheckAreaPhysics(Vector3 position, AreaManager areaManager, AngleFix angle)
     {
         AreaInfo info = areaManager.GetAreaInfo(angle);
         bool physicsCheck = false;
@@ -210,93 +197,23 @@ public class SceneMaker : MonoBehaviour
             Vector3.down);
         }
 
-        bool sizeCheck = checkSize(new Vector2(position.x, position.z), info.width, info.height);
         //Debug.Log(physicsCheck);
-        return
-            !physicsCheck
-
-
-            &&
-
-            sizeCheck;
+        return !physicsCheck;
     }
-    //bool checkRotation(Vector2 position, Vector2 virtualSize, AreaOut[] areaOut)
-    //{
+    /// <summary>
+    /// 验证该地区是否超过地图尺寸
+    /// </summary>
+    /// <param name="position">区域地点</param>
+    /// <param name="areaManager">区域信息</param>
+    /// <param name="roted">是否旋转</param>
+    /// <returns>返回是否通过检测 TRUE=通过</returns>
+    bool checkInMap(Vector3 position, AreaManager areaManager, AngleFix angle)
+    {
+        AreaInfo info = areaManager.GetAreaInfo(angle);
+        bool sizeCheck = checkSize(new Vector2(position.x, position.z), info.width, info.height);
+        return sizeCheck;
+    }
 
-    //    if (position.x + virtualSize.x - 1 >= length || position.y + virtualSize.y - 1 >= length)
-    //    {
-    //        return false;
-    //    }
-
-    //    GameObject tempInfo;
-    //    Vector2 closeAreaPosition;
-    //    OutDirection needDirection;
-
-    //    for (int i = 0; i < areaOut.Length; i++)
-    //    {
-    //        switch (areaOut[i].direction)
-    //        {
-    //            case OutDirection.up:
-    //                {
-    //                    //与该路口的相邻点虚拟（地图）世界坐标
-    //                    closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x, position.y + areaOut[i].virtualPosition.y - 1);
-    //                    needDirection = OutDirection.down;
-    //                    break;
-    //                }
-    //            case OutDirection.down:
-    //                {
-    //                    //与该路口的相邻点虚拟（地图）世界坐标
-    //                    closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x, position.y + areaOut[i].virtualPosition.y + 1);
-    //                    needDirection = OutDirection.up;
-    //                    break;
-    //                }
-    //            case OutDirection.left:
-    //                {
-    //                    closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x - 1, position.y + areaOut[i].virtualPosition.y);
-    //                    needDirection = OutDirection.right;
-    //                    break;
-    //                }
-    //            case OutDirection.right:
-    //                {
-    //                    closeAreaPosition = new Vector2(position.x + areaOut[i].virtualPosition.x - 1, position.y + areaOut[i].virtualPosition.y);
-    //                    needDirection = OutDirection.left;
-    //                    break;
-    //                }
-    //            default:
-    //                closeAreaPosition = new Vector2(-1, -1);
-    //                needDirection = OutDirection.up;
-    //                break;
-    //        }
-    //        mapDictionary.TryGetValue(closeAreaPosition, out tempInfo);
-
-    //        //如果该相邻点安置了任何区域，并且该区域该点的路口设置不能通过连接验证（该点没有路口设置或者路口方向不正确）
-    //        if (tempInfo != null && !checkRoadCross(closeAreaPosition, tempInfo.GetComponent<AreaManager>(), needDirection))
-    //        {
-    //            return false;
-    //        }
-    //    }
-    //    return true;
-    //}
-    ///// <summary>
-    ///// 验证地图上一个点是否为地图可以接通的方向
-    ///// </summary>
-    ///// <param name="worldVirtualPosition">验证点的虚拟（地图）世界坐标</param>
-    ///// <param name="targetArea">对象区域的信息对象</param>
-    ///// <param name="targetNeedDirection">需求该相邻区域的方向</param>
-    ///// <returns></returns>
-    //bool checkRoadCross(Vector2 worldVirtualPosition, AreaManager targetArea, OutDirection targetNeedDirection)
-    //{
-    //    Vector2 localAreaPosition = worldVirtualPosition - targetArea.centerPosition;
-    //    for (int i = 0; i < targetArea.areaOut.Length; i++)
-    //    {
-    //        //路口位置坐标找到并且该位置上于所需求的方向一致，则通过验证
-    //        if (localAreaPosition == targetArea.areaOut[i].virtualPosition && targetArea.areaOut[i].direction == targetNeedDirection)
-    //        {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
     #endregion
     #endregion
     #region makeScene follow
@@ -307,6 +224,8 @@ public class SceneMaker : MonoBehaviour
 
     public void MakeUpPoint()
     {
+        isDownSet = false;
+        isPorSet = false;
         makingAreaType = UnitType.Wall;
         Random.seed = System.DateTime.Now.Millisecond;
         Vector2 upPoint;
@@ -315,7 +234,7 @@ public class SceneMaker : MonoBehaviour
         AngleFix angle;
         do
         {
-            upPoint = RandomMapPoiot();
+            upPoint = RandomMapInnerPoint();
             area = UpPrefab[RandomIndex(UpPrefab.Length)];
             areaManager = area.GetComponent<AreaManager>();
             angle = RandomMapRotation(upPoint, areaManager);
@@ -354,22 +273,11 @@ public class SceneMaker : MonoBehaviour
         AngleFix angle = AngleFix.none;
 
         bool checkRes = false;
-        //Debug.Log("----------------------------------------------------------------");
-        //Debug.Log(nowWeightPoint.roadPoint);
-        //Debug.Log(nowWeightPoint.roomPoint);
-        //Debug.Log(nowWeightPoint.cornerPoint);
-        //Debug.Log(nowWeightPoint.endPoint);
-
         normalTypeArray = nowWeightPoint.GetWeightRandomTypeOrder(normalTypeArray);
 
 
         for (areaTypeIndex = 0; areaTypeIndex < normalTypeArray.Length && !checkRes; areaTypeIndex++)
         {
-            if (areaTypeIndex != 0)
-            {
-                Debug.Log("lenth:"+normalTypeArray.Length);
-                Debug.Log(normalTypeArray[areaTypeIndex]);
-            }
             switch (normalTypeArray[areaTypeIndex])
             {
                 case UnitType.Road:
@@ -384,7 +292,20 @@ public class SceneMaker : MonoBehaviour
                     }
                 case UnitType.End:
                     {
-                        randomNormalPrefabList = EndPrefab.getRandomArray();
+                        Debug.Log("!!" + isDownSet);
+                        //每当生成终节点时，如果尚未生成向下场景，则生成向下场景/传送阵场景
+                        if (!isDownSet)
+                        {
+                            randomNormalPrefabList = DownPrefab.getRandomArray();
+                        }
+                        else if (!isPorSet)
+                        {
+                            randomNormalPrefabList = PortalPrefab.getRandomArray();
+                        }
+                        else
+                        {
+                            randomNormalPrefabList = EndPrefab.getRandomArray();
+                        }
                         break;
                     }
                 case UnitType.Corner:
@@ -410,22 +331,44 @@ public class SceneMaker : MonoBehaviour
                     angle = areaOutList[entryIndex].direction.getAngleFromTargetDirection(needDirection);
                     areaPostion = entryPoint - areaOutList[entryIndex].Rot(angle).position;
 
-                    if (angle == AngleFix.Angle90 || angle == AngleFix.Angle270)
+
+                    checkRes = checkInMap(areaPostion, areaManager, angle);
+                    #region 超出地图范围的情况下，允许生成传送阵和出口
+                    if (!checkRes && (!isDownSet || !isPorSet))
                     {
-                        checkRes = CheckArea(areaPostion, areaManager, angle);
+                        if (!isDownSet)
+                        {
+                            areaPrefab = DownPrefab.getRandomOne();
+                            normalTypeArray[areaTypeIndex] = UnitType.Down;
+                        }
+                        else
+                        {
+                            areaPrefab = PortalPrefab.getRandomOne();
+                            normalTypeArray[areaTypeIndex] = UnitType.Portal;
+                        }
+                        areaManager = areaPrefab.GetComponent<AreaManager>();
+                        areaOutList = areaManager.AreaAngle0.areaOut.getRandomArray();
+
+                        angle = areaOutList[0].direction.getAngleFromTargetDirection(needDirection);
+                        areaPostion = entryPoint - areaOutList[0].Rot(angle).position;
                     }
-                    else
-                    {
-                        checkRes = CheckArea(areaPostion, areaManager, angle);
-                    }
-                    //Debug.Log(checkRes);
+                    #endregion
+                    checkRes = checkRes && CheckAreaPhysics(areaPostion, areaManager, angle);
+
                     if (checkRes)
                     {
+                        if(areaManager.type == UnitType.Portal)
+                        {
+                            isPorSet = true;
+                        }
+                        else if (areaManager.type == UnitType.Down)
+                        {
+                            isDownSet = true;
+                                
+                        }
                         break;
                     }
-                    //changedPrefab = areaPrefab.Rot(entryPoint, angle);
                 }
-                //Debug.Log(checkRes);
             }
             if (checkRes)
             {
@@ -433,23 +376,19 @@ public class SceneMaker : MonoBehaviour
             }
         }
 
-        //Debug.Log(checkRes);
         //所有地区生成不能的情况下，封堵
         if (!checkRes)
         {
-            //Debug.Log("OUT!");
             CreateWall(entryPoint, needDirection);
             return;
         }
-
 
         //调整权重
         TrimWeightPoint(areaManager, thisFloorNumber);
 
         //生成区域
-        CreateArea(areaPrefab, new Vector2(areaPostion.x, areaPostion.z), angle);
         makingAreaType = normalTypeArray[areaTypeIndex];
-
+        CreateArea(areaPrefab, new Vector2(areaPostion.x, areaPostion.z), angle);
 
         for (int i = 0; i < areaOutList.Length; i++)
         {
@@ -490,7 +429,7 @@ public class SceneMaker : MonoBehaviour
             nowWeightPoint.AddWeight(UnitType.Corner, (10 - thisFloorNumber) >= 0 ? (10 - thisFloorNumber) * 2 : 0);
             nowWeightPoint.CutWeight(UnitType.Road, (10 - thisFloorNumber) >= 0 ? (10 - thisFloorNumber) : 0);
             nowWeightPoint.CutWeight(UnitType.Room, (10 - thisFloorNumber) >= 0 ? (10 - thisFloorNumber) : 0);
-            nowWeightPoint.CutWeight(UnitType.End, (10 - thisFloorNumber) >= 0 ? (10 - thisFloorNumber) * 2 : 0);
+            nowWeightPoint.CutWeight(UnitType.End, (10 - thisFloorNumber) >= 0 ? (10 - thisFloorNumber) * 3 : 0);
 
         }
     }
@@ -521,22 +460,6 @@ public class SceneMaker : MonoBehaviour
         gameObject.transform.rotation = Quaternion.Euler(0, (int)angle, 0);
     }
     #endregion
-
-
-
-    //void MakeDownPoint()
-    //{
-
-    //}
-    //void MakeMap()
-    //{
-
-    //}
-    //// Update is called once per frame
-    //void Update()
-    //{
-
-    //}
 
 
 
