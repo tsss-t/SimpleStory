@@ -381,6 +381,7 @@ public class EnemyController : MonoBehaviour
                     }
 
                     anim.SetTrigger(attackAction.actionTrigerName);
+                    
                     charaControler.Hit(ATK, ACC);
                     nowAction = ActionType.attack;
                     attackTimer = attackkDelay;
@@ -459,7 +460,9 @@ public class EnemyController : MonoBehaviour
     {
         if (nowState != ActionState.die)
         {
+            //blood effect
             GameObject.Instantiate(damageEffectPrefab, transform.position, Quaternion.identity);
+
             if (hitActionList.Length == 1)
             {
                 hitAction = hitActionList[0];

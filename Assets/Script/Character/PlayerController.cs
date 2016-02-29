@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody playerRigidbody;
     PlayerState playerState;
     NavMeshAgent playerAgent;
+    AudioSource audioStepSound;
     private Animator anim;
     private HashIDs hash;
     private float timerEnergy = 0f;
@@ -28,6 +29,7 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
         Transform StartPosition = this.transform;
         switch (GameController._instance.GetLastChangeSceneType())
         {
@@ -56,6 +58,7 @@ public class PlayerController : MonoBehaviour
         playerAgent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         hash = this.GetComponent<HashIDs>();
+        audioStepSound = this.GetComponent<AudioSource>();
         anim.SetLayerWeight(1, 1f);
         //FOR DEBUG
         playerState.PlayerStateChanged(PlayerStateChangeType.all);
@@ -65,7 +68,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
- 
+
         if (playerState.PlayerAliveNow)
         {
             playerState.playerTransform = transform;
@@ -156,17 +159,28 @@ public class PlayerController : MonoBehaviour
                 playerRigidbody.velocity = new Vector3(velocity * horizontal, nowVel.y, vertical * velocity);
                 anim.SetFloat(hash.speedFloat, playerRigidbody.velocity.magnitude);
                 transform.LookAt(new Vector3(horizontal, 0, vertical) + transform.position);
-
+                if (!audioStepSound.isPlaying)
+                {
+                    audioStepSound.Play();
+                }
             }
             else
             {
+                if (audioStepSound.isPlaying)
+                {
+                    audioStepSound.Stop();
+                }
                 anim.SetFloat(hash.speedFloat, 0f);
                 playerRigidbody.velocity = new Vector3(0, nowVel.y, 0);
             }
+
         }
         else
         {
-
+            if (audioStepSound.isPlaying)
+            {
+                audioStepSound.Stop();
+            }
             playerRigidbody.velocity = new Vector3(0f, 0f, 0f);
         }
 
@@ -219,10 +233,21 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     /// <param name="enemyATK"></param>
     /// <param name="ACC"></param>
-    public void Hit(int enemyATK, int ACC)
+    public bool Hit(int enemyATK, int ACC)
     {
         //TODO:攻撃のダメージ算出
-        anim.SetTrigger(hash.hitTrigger);
+        bool isHit = true;
+        if (Random.Range(0, 100) < ACC)
+        {
+            anim.SetTrigger(hash.hitTrigger);
+
+        }
+        else
+        {
+            isHit = false;
+        }
+
+
         int damege = enemyATK - playerState.DEF;
         if (damege <= 0)
         {
@@ -235,6 +260,7 @@ public class PlayerController : MonoBehaviour
             die();
         }
         playerState.PlayerStateChanged(PlayerStateChangeType.HP);
+        return isHit;
     }
     void die()
     {

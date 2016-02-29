@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
+        Random.seed = System.DateTime.Now.Millisecond;
         _instans = this;
         if (GameObject.FindGameObjectWithTag(Tags.player) != null)
         {

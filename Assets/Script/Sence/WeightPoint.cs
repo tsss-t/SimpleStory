@@ -4,10 +4,10 @@ using System.Collections.Generic;
 [System.Serializable]
 public class WeightPoint
 {
-    public int roadPoint = 25;
-    public int roomPoint = 25;
-    public int endPoint = 1;
-    public int cornerPoint = 25;
+    public int roadPoint = 30;
+    public int roomPoint = 30;
+    public int endPoint = 10;
+    public int cornerPoint = 20;
     //public UnitType GetNextAreaType()
     //{
     //    int random = Random.Range(0, roadPoint + roomPoint + endPoint + cornerPoint);

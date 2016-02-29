@@ -123,6 +123,7 @@ public class PlayerState
     {
         playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
         HP = 100;
+        energy = 100;
         LoadData();
         Init();
     }
@@ -162,12 +163,10 @@ public class PlayerState
         INT = level * 2 + baseINT + equepINT;
         CON = level * 3 + baseCON + equepCON;
         LUK = (int)(level * 0.25f + baseLUK + equepLUK);
-
         ATK = (int)(STR * 1.25f);
         DEF = (int)(DEX * 0.4f + CON * 0.4f);
         energyUP = 0.1f - DEX * 0.001f;
         energyMax = 100;
-        energy = 100;
         HPMax = level * 100 + STR * 10 + CON * 25;
         HP = HPMax > HP ? HP : HPMax;
         health = 1 + level * 0.3f + CON * 0.2f;
