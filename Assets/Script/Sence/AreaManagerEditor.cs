@@ -14,10 +14,29 @@ public class AreaManagerEditor : Editor
     {
         areaManager = (AreaManager)target;
 
-        if (areaManager.AreaOutGOList==null)
+        if (areaManager.AreaOutGOList == null)
         {
             areaManager.AreaOutGOList = new AreaOutGO[0];
         }
+
+
+        GUILayout.Label(string.Format("Input the Area's type and next Area's weight point"));
+        areaManager.type= (UnitType)EditorGUILayout.EnumPopup("AreaType", areaManager.type);
+        SerializedProperty basePoint = serializedObject.FindProperty("basePoint");
+        EditorGUILayout.PropertyField(basePoint);
+
+        if (basePoint.isExpanded)
+        {
+            EditorGUI.indentLevel += 1;
+            areaManager.basePoint.roadPoint = EditorGUILayout.IntField("roadPoint", areaManager.basePoint.roadPoint);
+            areaManager.basePoint.roomPoint = EditorGUILayout.IntField("roomPoint", areaManager.basePoint.roomPoint);
+            areaManager.basePoint.endPoint = EditorGUILayout.IntField("endPoint", areaManager.basePoint.endPoint);
+            areaManager.basePoint.cornerPoint = EditorGUILayout.IntField("cornerPoint", areaManager.basePoint.cornerPoint);
+            EditorGUI.indentLevel -= 1;
+        }
+
+
+
 
         GUILayout.Label(string.Format("Input the data in rota 0°,then put the button to compute other data"));
 
@@ -125,7 +144,7 @@ public class AreaManagerEditor : Editor
                             EditorGUILayout.BeginHorizontal();
                             SerializedProperty postion = areaOut.FindPropertyRelative("position");
                             SerializedProperty direction = areaOut.FindPropertyRelative("direction");
-                            if(angle==0)
+                            if (angle == 0)
                             {
                                 if (areaManager.AreaOutGOList[j].location.Equals(null) || areaManager.AreaOutGOList[j].direction.Equals(null))
                                 {

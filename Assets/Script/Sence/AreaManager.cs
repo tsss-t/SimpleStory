@@ -1,13 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-public enum OutDirection
-{
-    none = -1, up = 1, right, down, left
-}
-public enum AngleFix
-{
-    none = -1, Angle0 = 0, Angle90 = 90, Angle180 = 180, Angle270 = 270
-}
+
 [System.Serializable]
 public struct AreaOut
 {
@@ -23,7 +16,7 @@ public struct AreaOutGO
 [System.Serializable]
 public class AreaInfo
 {
-    
+
     public GameObject area;
     public int height;
     public int width;
@@ -35,16 +28,22 @@ public class AreaInfo
     public AreaOut[] areaOut;
     public AreaInfo()
     {
-       
+
     }
 }
+
 public class AreaManager : MonoBehaviour
 {
+    public UnitType type;
+    public WeightPoint basePoint;
     public AreaOutGO[] AreaOutGOList;
-    public AreaInfo AreaAngle0 ;
-    public AreaInfo AreaAngle90 ;
-    public AreaInfo AreaAngle180 ;
-    public AreaInfo AreaAngle270 ;
+    public AreaInfo AreaAngle0;
+    public AreaInfo AreaAngle90;
+    public AreaInfo AreaAngle180;
+    public AreaInfo AreaAngle270;
+
+
+
     //public int height;
     //public int width;
     //public Vector3 centerPointUp;
