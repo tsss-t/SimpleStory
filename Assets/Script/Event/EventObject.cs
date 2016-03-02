@@ -8,42 +8,54 @@ public class EventObject : MonoBehaviour
 {
     public int eventID;
     public ObjectType objectType = ObjectType.Destroy;
-    private bool isDone;
+    public bool UpdateAtStart = true;
     // Use this for initialization
     void Start()
     {
-        try
-        {
-            if (GameController._instance.getEventIsDone(eventID))
-            {
-                isDone = true;
-                this.gameObject.SetActive(false);
-            }
-            else
-            {
-                isDone = false;
-            }
-        }
-        catch
-        {
-            Debug.Log("EventID Set Erorr");
-        }
+        UpdateState();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isDone)
+        if(!UpdateAtStart)
         {
-            if (objectType == ObjectType.Destroy)
+            UpdateState();
+        }
+    }
+
+    void UpdateState()
+    {
+        try
+        {
+            //すでにやったイベント
+            if (GameController._instance.getEventIsDone(eventID))
             {
-                this.gameObject.SetActive(false);
-                Destroy(this.gameObject);
+                if (objectType == ObjectType.Destroy)
+                {
+                    this.gameObject.SetActive(false);
+                }
+                else
+                {
+                    this.gameObject.SetActive(true);
+                }
             }
+            //まだやっていないイベント
             else
             {
-                this.gameObject.SetActive(true);
+                if (objectType == ObjectType.Destroy)
+                {
+                    this.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.SetActive(false);
+                }
             }
+        }
+        catch
+        {
+            Debug.Log("EventID Set Erorr");
         }
     }
 }
