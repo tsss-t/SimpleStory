@@ -14,8 +14,11 @@ public class UISceneFader : MonoBehaviour
     bool switchFlag;
     void Awake()
     {
-        switchFlag = true;
         _instance = this;
+    }
+    void Start()
+    {
+        switchFlag = true;
         thisTexture = GetComponent<GUITexture>();
         thisTexture.pixelInset = new
             Rect(0f, 0f, Screen.width, Screen.height);

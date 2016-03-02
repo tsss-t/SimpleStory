@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 /// <summary>
 /// セーブデータクラス
@@ -14,23 +15,23 @@ public class GameData
     public string PlayerState;
     public string PlayerEventProcess;
     public string PlayerPortalPorcess;
+    public string SenceData;
     public GameData()
     {
 
     }
-    public GameData(string PlayerAcceptData, string PlayerBag, string PlayerState, string PlayerEventProcess, string PlayerPortalPorcess)
+    public GameData(string PlayerAcceptData, string PlayerBag, string PlayerState, string PlayerEventProcess, string PlayerPortalPorcess, string SenceData)
     {
         this.PlayerAcceptData = PlayerAcceptData;
         this.PlayerBag = PlayerBag;
         this.PlayerState = PlayerState;
         this.PlayerEventProcess = PlayerEventProcess;
         this.PlayerPortalPorcess = PlayerPortalPorcess;
+        this.SenceData = SenceData;
     }
 }
 public class GameController
 {
-
-
     private static GameController gameController;
     public static GameController _instance
     {
@@ -46,10 +47,6 @@ public class GameController
                 return gameController;
             }
         }
-        set
-        {
-            gameController = value;
-        }
     }
     string playerStateData;
     string playerTypeData;
@@ -62,6 +59,29 @@ public class GameController
     string openingData;
     string eventData;
     string portalData;
+    string areaData;
+    #region Game Running Data
+    private EntryType lastChangeSceneType;
+    public void SetLastChangeSceneType(EntryType type)
+    {
+        this.lastChangeSceneType = type;
+    }
+    public EntryType GetLastChangeSceneType()
+    {
+        return this.lastChangeSceneType;
+    }
+
+    private int playerInFloor;
+    public void SetGoingToFloor(int floorNumber)
+    {
+        this.playerInFloor = floorNumber;
+    }
+    public int GetGoingToFloor()
+    {
+        return this.playerInFloor;
+    }
+    #endregion
+
     private GameController()
     {
         playerStateData = GameManager._instans.playerStateData.text;
@@ -75,19 +95,19 @@ public class GameController
         openingData = GameManager._instans.openingData.text;
         eventData = GameManager._instans.eventData.text;
         portalData = GameManager._instans.portalData.text;
+        areaData = GameManager._instans.sceneData.text;
         //Application.targetFrameRate = 45;
         xs = new XmlSaver();
         gameData = new GameData();
         gameData.key = GameManager._instans.gameDataKey;
-        InitSave();
+        playerInFloor = -1000;
+        //InitSave();
         Load();
-        LoadEventProcess();
-        LoadPortalList();
         lastChangeSceneType = EntryType.Portal;
     }
 
     #region paramater
-    private const string dataFileName = "tankyWarData.dat";//セーブデータの名前
+    private const string dataFileName = "save.dat";//セーブデータの名前
 
     private XmlSaver xs;
     public GameData gameData;
@@ -95,6 +115,16 @@ public class GameController
     //PlayerState playerState;
 
     #endregion
+
+    #region newGame
+    public void newGame()
+    {
+        InitSave();
+        Load();
+        lastChangeSceneType = EntryType.Down;
+    }
+    #endregion
+
     #region Save
     public void WriteData()
     {
@@ -102,13 +132,14 @@ public class GameController
         string dataString = xs.SerializeObject(gameData, typeof(GameData));
         xs.CreateXML(gameDataFile, dataString);
     }
-    void Save()
+    public void Save()
     {
         SaveAcceptQuest();
         SaveBag();
         SavePlayerState();
         SaveEventProcess();
         SavePortalProcess();
+        SaveAreaData();
         WriteData();
     }
     void InitSave()
@@ -118,6 +149,7 @@ public class GameController
         gameData.PlayerState = playerStateData.ToString();
         gameData.PlayerEventProcess = eventData.ToString();
         gameData.PlayerPortalPorcess = portalData.ToString();
+        gameData.SenceData = areaData.ToString();
         WriteData();
     }
     #region Item
@@ -145,10 +177,18 @@ public class GameController
     }
     #endregion
     #region PlayerState
-    const string playerStateUper = "EXP,money,isWalk,Type";
+    const string playerStateUper = "EXP,money,isWalk,Type,floorNumber";
     void SavePlayerState()
     {
-        gameData.PlayerState = string.Format("{0}\n{1},{2},{3},{4}\n", playerStateUper, PlayerState._instance.EXP, PlayerState._instance.money, PlayerState._instance.isWalk ? 1 : 0, (int)PlayerState._instance.type);
+        gameData.PlayerState = string.Format("{0}\n{1},{2},{3},{4},{5},{6}\n",
+            playerStateUper,
+            PlayerState._instance.EXP,
+            PlayerState._instance.money,
+            PlayerState._instance.isWalk ? 1 : 0,
+            (int)PlayerState._instance.type,
+            playerInFloor,
+            (int)this.lastChangeSceneType
+            );
     }
     #endregion
     #region Skill
@@ -165,10 +205,10 @@ public class GameController
         saveString = "";
         foreach (KeyValuePair<int, bool> item in eventDictionary)
         {
-            gameData.PlayerEventProcess = string.Format("{0},{1}", item.Key, item.Value ? "1" : "0");
+            saveString += string.Format("{0},{1}\n", item.Key, item.Value ? "1" : "0");
 
         }
-        gameData.PlayerAcceptData = string.Format("{0}\n{1}", playerEventProcessUper, saveString);
+        gameData.PlayerEventProcess = string.Format("{0}\n{1}", playerEventProcessUper, saveString);
     }
     #endregion
     #region protal
@@ -178,13 +218,31 @@ public class GameController
         saveString = "";
         foreach (KeyValuePair<int, bool> item in portalDictionary)
         {
-            gameData.PlayerEventProcess = string.Format("{0},{1}", item.Key, item.Value ? "1" : "0");
+            saveString += string.Format("{0},{1}\n", item.Key, item.Value ? "1" : "0");
 
         }
-        gameData.PlayerAcceptData = string.Format("{0}\n{1}", playerPortalProcessUper, saveString);
+        gameData.PlayerPortalPorcess = string.Format("{0}\n{1}", playerPortalProcessUper, saveString);
     }
     #endregion
+    #region areaInfo
+    const string AreaDataUper = "floorNumber,areaName,areaPositionX,areaPositionY,areaPositionZ,areaAngle";
+    void SaveAreaData()
+    {
+        saveString = "";
+        foreach (KeyValuePair<int, List<AreaData>> item in areaDictionary)
+        {
+            for (int i = 0; i < item.Value.Count; i++)
+            {
+                saveString += string.Format("{0},{1},{2},{3},{4},{5}\n", item.Value[i].floorNumber, item.Value[i].areaName, item.Value[i].areaPosition.x, item.Value[i].areaPosition.y, item.Value[i].areaPosition.z, item.Value[i].areaAngle.eulerAngles.y);
+            }
+
+        }
+        gameData.SenceData = string.Format("{0}\n{1}", AreaDataUper, saveString);
+    }
+
     #endregion
+    #endregion
+
     #region Load
     public void Load()
     {
@@ -193,22 +251,17 @@ public class GameController
         {
             string dataString = xs.LoadXML(gameDataFile);
             GameData gameDataFromXML = xs.DeserializeObject(dataString, typeof(GameData)) as GameData;
-
-            //是合法存档//
-            if (gameDataFromXML.key == gameData.key)
-            {
-                gameData = gameDataFromXML;
-            }
-            //是非法拷贝存档//
-            else
-            {
-                InitSave();
-                Load();
-            }
+            //セーブデータ　使用可能
+            gameData = gameDataFromXML;
+            LoadEventProcess();
+            LoadPortalList();
+            LoadAreaList();
+            LoadPlayerPosition();
         }
         //セーブデータが存在しません
         else
         {
+            Debug.Log("Not found savedata");
             InitSave();
             Load();
         }
@@ -372,7 +425,7 @@ public class GameController
                         int.Parse(proArray[2]),
                         QuestList.getQuest(int.Parse(proArray[3])),
                         proArray[4].Equals("0") ? false : true,
-                        proArray[5].Equals("0") ? false : true));
+                        proArray[5].Replace("\r", "").Equals("0") ? false : true));
             }
         }
         return acceptQuestList;
@@ -464,6 +517,14 @@ public class GameController
         }
         return state;
     }
+    public void LoadPlayerPosition()
+    {
+        string[] dataArray = gameData.PlayerState.ToString().Split('\n');
+        string[] proArray = dataArray[1].Split(',');
+        playerInFloor = int.Parse(proArray[4]);
+        lastChangeSceneType = (EntryType)int.Parse(proArray[5]);
+    }
+
     #endregion
     #region TextEvent
     List<TalkText> textList;
@@ -633,6 +694,9 @@ public class GameController
     }
     #endregion
     #region PortalList 
+    /// <summary>
+    /// floorNumber、floor展開？（利用可否）
+    /// </summary>
     Dictionary<int, bool> portalDictionary;
     void LoadPortalList()
     {
@@ -674,43 +738,54 @@ public class GameController
         }
         catch
         {
-            
+
         }
     }
 
     #endregion
+    #region sceneInfo
+    Dictionary<int, List<AreaData>> areaDictionary;
+    List<AreaData> areaList;
+    void LoadAreaList()
+    {
+        int floorNumber = 0;
+        if (areaDictionary == null)
+        {
+            string[] proArray;
+            string[] dataArray = gameData.SenceData.ToString().Split('\n');
+            areaDictionary = new Dictionary<int, List<AreaData>>();
+            for (int i = 1; i < dataArray.Length; i++)
+            {
+
+                if (dataArray[i] != "")
+                {
+                    proArray = dataArray[i].Split(',');
+
+                    floorNumber = int.Parse(proArray[0]);
+
+
+                    areaDictionary.TryGetValue(floorNumber, out areaList);
+                    if (areaList == null)
+                    {
+                        areaList = new List<AreaData>();
+                    }
+                    areaList.Add(new AreaData(floorNumber, proArray[1], float.Parse(proArray[2]), float.Parse(proArray[3]), float.Parse(proArray[4]), (AngleFix)int.Parse(proArray[5])));
+
+                    areaDictionary[floorNumber] = areaList;
+                }
+            }
+        }
+    }
+    public List<AreaData> GetAreaDataList(int floorNumber)
+    {
+        areaDictionary.TryGetValue(floorNumber, out areaList);
+        return areaList;
+    }
+    public void SetAreaData(int floorNumber, List<AreaData> areaDataList)
+    {
+        areaDictionary[floorNumber] = areaDataList;
+    }
 
     #endregion
-
-    #region temp Data
-    private EntryType lastChangeSceneType;
-    public void SetLastChangeSceneType(EntryType type)
-    {
-        this.lastChangeSceneType = type;
-    }
-    public EntryType GetLastChangeSceneType()
-    {
-        return this.lastChangeSceneType; 
-    }
     #endregion
-    //#region Path
-
-    ////获取路径//
-    //private static string GetDataPath()
-    //{
-    //    // Your game has read+write access to /var/mobile/Applications/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/Documents
-    //    // Application.dataPath returns ar/mobile/Applications/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/myappname.app/Data             
-    //    // Strip "/Data" from path
-    //    if (Application.platform == RuntimePlatform.IPhonePlayer)
-    //    {
-    //        string path = Application.dataPath.Substring(0, Application.dataPath.Length - 5);
-    //        // Strip application name
-    //        path = path.Substring(0, path.LastIndexOf('/'));
-    //        return path + "/Documents";
-    //    }
-    //    else
-    //        //    return Application.dataPath + "/Resources";
-    //        return Application.dataPath;
-    //}
-    //#endregion
 }

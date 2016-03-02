@@ -254,6 +254,11 @@ public class UIController : MonoBehaviour
     {
         questManagerUI.OnTollgleButtonClick();
     }
+    public void OnSaveButtonClicked()
+    {
+        GameController._instance.Save();
+
+    }
 
     #endregion
     public void OnPortalButtonClick()

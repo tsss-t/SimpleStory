@@ -12,6 +12,9 @@ public class CameraMovement : MonoBehaviour
 
     void Awake()
     {
+    }
+    void Start()
+    {
         Transform StartPosition = this.transform;
         switch (GameController._instance.GetLastChangeSceneType())
         {
@@ -34,17 +37,15 @@ public class CameraMovement : MonoBehaviour
 
 
         player = GameObject.FindGameObjectWithTag(Tags.player).transform;
-        target = player ;
+        target = player;
 
         //相机偏移
         //relCameraPos = transform.position - target.position;
-        relCameraPos = new Vector3(0,9,-4);
+        relCameraPos = new Vector3(0, 9, -4);
 
         relCameraPosMag = relCameraPos.magnitude - 0.5f;
 
         this.transform.position = StartPosition.position + relCameraPos;
-
-
     }
     public void setTarget(Transform target)
     {

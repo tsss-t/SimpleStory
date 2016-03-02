@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public TextAsset openingData;
     public TextAsset eventData;
     public TextAsset portalData;
+    public TextAsset sceneData;
     public string gameDataKey;
 
     public static GameManager _instans;
@@ -28,12 +29,11 @@ public class GameManager : MonoBehaviour
             PlayerState._instance.playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
         }
         gameDataKey = SystemInfo.deviceUniqueIdentifier;
-        //DEBUG
     }
 
     #region Path
 
-    //获取路径//
+    //path
     public static string GetDataPath()
     {
         // Your game has read+write access to /var/mobile/Applications/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/Documents

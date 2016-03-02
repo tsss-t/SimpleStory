@@ -1,2 +1,2 @@
-﻿EXP,money,isWalk,Type
-0,1000,0,1
+﻿EXP,money,isWalk,Type,floorNumber,where
+0,1000,0,1,0,0

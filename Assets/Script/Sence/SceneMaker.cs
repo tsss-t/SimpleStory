@@ -22,9 +22,25 @@ public struct entryData
 #endregion
 public class SceneMaker : MonoBehaviour
 {
+    #region para
+    enum MakeMode
+    {
+        MakeSceneMode, MakeDataMode
+    }
+
+    MakeMode mode;
+
+    public static SceneMaker _instans;
+
     GameObject areaContainer;
+    List<AreaData> areaDataList;
     //bool connect = false;
     public GameObject temp;
+    public bool isDownSet = false;
+    public bool isPorSet = false;
+
+
+    #region Editor
     public int mapwidth = 0;//地图大小 mapwidth x mapheigth
     public int mapheigth = 0;
     public GameObject[] UpPrefab;
@@ -36,40 +52,27 @@ public class SceneMaker : MonoBehaviour
     public GameObject[] CornerPrefab;
     public GameObject[] WallPrefab;
 
-    #region Editor
     public sceneData[] senceDataList;
     public entryData[] entryDataList;
     public WeightPoint nowWeightPoint;
     public UnitType makingAreaType;
     public int makeingCombo;
     public UnitType[] normalTypeArray = { UnitType.Road, UnitType.Room, UnitType.Corner, UnitType.End };
-
-    public bool isDownSet = false;
-    public bool isPorSet = false;
-
     #endregion
-
+    #endregion
 
     #region 初期化
-    // Use this for initialization
-    void Start()
+    void Awake()
     {
-        //Debug.Log("start!");
-        //mapDictionary = new Dictionary<Vector2, GameObject>();
-        InitDictionary();
-    }
-    void InitDictionary()
-    {
-        //areaPrefabDictionary = new Dictionary<UnitType, GameObject[]>();
-        //areaPrefabDictionary.Add(UnitType.Up, UpPrefab);
-        //areaPrefabDictionary.Add(UnitType.Down, DownPrefab);
-        //areaPrefabDictionary.Add(UnitType.Portal, PortalPrefab);
-        //areaPrefabDictionary.Add(UnitType.Road, RoadPrefab);
-        //areaPrefabDictionary.Add(UnitType.Room, RoomPrefab);
-        //areaPrefabDictionary.Add(UnitType.End, EndPrefab);
+        _instans = this;
     }
     #endregion
-    #region API
+    #region 内部方法
+    /// <summary>
+    /// タイプから、対応のアリアPrefabを貰う
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
     GameObject[] getPrefabArray(UnitType type)
     {
         switch (type)
@@ -96,7 +99,7 @@ public class SceneMaker : MonoBehaviour
     }
     #region Random Method
     /// <summary>
-    /// 取地图上随机点
+    ///　マップ上でランダム座標　取地图上随机点
     /// </summary>
     /// <returns>生成的随机点坐标</returns>
     Vector2 RandomMapPoint()
@@ -105,7 +108,10 @@ public class SceneMaker : MonoBehaviour
         int y = Random.Range(0, mapheigth);
         return new Vector2(x, y);
     }
-
+    /// <summary>
+    ///　マップ内部（1/2のwidth/heigth）上でランダム座標　取地图上随机点
+    /// </summary>
+    /// <returns>生成的随机点坐标</returns>
     Vector2 RandomMapInnerPoint()
     {
         int x = Random.Range((int)(mapwidth * 0.25f), (int)(mapwidth - mapwidth * 0.25f));
@@ -114,22 +120,22 @@ public class SceneMaker : MonoBehaviour
     }
 
     /// <summary>
-    /// 取0到indexMax的随机值
+    /// ０からindexMaxまでランダムで一つを返す　取0到indexMax的随机值
     /// </summary>
-    /// <param name="indexMax">随机值上限</param>
-    /// <returns>生成的随机值</returns>
+    /// <param name="indexMax">ランダム範囲の上限　随机值上限</param>
+    /// <returns>ランダム数値を返す　生成的随机值</returns>
     int RandomIndex(int indexMax)
     {
         int x = Random.Range(0, indexMax);
         return x;
     }
     /// <summary>
-    /// 在规定范围内产生随机方向
+    /// ランダムで可能な角度の中に一つの角度を貰う　在规定范围内产生随机方向
     /// </summary>
-    /// <param name="position">生成的位置</param>
-    /// <param name="areaInfo">需要生成的区域信息</param>
+    /// <param name="position">エリアの中心座標　生成的位置</param>
+    /// <param name="areaInfo">エリアの情報クラス　需要生成的区域信息</param>
     /// <returns>方向的Int值（）</returns>
-    AngleFix RandomMapRotation(Vector2 position, AreaManager areaInfo)
+    AngleFix RandomMapRotation(Vector2 position, AreaPrefabManager areaInfo)
     {
         List<AngleFix> canSetDirection = new List<AngleFix>();
 
@@ -147,13 +153,13 @@ public class SceneMaker : MonoBehaviour
     }
 
     #endregion
-    #region check
+    #region check　エリア生成検証
     /// <summary>
-    /// 检验是否生成的区域在地图规定大小区域范围内
+    /// 検証：このエリアの生成場所は指定されたマップサイズに超えたか　验证该地区是否超过地图尺寸
     /// </summary>
-    /// <param name="position">生成点坐标</param>
-    /// <param name="width">区域的长度</param>
-    /// <param name="height">区域的宽度</param>
+    /// <param name="position">エリアの中心座標　区域地点</param>
+    /// <param name="width">エリアのwidth　区域的宽度</param>
+    /// <param name="height">エリアのheight　区域的长度</param>
     /// <returns>是否超出地图设置范围： true=通过检测，不超出</returns>
     bool checkSize(Vector2 position, int width, int height)
     {
@@ -167,20 +173,20 @@ public class SceneMaker : MonoBehaviour
         return true;
     }
     /// <summary>
-    /// 用投影的方式确认该地区是否与其他地区重合
+    /// 検証：CapsuleCastを使用し、他のエリアと被るかどうか　　　　用投影的方式确认该地区是否与其他地区重合
     /// </summary>
-    /// <param name="position">区域地点</param>
-    /// <param name="areaManager">区域信息</param>
-    /// <param name="roted">是否旋转</param>
-    /// <returns>返回是否通过检测 TRUE=通过</returns>
-    bool CheckAreaPhysics(Vector3 position, AreaManager areaManager, AngleFix angle)
+    /// <param name="position">エリアの中心座標　区域地点</param>
+    /// <param name="areaManager">エリアの情報クラス　区域信息</param>
+    /// <param name="angle">エリア回る角度　是否旋转</param>
+    /// <returns>この検証を通過できるかどうか　TRUE=通過　返回是否通过检测 TRUE=通过</returns>
+    bool CheckAreaPhysics(Vector3 position, AreaPrefabManager areaManager, AngleFix angle)
     {
-        AreaInfo info = areaManager.GetAreaInfo(angle);
+        AreaPrefabInfo info = areaManager.GetAreaPrefabInfo(angle);
         bool physicsCheck = false;
         //left to right
         if (info.width > info.height)
         {
-            //宽大于长，从左到右
+            //width>height:左から右までのCapsuleCast検証　宽大于长，从左到右
             physicsCheck = Physics.CapsuleCast(
           position + new Vector3(0, 100, info.centerPointLeft.z + 1 + info.centerPointUp.magnitude > 0 ? 0 : info.centerPointLeft.z + 1 + info.centerPointUp.magnitude),
           position + new Vector3(0, 100, info.centerPointRight.z - 1 - info.centerPointUp.magnitude < 0 ? 0 : info.centerPointRight.z - 1 - info.centerPointUp.magnitude),
@@ -189,7 +195,7 @@ public class SceneMaker : MonoBehaviour
         }
         else
         {
-            //长大于宽，从上到下
+            //height>width:上から下までのCapsuleCast検証　长大于宽，从上到下
             physicsCheck = Physics.CapsuleCast(
           position + new Vector3(info.centerPointUp.x + 1 + info.centerPointLeft.magnitude > 0 ? 0 : info.centerPointUp.x + 1 + info.centerPointLeft.magnitude, 100, 0),
           position + new Vector3(info.centerPointDown.x - 1 - info.centerPointLeft.magnitude < 0 ? 0 : info.centerPointDown.x - 1 - info.centerPointLeft.magnitude, 100, 0),
@@ -201,16 +207,45 @@ public class SceneMaker : MonoBehaviour
         return !physicsCheck;
     }
     /// <summary>
-    /// 验证该地区是否超过地图尺寸
+    /// Simple AABB check
     /// </summary>
-    /// <param name="position">区域地点</param>
-    /// <param name="areaManager">区域信息</param>
-    /// <param name="roted">是否旋转</param>
-    /// <returns>返回是否通过检测 TRUE=通过</returns>
-    bool checkInMap(Vector3 position, AreaManager areaManager, AngleFix angle)
+    /// <param name="position">エリアの中心座標　区域地点</param>
+    /// <param name="areaManager">エリアの情報クラス　区域信息</param>
+    /// <param name="angle">エリア回る角度　是否旋转</param>
+    /// <returns>この検証を通過できるかどうか　TRUE=通過　返回是否通过检测 TRUE=通过</returns>
+    bool CheckAreaOverlay(Vector3 position, AreaPrefabManager areaManager, AngleFix angle)
     {
-        AreaInfo info = areaManager.GetAreaInfo(angle);
+        AreaPrefabInfo info = areaManager.GetAreaPrefabInfo(angle);
+        bool OverlayCheck = true;
+
+        Vector3 relativePosition;
+
+        for (int i = 0; i < areaDataList.Count; i++)
+        {
+            relativePosition = areaDataList[i].areaPosition - position;
+            if (Mathf.Abs(relativePosition.x)< areaDataList[i].heightHalf + info.centerPointUp.magnitude &&
+                Mathf.Abs(relativePosition.z) < areaDataList[i].widthHalf + info.centerPointLeft.magnitude
+                )
+            {
+                OverlayCheck = false;
+                break;
+            }
+        }
+        return OverlayCheck;
+    }
+
+    /// <summary>
+    /// 検証：このエリアの生成場所は指定されたマップサイズに超えたか　验证该地区是否超过地图尺寸
+    /// </summary>
+    /// <param name="position">エリアの中心座標　区域地点</param>
+    /// <param name="areaManager">エリアの情報クラス　区域信息</param>
+    /// <param name="angle">エリア回る角度　是否旋转</param>
+    /// <returns>この検証を通過できるかどうか　TRUE=通過　返回是否通过检测 TRUE=通过</returns>
+    bool checkInMap(Vector3 position, AreaPrefabManager areaManager, AngleFix angle)
+    {
+        AreaPrefabInfo info = areaManager.GetAreaPrefabInfo(angle);
         bool sizeCheck = checkSize(new Vector2(position.x, position.z), info.width, info.height);
+
         return sizeCheck;
     }
 
@@ -219,44 +254,76 @@ public class SceneMaker : MonoBehaviour
     #region makeScene follow
     public void CreateStart()
     {
+        mode = MakeMode.MakeSceneMode;
         MakeUpPoint();
     }
-
+    public void CreateDataStart()
+    {
+        mode = MakeMode.MakeDataMode;
+        areaDataList = new List<AreaData>();
+        MakeUpPoint();
+    }
+    /// <summary>
+    /// 上に行く階段から生成始めます
+    /// </summary>
     public void MakeUpPoint()
     {
         isDownSet = false;
         isPorSet = false;
         makingAreaType = UnitType.Wall;
-        Random.seed = System.DateTime.Now.Millisecond;
         Vector2 upPoint;
-        GameObject area;
-        AreaManager areaManager;
+        GameObject areaPrefab;
+        AreaPrefabManager areaManager;
         AngleFix angle;
-        do
-        {
-            upPoint = RandomMapInnerPoint();
-            area = UpPrefab[RandomIndex(UpPrefab.Length)];
-            areaManager = area.GetComponent<AreaManager>();
-            angle = RandomMapRotation(upPoint, areaManager);
-        }
-        while (angle == AngleFix.none);
 
 
-        TrimWeightPoint(areaManager, 0);
-        CreateArea(area, upPoint, angle);
-        makingAreaType = UnitType.Up;
-        for (int i = 0; i < areaManager.AreaOutGOList.Length; i++)
+        for (;isPorSet==false;)
         {
-            MakeNormalArea(areaManager.GetAreaInfo(angle).areaOut[i].position + new Vector3(upPoint.x, 0, upPoint.y), areaManager.GetAreaInfo(angle).areaOut[i].direction.TureBack(), 0);
+
+
+            Random.seed = System.DateTime.Now.Millisecond;
+            if (mode == MakeMode.MakeDataMode)
+            {
+                areaDataList.Clear();
+            }
+            else
+            {
+                DestroyImmediate(areaContainer);
+            }
+            do
+            {
+                upPoint = RandomMapInnerPoint();
+                areaPrefab = UpPrefab[RandomIndex(UpPrefab.Length)];
+                areaManager = areaPrefab.GetComponent<AreaPrefabManager>();
+                angle = RandomMapRotation(upPoint, areaManager);
+            }
+            while (angle == AngleFix.none);
+
+            Debug.Log(upPoint);
+
+
             TrimWeightPoint(areaManager, 0);
+            CreateArea(areaPrefab, areaManager, upPoint, angle);
+            makingAreaType = UnitType.Up;
+            for (int i = 0; i < areaManager.AreaOutGOList.Length; i++)
+            {
+                MakeNormalArea(areaManager.GetAreaPrefabInfo(angle).areaOut[i].position + new Vector3(upPoint.x, 0, upPoint.y), areaManager.GetAreaPrefabInfo(angle).areaOut[i].direction.TureBack(), 0);
+                TrimWeightPoint(areaManager, 0);
+            }
+            Debug.Log(isPorSet);
+        }
+        if (mode == MakeMode.MakeDataMode)
+        {
+            GameController._instance.SetAreaData(GameController._instance.GetGoingToFloor(), areaDataList);
         }
     }
 
     /// <summary>
-    /// 生成下一个地区
+    /// 次のエリアを生成する　　生成下一个地区
     /// </summary>
-    /// <param name="entryPoint">生成的入口点</param>
-    /// <param name="needDirection">入口点的方向</param>
+    /// <param name="entryPoint">生成するエリアの入口の座標　生成的入口点</param>
+    /// <param name="needDirection">必要な入口の方向　入口点的方向</param>
+    /// <param name="upFloorNumber">生成するエリアの上のエリアの深度</param>
     void MakeNormalArea(Vector3 entryPoint, OutDirection needDirection, int upFloorNumber)
     {
         int thisFloorNumber = upFloorNumber + 1;
@@ -265,8 +332,8 @@ public class SceneMaker : MonoBehaviour
 
 
         //GameObject changedPrefab;
-        AreaManager areaManager = null;
-        AreaOut[] areaOutList = null;
+        AreaPrefabManager areaManager = null;
+        AreaPrefabOut[] areaOutList = null;
         Vector3 areaPostion = Vector3.zero;
         int entryIndex = 0;
         int areaTypeIndex = 0;
@@ -292,7 +359,6 @@ public class SceneMaker : MonoBehaviour
                     }
                 case UnitType.End:
                     {
-                        Debug.Log("!!" + isDownSet);
                         //每当生成终节点时，如果尚未生成向下场景，则生成向下场景/传送阵场景
                         if (!isDownSet)
                         {
@@ -324,7 +390,7 @@ public class SceneMaker : MonoBehaviour
             {
                 areaPrefab = randomNormalPrefabList[i];
                 //Debug.Log(areaPrefab.name);
-                areaManager = areaPrefab.GetComponent<AreaManager>();
+                areaManager = areaPrefab.GetComponent<AreaPrefabManager>();
                 areaOutList = areaManager.AreaAngle0.areaOut.getRandomArray();
                 for (entryIndex = 0; entryIndex < areaOutList.Length; entryIndex++)
                 {
@@ -346,25 +412,31 @@ public class SceneMaker : MonoBehaviour
                             areaPrefab = PortalPrefab.getRandomOne();
                             normalTypeArray[areaTypeIndex] = UnitType.Portal;
                         }
-                        areaManager = areaPrefab.GetComponent<AreaManager>();
+                        areaManager = areaPrefab.GetComponent<AreaPrefabManager>();
                         areaOutList = areaManager.AreaAngle0.areaOut.getRandomArray();
 
                         angle = areaOutList[0].direction.getAngleFromTargetDirection(needDirection);
                         areaPostion = entryPoint - areaOutList[0].Rot(angle).position;
                     }
                     #endregion
-                    checkRes = checkRes && CheckAreaPhysics(areaPostion, areaManager, angle);
-
+                    if (mode == MakeMode.MakeSceneMode)
+                    {
+                        checkRes = checkRes && CheckAreaPhysics(areaPostion, areaManager, angle);
+                    }
+                    else
+                    {
+                        checkRes = checkRes && CheckAreaOverlay(areaPostion, areaManager, angle);
+                    }
                     if (checkRes)
                     {
-                        if(areaManager.type == UnitType.Portal)
+                        if (areaManager.type == UnitType.Portal)
                         {
                             isPorSet = true;
                         }
                         else if (areaManager.type == UnitType.Down)
                         {
                             isDownSet = true;
-                                
+
                         }
                         break;
                     }
@@ -376,19 +448,19 @@ public class SceneMaker : MonoBehaviour
             }
         }
 
-        //所有地区生成不能的情况下，封堵
+        //全てのエリアのマッチングが出来ない場合、入口を封鎖する　所有地区生成不能的情况下，封堵
         if (!checkRes)
         {
             CreateWall(entryPoint, needDirection);
             return;
         }
 
-        //调整权重
+        //ウェイトを調整　调整权重
         TrimWeightPoint(areaManager, thisFloorNumber);
 
-        //生成区域
+        //エリアを生成する　生成区域
         makingAreaType = normalTypeArray[areaTypeIndex];
-        CreateArea(areaPrefab, new Vector2(areaPostion.x, areaPostion.z), angle);
+        CreateArea(areaPrefab, areaManager, new Vector2(areaPostion.x, areaPostion.z), angle);
 
         for (int i = 0; i < areaOutList.Length; i++)
         {
@@ -401,10 +473,11 @@ public class SceneMaker : MonoBehaviour
         //TODO:生成方法
     }
     /// <summary>
-    /// 调整权重算法
+    /// ウェイトを調整　调整权重算法
     /// </summary>
-    /// <param name="type">正在构造的地区的信息</param>
-    void TrimWeightPoint(AreaManager makingAreaPrefabInfo, int thisFloorNumber)
+    /// <param name="makingAreaPrefabInfo">正在构造的地区的信息</param>
+    /// <param name="thisFloorNumber">現在のエリア深度</param>
+    void TrimWeightPoint(AreaPrefabManager makingAreaPrefabInfo, int thisFloorNumber)
     {
         makeingCombo = makingAreaPrefabInfo.type != makingAreaType ? 0 : makeingCombo + 1;
         if (makeingCombo > 0)
@@ -420,7 +493,6 @@ public class SceneMaker : MonoBehaviour
         }
         else
         {
-
             nowWeightPoint.cornerPoint = makingAreaPrefabInfo.basePoint.cornerPoint;
             nowWeightPoint.roadPoint = makingAreaPrefabInfo.basePoint.roadPoint;
             nowWeightPoint.roomPoint = makingAreaPrefabInfo.basePoint.roomPoint;
@@ -430,35 +502,66 @@ public class SceneMaker : MonoBehaviour
             nowWeightPoint.CutWeight(UnitType.Road, (10 - thisFloorNumber) >= 0 ? (10 - thisFloorNumber) : 0);
             nowWeightPoint.CutWeight(UnitType.Room, (10 - thisFloorNumber) >= 0 ? (10 - thisFloorNumber) : 0);
             nowWeightPoint.CutWeight(UnitType.End, (10 - thisFloorNumber) >= 0 ? (10 - thisFloorNumber) * 3 : 0);
-
         }
     }
+    /// <summary>
+    /// 封鎖の壁を作る
+    /// </summary>
+    /// <param name="postion">壁生成の位置</param>
+    /// <param name="needDirection">壁の方向</param>
     void CreateWall(Vector3 postion, OutDirection needDirection)
     {
+        AreaPrefabManager areaManager;
+
         makingAreaType = UnitType.Wall;
         if (makingAreaType == UnitType.Road)
         {
-            CreateArea(WallPrefab[0], new Vector2(postion.x, postion.z), WallPrefab[0].GetComponent<AreaManager>().AreaAngle0.areaOut[0].direction.getAngleFromTargetDirection(needDirection));
+            areaManager = WallPrefab[0].GetComponent<AreaPrefabManager>();
+            CreateArea(WallPrefab[0], areaManager, new Vector2(postion.x, postion.z), areaManager.AreaAngle0.areaOut[0].direction.getAngleFromTargetDirection(needDirection));
         }
         else
         {
-            CreateArea(WallPrefab[1], new Vector2(postion.x, postion.z), WallPrefab[1].GetComponent<AreaManager>().AreaAngle0.areaOut[0].direction.getAngleFromTargetDirection(needDirection));
+            areaManager = WallPrefab[1].GetComponent<AreaPrefabManager>();
+            CreateArea(WallPrefab[1], areaManager, new Vector2(postion.x, postion.z), areaManager.AreaAngle0.areaOut[0].direction.getAngleFromTargetDirection(needDirection));
         }
         //todo
     }
-
-    void CreateArea(GameObject go, Vector2 position, AngleFix angle)
+    /// <summary>
+    /// エリア生成（実体化）/（データ化）
+    /// </summary>
+    /// <param name="go">生成するエリアのprefab</param>
+    /// <param name="position">生成座標</param>
+    /// <param name="angle">エリアの回る角度</param>
+    void CreateArea(GameObject go, AreaPrefabManager areaManager, Vector2 position, AngleFix angle)
     {
-        if (areaContainer == null)
+        if (mode == MakeMode.MakeSceneMode)
         {
-            areaContainer = new GameObject("Environment");
-        }
-        GameObject gameObject = PrefabUtility.InstantiatePrefab(go) as GameObject;
+            if (areaContainer == null)
+            {
+                areaContainer = new GameObject("Environment");
+            }
+            GameObject gameObject = PrefabUtility.InstantiatePrefab(go) as GameObject;
 
-        gameObject.transform.parent = areaContainer.transform;
-        gameObject.transform.position = new Vector3(position.x, 0, position.y);
-        gameObject.transform.rotation = Quaternion.Euler(0, (int)angle, 0);
+            gameObject.transform.parent = areaContainer.transform;
+            gameObject.transform.position = new Vector3(position.x, 0, position.y);
+            gameObject.transform.rotation = Quaternion.Euler(0, (int)angle, 0);
+        }
+        else
+        {
+            areaDataList.Add(
+                new AreaData(
+                    GameController._instance.GetGoingToFloor(), 
+                    go.name, 
+                    position.x,
+                    0,
+                    position.y, 
+                    angle,
+                    areaManager.GetAreaPrefabInfo(angle).width,
+                    areaManager.GetAreaPrefabInfo(angle).height));
+        }
     }
+
+
     #endregion
 
 
