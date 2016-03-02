@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 
 
@@ -223,7 +222,7 @@ public class SceneMaker : MonoBehaviour
         for (int i = 0; i < areaDataList.Count; i++)
         {
             relativePosition = areaDataList[i].areaPosition - position;
-            if (Mathf.Abs(relativePosition.x)< areaDataList[i].heightHalf + info.centerPointUp.magnitude &&
+            if (Mathf.Abs(relativePosition.x) < areaDataList[i].heightHalf + info.centerPointUp.magnitude &&
                 Mathf.Abs(relativePosition.z) < areaDataList[i].widthHalf + info.centerPointLeft.magnitude
                 )
             {
@@ -277,7 +276,7 @@ public class SceneMaker : MonoBehaviour
         AngleFix angle;
 
 
-        for (;isPorSet==false;)
+        for (; isPorSet == false;)
         {
 
 
@@ -540,21 +539,18 @@ public class SceneMaker : MonoBehaviour
             {
                 areaContainer = new GameObject("Environment");
             }
-            GameObject gameObject = PrefabUtility.InstantiatePrefab(go) as GameObject;
-
+            GameObject gameObject = Instantiate(Resources.Load(go.name), new Vector3(position.x, 0, position.y), Quaternion.Euler(0, (int)angle, 0)) as GameObject;
             gameObject.transform.parent = areaContainer.transform;
-            gameObject.transform.position = new Vector3(position.x, 0, position.y);
-            gameObject.transform.rotation = Quaternion.Euler(0, (int)angle, 0);
         }
         else
         {
             areaDataList.Add(
                 new AreaData(
-                    GameController._instance.GetGoingToFloor(), 
-                    go.name, 
+                    GameController._instance.GetGoingToFloor(),
+                    go.name,
                     position.x,
                     0,
-                    position.y, 
+                    position.y,
                     angle,
                     areaManager.GetAreaPrefabInfo(angle).width,
                     areaManager.GetAreaPrefabInfo(angle).height));

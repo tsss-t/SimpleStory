@@ -101,7 +101,7 @@ public class GameController
         gameData = new GameData();
         gameData.key = GameManager._instans.gameDataKey;
         playerInFloor = -1000;
-        //InitSave();
+        InitSave();
         Load();
         lastChangeSceneType = EntryType.Portal;
     }
