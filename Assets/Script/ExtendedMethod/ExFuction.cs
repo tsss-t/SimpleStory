@@ -11,9 +11,9 @@ public static class ExFuction
         rate.constantMax = emissionRate;
         emission.rate = rate;
     }
-    public static AreaOut Rot(this AreaOut areaOut, AngleFix angle)
+    public static AreaPrefabOut Rot(this AreaPrefabOut areaOut, AngleFix angle)
     {
-        AreaOut tempArea;
+        AreaPrefabOut tempArea;
         tempArea.position = areaOut.position;
         tempArea.direction = areaOut.direction;
         switch (angle)

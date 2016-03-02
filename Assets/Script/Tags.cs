@@ -24,7 +24,9 @@ public class SceneName
     public const string StartMenu = "Start";
     public const string Opening = "Opening";
     public const string Town = "Town";
-    public const string FirstFloor = "firstFloor";
-    public const string LastFloor = "lastFloor";
+    public const string FirstFloor = "FirstFloor";
+    public const string LastFloor = "LastFloor";
+    public const string ShopFloor = "ShopFloor";
+    public const string RandomMapFloor = "RandomFloor";
 
 }

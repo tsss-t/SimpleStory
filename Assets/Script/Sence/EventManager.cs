@@ -7,7 +7,8 @@ public class EventManager : MonoBehaviour
     public GameObject enemyPrefab;
     GameObject player;
     AutoMove playerAutoMove;
-    public GameObject tufei;
+    public GameObject eventObject1;
+    public GameObject eventObject2;
     AutoMove tufeiAutoMove;
 
     PlayerState playerState;
@@ -28,9 +29,9 @@ public class EventManager : MonoBehaviour
         enemyManager = EnemyManager._instance;
 
         playerAutoMove = player.GetComponent<AutoMove>();
-        if (tufei != null)
+        if (eventObject1 != null)
         {
-            tufeiAutoMove = tufei.GetComponent<AutoMove>();
+            tufeiAutoMove = eventObject1.GetComponent<AutoMove>();
         }
 
         playerState = PlayerState._instance;
@@ -104,7 +105,7 @@ public class EventManager : MonoBehaviour
     public void EventThreeOne()
     {
         playerState.ChangeAction(PlayerState.PlayerAction.Locked);
-        GameObject.FindGameObjectWithTag(Tags.mainCamera).GetComponent<CameraMovement>().setTarget(tufei.transform);
+        GameObject.FindGameObjectWithTag(Tags.mainCamera).GetComponent<CameraMovement>().setTarget(eventObject1.transform);
         tufeiAutoMove.StartDestination(PositionTarget[3].position);
         StartCoroutine(Wait(3f));
         nextEvent.methodName = "EventThreeTwo";
@@ -127,7 +128,7 @@ public class EventManager : MonoBehaviour
         EventDelegate distorytufei = new EventDelegate(this, "DesTufei");
 
         EventDelegate cameraMove = new EventDelegate(this, "CameraFollowObject");
-        cameraMove.parameters[0] = new EventDelegate.Parameter(tufei.transform);
+        cameraMove.parameters[0] = new EventDelegate.Parameter(eventObject1.transform);
         cameraMove.parameters[1] = new EventDelegate.Parameter(PositionTarget[0].position);
         cameraMove.parameters[2] = new EventDelegate.Parameter(3f);
         cameraMove.parameters[3] = new EventDelegate.Parameter(distorytufei);
@@ -160,7 +161,7 @@ public class EventManager : MonoBehaviour
         EventDelegate makePlayerFree = new EventDelegate(this, "MakePlayerFree");
 
 
-        EventDelegate move = new EventDelegate(this, "CameraFollowObject");
+        EventDelegate move = new EventDelegate(this, "MoveTo");
         move.parameters[0] = new EventDelegate.Parameter(player.transform);
         move.parameters[1] = new EventDelegate.Parameter(PositionTarget[1].position);
         move.parameters[2] = new EventDelegate.Parameter(0f);
@@ -168,6 +169,65 @@ public class EventManager : MonoBehaviour
         Talk(6, move);
     }
     #endregion
+    #region LastFloor Event
+    /// <summary>
+    /// 崩れている場所、通行禁止
+    /// </summary>
+    public void EventLastFloorOneOne()
+    {
+        EventDelegate makePlayerFree = new EventDelegate(this, "MakePlayerFree");
+
+        EventDelegate move = new EventDelegate(this, "MoveTo");
+        move.parameters[0] = new EventDelegate.Parameter(player.transform);
+        move.parameters[1] = new EventDelegate.Parameter(PositionTarget[0].position);
+        move.parameters[2] = new EventDelegate.Parameter(0f);
+        move.parameters[3] = new EventDelegate.Parameter(makePlayerFree);
+        Talk(10, move);
+    }
+    /// <summary>
+    /// 崩れている場所、片付け
+    /// </summary>
+    public void EventLastFloorTwoOne()
+    {
+        EventDelegate unlockPlayer = new EventDelegate(this, "MakePlayerFree");
+
+        EventDelegate talkEvent13 = new EventDelegate(this, "Talk");
+        talkEvent13.parameters[0] = new EventDelegate.Parameter(13);
+        talkEvent13.parameters[1] = new EventDelegate.Parameter(unlockPlayer);
+
+        EventDelegate moveRocks = new EventDelegate(this, "EventMoveRocks");
+        moveRocks.parameters[0] = new EventDelegate.Parameter(talkEvent13);
+
+        EventDelegate talkEvent12 = new EventDelegate(this, "Talk");
+        talkEvent12.parameters[0] = new EventDelegate.Parameter(12);
+        talkEvent12.parameters[1] = new EventDelegate.Parameter(moveRocks);
+
+        EventDelegate moveToRocks = new EventDelegate(this, "MoveTo");
+        moveToRocks.parameters[0] = new EventDelegate.Parameter(player.transform);
+        moveToRocks.parameters[1] = new EventDelegate.Parameter(PositionTarget[2].position);
+        moveToRocks.parameters[2] = new EventDelegate.Parameter(0f);
+        moveToRocks.parameters[3] = new EventDelegate.Parameter(talkEvent12);
+
+        EventDelegate talkEvent11 = new EventDelegate(this, "Talk");
+        talkEvent11.parameters[0] = new EventDelegate.Parameter(11);
+        talkEvent11.parameters[1] = new EventDelegate.Parameter(moveToRocks);
+
+        EventDelegate cameraLookAt = new EventDelegate(this, "CameraLookAt");
+        cameraLookAt.parameters[0] = new EventDelegate.Parameter(PositionTarget[1].transform);
+        cameraLookAt.parameters[1] = new EventDelegate.Parameter(2f);
+        cameraLookAt.parameters[2] = new EventDelegate.Parameter(talkEvent11);
+
+        cameraLookAt.Execute();
+        GameController._instance.doneEvent(3);
+    }
+    public void EventMoveRocks(EventDelegate nextMethod)
+    {
+        this.nextEvent = nextMethod;
+        StartCoroutine(moveRocks());
+    }
+
+    #endregion
+
     #region shopFloor Event 
     public void EventShopOneOne()
     {
@@ -298,15 +358,15 @@ public class EventManager : MonoBehaviour
     {
         try
         {
-            iTween.FadeTo(tufei.transform.Find("Merchant_body").gameObject, 0, 2f);
-            iTween.FadeTo(tufei.transform.Find("Object017").gameObject, 0, 2f);
-            iTween.FadeTo(tufei.transform.Find("Object018").gameObject, 0, 2f);
-            iTween.FadeTo(tufei.transform.Find("Object019").gameObject, 0, 2f);
+            iTween.FadeTo(eventObject1.transform.Find("Merchant_body").gameObject, 0, 2f);
+            iTween.FadeTo(eventObject1.transform.Find("Object017").gameObject, 0, 2f);
+            iTween.FadeTo(eventObject1.transform.Find("Object018").gameObject, 0, 2f);
+            iTween.FadeTo(eventObject1.transform.Find("Object019").gameObject, 0, 2f);
         }
         catch { Debug.Log("error"); }
         yield return new WaitForSeconds(1.5f);
         thisEventIsOver = true;
-        Destroy(tufei);
+        Destroy(eventObject1);
     }
 
 
@@ -364,12 +424,24 @@ public class EventManager : MonoBehaviour
         UISceneFader._instance.changeFade();
         yield return new WaitForSeconds(2f);
 
-        tufei.SetActive(false);
+        eventObject1.SetActive(false);
         foreach (GameObject item in NPCManager._instance.GetNPCDctionary().Values)
         {
             item.SetActive(true);
         }
 
+        UISceneFader._instance.changeFade();
+        yield return new WaitForSeconds(2f);
+
+        thisEventIsOver = true;
+    }
+    IEnumerator moveRocks()
+    {
+        UISceneFader._instance.changeFade();
+        yield return new WaitForSeconds(2f);
+        eventObject1.SetActive(false);
+
+        eventObject2.SetActive(true);
         UISceneFader._instance.changeFade();
         yield return new WaitForSeconds(2f);
 

@@ -104,13 +104,13 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            anim.SetFloat(hash.speedFloat, 0f);
+            MoveStop();
         }
     }
     #endregion
     #region 状態変更（歩く）
     /// <summary>
-    /// 歩くと走るの切り替え　ｚボタン
+    /// 歩くと走るの切り替え　pボタン
     /// </summary>
     void WalkChange()
     {
@@ -166,25 +166,27 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (audioStepSound.isPlaying)
-                {
-                    audioStepSound.Stop();
-                }
-                anim.SetFloat(hash.speedFloat, 0f);
-                playerRigidbody.velocity = new Vector3(0, nowVel.y, 0);
+                MoveStop();
             }
 
         }
         else
         {
-            if (audioStepSound.isPlaying)
-            {
-                audioStepSound.Stop();
-            }
-            playerRigidbody.velocity = new Vector3(0f, 0f, 0f);
+            MoveStop();
         }
 
     }
+    void MoveStop()
+    {
+        if (audioStepSound.isPlaying)
+        {
+            audioStepSound.Stop();
+        }
+        anim.SetFloat(hash.speedFloat, 0f);
+        playerRigidbody.velocity = new Vector3(0f, 0f, 0f);
+
+    }
+
     /// <summary>
     /// 主人公移動中転向
     /// </summary>
