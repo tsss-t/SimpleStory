@@ -103,7 +103,7 @@ public class GameController
         playerInFloor = -1000;
         InitSave();
         Load();
-        lastChangeSceneType = EntryType.Portal;
+        lastChangeSceneType = EntryType.Down;
     }
 
     #region paramater

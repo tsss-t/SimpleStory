@@ -280,6 +280,7 @@ public class EnemyController : MonoBehaviour
                 case ActionType.idel:
                     {
                         anim.SetFloat(hash.enemySpeedFloat, 0f);
+                        transform.GetComponent<CharacterController>().SimpleMove(Vector3.zero);
                         break;
                     }
                 case ActionType.run:
