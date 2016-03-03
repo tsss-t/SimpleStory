@@ -23,7 +23,6 @@ public class EventTrigger : MonoBehaviour
 
         if (!collider.isTrigger && collider.gameObject.tag.Equals(Tags.player)&&PlayerState._instance.GetActionInfoNow()== PlayerState.PlayerAction.Free)
         {
-            Debug.Log(this.gameObject.name);
             eventDele.Execute();
             if (Once)
             {
