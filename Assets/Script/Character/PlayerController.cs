@@ -183,7 +183,7 @@ public class PlayerController : MonoBehaviour
             audioStepSound.Stop();
         }
         anim.SetFloat(hash.speedFloat, 0f);
-        playerRigidbody.velocity = new Vector3(0f, 0f, 0f);
+        playerRigidbody.velocity = new Vector3(0f, playerRigidbody.velocity.y, 0f);
 
     }
 

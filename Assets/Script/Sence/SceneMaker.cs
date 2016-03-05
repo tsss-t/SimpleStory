@@ -1,24 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-
-#region data
-[System.Serializable]
-public struct sceneData
-{
-    string areaPrefabName;//使用的prefab名
-    Vector3 position;//区域中心点坐标
-    int height;//区域大小
-    int weidth;//区域大小
-}
-[System.Serializable]
-public struct entryData
-{
-    Vector3 position;//地点坐标
-    OutDirection direction;//方向
-    bool isCrossed;//是否连通
-}
-#endregion
 public class SceneMaker : MonoBehaviour
 {
     #region para
@@ -33,12 +15,16 @@ public class SceneMaker : MonoBehaviour
 
     GameObject areaContainer;
     List<AreaData> areaDataList;
+    List<EnemyPositionData> enemyDataList;
     //bool connect = false;
     public GameObject temp;
     public bool isDownSet = false;
     public bool isPorSet = false;
 
-
+    private WeightPoint nowWeightPoint;
+    private UnitType makingAreaType;
+    private int makeingCombo;
+    private UnitType[] normalTypeArray = { UnitType.Road, UnitType.Room, UnitType.Corner, UnitType.End };
     #region Editor
     public int mapwidth = 0;//地图大小 mapwidth x mapheigth
     public int mapheigth = 0;
@@ -51,12 +37,7 @@ public class SceneMaker : MonoBehaviour
     public GameObject[] CornerPrefab;
     public GameObject[] WallPrefab;
 
-    public sceneData[] senceDataList;
-    public entryData[] entryDataList;
-    public WeightPoint nowWeightPoint;
-    public UnitType makingAreaType;
-    public int makeingCombo;
-    public UnitType[] normalTypeArray = { UnitType.Road, UnitType.Room, UnitType.Corner, UnitType.End };
+    public GameObject[] normalEnemyPrefab;
     #endregion
     #endregion
 
@@ -253,13 +234,16 @@ public class SceneMaker : MonoBehaviour
     #region makeScene follow
     public void CreateStart()
     {
+        nowWeightPoint = new WeightPoint();
         mode = MakeMode.MakeSceneMode;
         MakeUpPoint();
     }
     public void CreateDataStart()
     {
+        nowWeightPoint = new WeightPoint();
         mode = MakeMode.MakeDataMode;
         areaDataList = new List<AreaData>();
+        enemyDataList = new List<EnemyPositionData>();
         MakeUpPoint();
     }
     /// <summary>
@@ -284,6 +268,7 @@ public class SceneMaker : MonoBehaviour
             if (mode == MakeMode.MakeDataMode)
             {
                 areaDataList.Clear();
+                enemyDataList.Clear();
             }
             else
             {
@@ -314,6 +299,7 @@ public class SceneMaker : MonoBehaviour
         if (mode == MakeMode.MakeDataMode)
         {
             GameController._instance.SetAreaData(GameController._instance.GetGoingToFloor(), areaDataList);
+            GameController._instance.SetEnemeyPositon(GameController._instance.GetGoingToFloor(), enemyDataList);
         }
     }
 
@@ -554,6 +540,44 @@ public class SceneMaker : MonoBehaviour
                     angle,
                     areaManager.GetAreaPrefabInfo(angle).width,
                     areaManager.GetAreaPrefabInfo(angle).height));
+
+
+            bool isCreateEnemy = false;
+
+            switch (areaManager.type)
+            {
+                case UnitType.Road:
+                    isCreateEnemy = Random.value > 0.75;
+                    break;
+                case UnitType.Room:
+                    isCreateEnemy = Random.value > 0.25;
+                    break;
+                case UnitType.End:
+                    isCreateEnemy = Random.value > 0.5;
+                    break;
+                case UnitType.Corner:
+                    isCreateEnemy = Random.value > 0.75;
+                    break;
+            }
+
+
+            if (isCreateEnemy)
+            {
+                int enemyCount = Random.Range(1, areaManager.GetAreaPrefabInfo(angle).width * areaManager.GetAreaPrefabInfo(angle).height / 10);
+                string enemyName = normalEnemyPrefab[Random.Range(0, normalEnemyPrefab.Length)].name;
+                enemyDataList.Add(
+                    new EnemyPositionData(
+                        GameController._instance.GetGoingToFloor(),
+                        enemyName,
+                        enemyCount,
+                        GameController._instance.GetGoingToFloor() + 101,
+                        position.x,
+                        0,
+                        position.y,
+                        areaManager.GetAreaPrefabInfo(angle).width,
+                        areaManager.GetAreaPrefabInfo(angle).height
+                    ));
+            }
         }
     }
 

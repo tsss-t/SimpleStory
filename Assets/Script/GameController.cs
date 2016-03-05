@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
+#region セーブデータクラス
 /// <summary>
 /// セーブデータクラス
 /// </summary>
@@ -16,11 +18,12 @@ public class GameData
     public string PlayerEventProcess;
     public string PlayerPortalPorcess;
     public string SenceData;
+    public string EnemyPositionData;
     public GameData()
     {
 
     }
-    public GameData(string PlayerAcceptData, string PlayerBag, string PlayerState, string PlayerEventProcess, string PlayerPortalPorcess, string SenceData)
+    public GameData(string PlayerAcceptData, string PlayerBag, string PlayerState, string PlayerEventProcess, string PlayerPortalPorcess, string SenceData, string EnemyPositionData)
     {
         this.PlayerAcceptData = PlayerAcceptData;
         this.PlayerBag = PlayerBag;
@@ -28,10 +31,16 @@ public class GameData
         this.PlayerEventProcess = PlayerEventProcess;
         this.PlayerPortalPorcess = PlayerPortalPorcess;
         this.SenceData = SenceData;
+        this.EnemyPositionData = EnemyPositionData;
     }
 }
+#endregion
+
+
+#region GameController
 public class GameController
 {
+    #region para
     private static GameController gameController;
     public static GameController _instance
     {
@@ -60,6 +69,8 @@ public class GameController
     string eventData;
     string portalData;
     string areaData;
+    string enemyPositionData;
+    #endregion 
     #region Game Running Data
     private EntryType lastChangeSceneType;
     public void SetLastChangeSceneType(EntryType type)
@@ -82,6 +93,7 @@ public class GameController
     }
     #endregion
 
+    #region 初期化
     private GameController()
     {
         playerStateData = GameManager._instans.playerStateData.text;
@@ -96,6 +108,7 @@ public class GameController
         eventData = GameManager._instans.eventData.text;
         portalData = GameManager._instans.portalData.text;
         areaData = GameManager._instans.sceneData.text;
+        enemyPositionData = GameManager._instans.enemyPositionData.text;
         //Application.targetFrameRate = 45;
         xs = new XmlSaver();
         gameData = new GameData();
@@ -103,9 +116,9 @@ public class GameController
         playerInFloor = -1000;
         InitSave();
         Load();
-        lastChangeSceneType = EntryType.Down;
+        lastChangeSceneType = EntryType.Portal;
     }
-
+    #endregion
     #region paramater
     private const string dataFileName = "save.dat";//セーブデータの名前
 
@@ -140,6 +153,7 @@ public class GameController
         SaveEventProcess();
         SavePortalProcess();
         SaveAreaData();
+        SaveEnemyPositionData();
         WriteData();
     }
     void InitSave()
@@ -150,6 +164,7 @@ public class GameController
         gameData.PlayerEventProcess = eventData.ToString();
         gameData.PlayerPortalPorcess = portalData.ToString();
         gameData.SenceData = areaData.ToString();
+        gameData.EnemyPositionData = enemyPositionData.ToString();
         WriteData();
     }
     #region Item
@@ -239,6 +254,22 @@ public class GameController
         }
         gameData.SenceData = string.Format("{0}\n{1}", AreaDataUper, saveString);
     }
+    #endregion
+    #region enemyPositionInfo
+    const string enemyPositionDataUper = "floorNum,enemyName,enemyLevel,leftUpPositionX,leftUpPositionY,leftUpPositionZ,width,height";
+    void SaveEnemyPositionData()
+    {
+        saveString = "";
+        foreach (List<EnemyPositionData> item in enemyPositionDictionary.Values)
+        {
+            for (int i = 0; i < item.Count; i++)
+            {
+                saveString += string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n", item[i].floorNum, item[i].enemyName, item[i].enemeyCount, item[i].enemyLevel, item[i].leftUpPosition.x, item[i].leftUpPosition.y, item[i].leftUpPosition.z, item[i].width, item[i].height);
+            }
+        }
+        gameData.EnemyPositionData = string.Format("{0}\n{1}", AreaDataUper, saveString);
+    }
+
 
     #endregion
     #endregion
@@ -255,8 +286,9 @@ public class GameController
             gameData = gameDataFromXML;
             LoadEventProcess();
             LoadPortalList();
-            LoadAreaList();
+            LoadAreaData();
             LoadPlayerPosition();
+            LoadEneymyPositionData();
         }
         //セーブデータが存在しません
         else
@@ -746,7 +778,7 @@ public class GameController
     #region sceneInfo
     Dictionary<int, List<AreaData>> areaDictionary;
     List<AreaData> areaList;
-    void LoadAreaList()
+    void LoadAreaData()
     {
         int floorNumber = 0;
         if (areaDictionary == null)
@@ -787,5 +819,49 @@ public class GameController
     }
 
     #endregion
+    #region enemyPosition
+    Dictionary<int, List<EnemyPositionData>> enemyPositionDictionary;
+    List<EnemyPositionData> enemyPositionList;
+    void LoadEneymyPositionData()
+    {
+        int floorNumber = 0;
+        if (enemyPositionDictionary == null)
+        {
+            string[] proArray;
+            string[] dataArray = gameData.EnemyPositionData.ToString().Split('\n');
+            enemyPositionDictionary = new Dictionary<int, List<EnemyPositionData>>();
+            for (int i = 1; i < dataArray.Length; i++)
+            {
+
+                if (dataArray[i] != "")
+                {
+                    proArray = dataArray[i].Split(',');
+
+                    floorNumber = int.Parse(proArray[0]);
+
+
+                    enemyPositionDictionary.TryGetValue(floorNumber, out enemyPositionList);
+                    if (enemyPositionList == null)
+                    {
+                        enemyPositionList = new List<EnemyPositionData>();
+                    }
+                    enemyPositionList.Add(new EnemyPositionData(floorNumber, proArray[1], int.Parse(proArray[2]), int.Parse(proArray[3]), float.Parse(proArray[4]), float.Parse(proArray[5]), float.Parse(proArray[6]), float.Parse(proArray[7]), float.Parse(proArray[8])));
+
+                    enemyPositionDictionary[floorNumber] = enemyPositionList;
+                }
+            }
+        }
+    }
+    public List<EnemyPositionData> GetEnemeyPosition(int floorNum)
+    {
+        enemyPositionDictionary.TryGetValue(floorNum, out enemyPositionList);
+        return enemyPositionList;
+    }
+    public void SetEnemeyPositon(int floorNum, List<EnemyPositionData> enemeyPositonList)
+    {
+        this.enemyPositionDictionary[floorNum] = enemeyPositonList;
+    }
+    #endregion
     #endregion
 }
+#endregion

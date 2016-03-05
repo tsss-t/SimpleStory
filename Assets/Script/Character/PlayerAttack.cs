@@ -44,9 +44,17 @@ public class PlayerAttack : MonoBehaviour
             {
                 Attack(SkillType.basic, 0);
             }
-            if(Input.GetButtonDown("Skill1"))
+            if (Input.GetButtonDown("Skill1"))
             {
                 Attack(SkillType.skill, PosType.one);
+            }
+            if (Input.GetButtonDown("Skill2"))
+            {
+                Attack(SkillType.skill, PosType.two);
+            }
+            if(Input.GetButtonDown("Skill3"))
+            {
+                Attack(SkillType.skill, PosType.three);
             }
         }
     }
@@ -61,6 +69,13 @@ public class PlayerAttack : MonoBehaviour
         string[] proArray = args.Split(',');
         PosType type = (PosType)int.Parse(proArray[0]);
         string effectName = proArray[1];
+        bool isAttack = true;
+
+        if (proArray.Length > 2)
+        {
+            isAttack = bool.Parse(proArray[2]);
+        }
+
 
         AttackEffect getEffect;
         AttackEffectDictinary.TryGetValue(effectName, out getEffect);
@@ -74,7 +89,7 @@ public class PlayerAttack : MonoBehaviour
                 {
                     for (int i = 0; i < canAttackEnemy.Length; i++)
                     {
-                        if (AttackFront(canAttackEnemy[i].transform.position))
+                        if (AttackFront(canAttackEnemy[i].transform.position, PosType.basic,false))
                         {
                             canAttackEnemy[i].GetComponent<EnemyController>().Hit(playerState.ATK);
                         }
@@ -85,9 +100,37 @@ public class PlayerAttack : MonoBehaviour
                 {
                     for (int i = 0; i < canAttackEnemy.Length; i++)
                     {
-                        if (AttackAround(canAttackEnemy[i].transform.position))
+                        if (AttackAround(canAttackEnemy[i].transform.position, PosType.one,false))
                         {
                             canAttackEnemy[i].GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.one).Damage);
+                        }
+                    }
+                    break;
+                }
+            case PosType.two:
+                {
+                    if (isAttack)
+                    {
+                        for (int i = 0; i < canAttackEnemy.Length; i++)
+                        {
+                            if (AttackFront(canAttackEnemy[i].transform.position, PosType.two,false))
+                            {
+                                canAttackEnemy[i].GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
+                            }
+                        }
+                    }
+                    break;
+                }
+            case PosType.three:
+                {
+                    if (isAttack)
+                    {
+                        for (int i = 0; i < canAttackEnemy.Length; i++)
+                        {
+                            if (AttackFront(canAttackEnemy[i].transform.position, PosType.two, false))
+                            {
+                                canAttackEnemy[i].GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
+                            }
                         }
                     }
                     break;
@@ -96,19 +139,23 @@ public class PlayerAttack : MonoBehaviour
     }
 
     #region 攻撃判定
+    float attackDis;
     /// <summary>
     /// //目の前の攻撃判定
     /// </summary>
     /// <param name="enemyPosition">敵の位置（ワールド座標）</param>
+    /// <param name="type">攻撃手段</param>
+    /// <param name="isEffect">特殊攻撃？</param>
     /// <returns></returns>
-    public bool AttackFront(Vector3 enemyPosition)
+    bool AttackFront(Vector3 enemyPosition, PosType type,bool isEffect)
     {
         enemyLocalPosition = transform.InverseTransformPoint(enemyPosition);
 
-        if (enemyLocalPosition.z > 0.0f)
+        if (enemyLocalPosition.z > 0.0f)//敵は正面にいる
         {
+            attackDis = getAttackDis(type,isEffect);
             //Debug.Log(playerState.GetAttackDis());
-            if (Vector3.Distance(enemyPosition, transform.position) < playerState.GetAttackDis())
+            if (Vector3.Distance(enemyPosition, transform.position) < attackDis)
             {
                 //Debug.Log("hit!");
                 return true;
@@ -116,17 +163,48 @@ public class PlayerAttack : MonoBehaviour
         }
         return false;
     }
-    public bool AttackAround(Vector3 enemyPosition)
+
+    /// <summary>
+    /// 周りの攻撃判定
+    /// </summary>
+    /// <param name="enemyPosition">敵の位置（ワールド座標）</param>
+    /// <param name="type">攻撃手段</param>
+    /// <param name="isEffect">特殊攻撃？</param>
+    /// <returns></returns>
+    bool AttackAround(Vector3 enemyPosition, PosType type, bool isEffect)
     {
-        if (Vector3.Distance(enemyPosition, transform.position) < playerState.GetAttackDis())
+        attackDis = getAttackDis(type, isEffect);
+        if (Vector3.Distance(enemyPosition, transform.position) < attackDis)
         {
             //Debug.Log("hit!");
             return true;
         }
         return false;
     }
+
+    float getAttackDis(PosType type, bool isEffect)
+    {
+        switch (type)
+        {
+            case PosType.basic:
+                attackDis = playerState.GetAttackDis();
+                break;
+            case PosType.one:
+                attackDis = isEffect ? SkillManager._instance.GetSkillByPosition(PosType.one).EffectDis : SkillManager._instance.GetSkillByPosition(PosType.one).AttackDis;
+                break;
+            case PosType.two:
+                attackDis = isEffect ? SkillManager._instance.GetSkillByPosition(PosType.two).EffectDis : SkillManager._instance.GetSkillByPosition(PosType.two).AttackDis;
+                break;
+            case PosType.three:
+                attackDis = isEffect ? SkillManager._instance.GetSkillByPosition(PosType.three).EffectDis : SkillManager._instance.GetSkillByPosition(PosType.three).AttackDis;
+                break;
+            default:
+                break;
+        }
+        return attackDis;
+    }
     #endregion
-    
+
     /// <summary>
     /// 動画管理
     /// </summary>
@@ -277,15 +355,55 @@ public class PlayerAttack : MonoBehaviour
     public void ShowEffectSelfToTarget(string effectName)
     {
         AttackEffect effect;
-        AttackEffectDictinary.TryGetValue(effectName,out effect);
+        AttackEffectDictinary.TryGetValue(effectName, out effect);
         canAttackEnemy = EnemyManager._instance.getAttackEnemy();
         foreach (GameObject go in canAttackEnemy)
         {
-            if(AttackAround(go.transform.position))
+            if (AttackAround(go.transform.position, PosType.one,true))
             {
                 GameObject goEffect = (GameObject.Instantiate(effect) as AttackEffect).gameObject;
                 goEffect.transform.position = transform.position + Vector3.up;
                 goEffect.GetComponent<EffectSettings>().Target = go;
+            }
+        }
+    }
+
+    public void ShowEffectToTarget(string effectName)
+    {
+        AttackEffect effect;
+        AttackEffectDictinary.TryGetValue(effectName, out effect);
+        canAttackEnemy = EnemyManager._instance.getAttackEnemy();
+        foreach (GameObject go in canAttackEnemy)
+        {
+            RaycastHit hit;
+            bool collider = Physics.Raycast(go.transform.position + Vector3.up, Vector3.down, out hit, 10f, LayerMask.GetMask("Building"));
+            if (AttackFront(go.transform.position, PosType.two,true))
+            {
+                if (collider)
+                {
+                    GameObject goEffect = (GameObject.Instantiate(effect) as AttackEffect).gameObject;
+                    go.GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.two).Damage * 5);
+                    goEffect.transform.position = go.transform.position;
+                }
+            }
+        }
+    }
+    public void ShowEffectHand()
+    {
+        string effectName = "DevilHandMobile";
+        AttackEffect effect;
+        AttackEffectDictinary.TryGetValue(effectName, out effect);
+        foreach (GameObject go in canAttackEnemy)
+        {
+            RaycastHit hit;
+            bool collider = Physics.Raycast(go.transform.position + Vector3.up, Vector3.down, out hit, 10f, LayerMask.GetMask("Building"));
+            if (AttackFront(go.transform.position, PosType.two, true))
+            {
+                if (collider)
+                {
+                    GameObject.Instantiate(effect, hit.point, Quaternion.identity);
+                    go.GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5,1,1);
+                }
             }
         }
     }
