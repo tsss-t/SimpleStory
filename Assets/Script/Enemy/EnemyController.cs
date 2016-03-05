@@ -63,6 +63,7 @@ public class EnemyController : MonoBehaviour
     private GameObject hpBar;
     private UISlider hpSlider;
 
+    private CharacterController charaController;
 
 
     #endregion
@@ -70,15 +71,17 @@ public class EnemyController : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        positionStart = new Vector3(transform.position.x, transform.position.y, transform.position.z); ;
         playerState = PlayerState._instance;
+    }
+    void Start()
+    {
+        positionStart = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         nowState = ActionState.notFoundPlayer;
         playerPosition = playerState.playerTransform.position;
         normalActionList = actionList.GetNormalActionEvents();
         attackActionList = actionList.GetAttackActionEvents();
         dieActionList = actionList.GetDieActionEvents();
         hitActionList = actionList.GetHitActionEvents();
-
 
         anim = this.GetComponent<Animator>();
         timer = 0f;
@@ -89,6 +92,8 @@ public class EnemyController : MonoBehaviour
         hpBarManager = UIHpBarManager.hpBarManager;
         hpBar = hpBarManager.CreateHpBar(transform.Find("HpBarPoint").gameObject);
         hpSlider = hpBar.transform.GetComponentInChildren<UISlider>();
+
+        charaController = this.GetComponent<CharacterController>();
     }
     #endregion
     #region Update
@@ -142,6 +147,13 @@ public class EnemyController : MonoBehaviour
                 if (gameObject.transform.position.y < -100)
                 {
                     BugDie();
+                }
+            }
+            else
+            {
+                if(charaController.enabled)
+                {
+                    charaController.SimpleMove(Vector3.zero);
                 }
             }
         }
@@ -280,7 +292,7 @@ public class EnemyController : MonoBehaviour
                 case ActionType.idel:
                     {
                         anim.SetFloat(hash.enemySpeedFloat, 0f);
-                        transform.GetComponent<CharacterController>().SimpleMove(Vector3.zero);
+                        charaController.SimpleMove(Vector3.zero);
                         break;
                     }
                 case ActionType.run:
@@ -294,7 +306,7 @@ public class EnemyController : MonoBehaviour
                         }
 
                         anim.SetFloat(hash.enemySpeedFloat, speed, speedDampTime, Time.deltaTime);
-                        transform.GetComponent<CharacterController>().SimpleMove(transform.forward * speed);
+                        charaController.SimpleMove(transform.forward * speed);
                         //GetComponent<Rigidbody>().velocity = new Vector3(speed * transform.forward.x, nowVel.y, speed * transform.forward.z);
                         break;
                     }
@@ -341,7 +353,7 @@ public class EnemyController : MonoBehaviour
             if (Vector3.Distance(transform.position, playerPosition) > attackDis)
             {
                 anim.SetFloat(hash.enemySpeedFloat, speed, speedDampTime, Time.deltaTime);
-                transform.GetComponent<CharacterController>().SimpleMove(transform.forward * speed);
+                charaController.SimpleMove(transform.forward * speed);
                 //GetComponent<Rigidbody>().velocity = new Vector3(speed * transform.forward.x, GetComponent<Rigidbody>().velocity.y, speed * transform.forward.z);
             }
             else
@@ -382,7 +394,7 @@ public class EnemyController : MonoBehaviour
                     }
 
                     anim.SetTrigger(attackAction.actionTrigerName);
-                    
+
                     charaControler.Hit(ATK, ACC);
                     nowAction = ActionType.attack;
                     attackTimer = attackkDelay;
@@ -401,7 +413,7 @@ public class EnemyController : MonoBehaviour
     {
         transform.LookAt(positionStart);
         anim.SetFloat(hash.enemySpeedFloat, speed, speedDampTime, Time.deltaTime);
-        transform.GetComponent<CharacterController>().SimpleMove(transform.forward * speed);
+        charaController. SimpleMove(transform.forward * speed);
         //GetComponent<Rigidbody>().velocity = new Vector3(speed * transform.forward.x, GetComponent<Rigidbody>().velocity.y, speed * transform.forward.z);
         if (Vector3.Distance(positionStart, transform.position) < 0.5f)
         {
@@ -453,10 +465,34 @@ public class EnemyController : MonoBehaviour
     ActionEvent hitAction;
     ActionEvent dieAction;
     int damage;
+
+
+    /// <summary>
+    /// 被攻撃、後退、飛ぶ
+    /// </summary>
+    /// <param name="ATK"></param>
+    /// <param name="jumpDis">飛ぶ距離</param>
+    /// <param name="backDis">後退距離</param>
+    public void Hit(int ATK, int jumpDis, int backDis)
+    {
+        iTween.MoveBy(this.gameObject, transform.InverseTransformDirection(playerState.playerTransform.forward) * backDis + Vector3.up * jumpDis, 0.3f);
+        Hit(ATK);
+
+    }
+    /// <summary>
+    /// 被攻撃、後退
+    /// </summary>
+    /// <param name="ATK">技の攻撃力</param>
+    /// <param name="backDis">後退距離</param>
+    public void Hit(int ATK, int backDis)
+    {
+        iTween.MoveBy(this.gameObject, transform.InverseTransformDirection(playerState.playerTransform.forward) * backDis, 0.3f);
+        Hit(ATK);
+    }
     /// <summary>
     /// 被攻撃
     /// </summary>
-    /// <param name="ATK">プレイヤーの攻撃力</param>
+    /// <param name="ATK">技の攻撃力</param>
     public void Hit(int ATK)
     {
         if (nowState != ActionState.die)
@@ -516,7 +552,7 @@ public class EnemyController : MonoBehaviour
 
 
         StartCoroutine(AfterDie());
-        this.GetComponent<CharacterController>().enabled = false;
+
 
     }
     private void BugDie()
@@ -526,7 +562,7 @@ public class EnemyController : MonoBehaviour
         dieAction = dieActionList[0];
         anim.SetTrigger(dieAction.actionTrigerName);
         StartCoroutine(AfterDie());
-        this.GetComponent<CharacterController>().enabled = false;
+        charaController.enabled = false;
     }
 
     #endregion
@@ -541,6 +577,8 @@ public class EnemyController : MonoBehaviour
         targetPos = new Vector3(transform.position.x, transform.position.y - height, transform.position.z);
         for (float timer = 0; timer < 10f; timer += Time.deltaTime)
             yield return 0;
+
+        charaController.enabled = false;
         while (transform.position.y - 1f > targetPos.y)
         {
             transform.position = Vector3.Lerp(transform.position, targetPos, 0.1f * Time.deltaTime);

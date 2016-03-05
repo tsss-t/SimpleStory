@@ -17,6 +17,8 @@ public class Skill
     int coldTime;
     int damage;
     int level = 1;
+    float attackDis = 5;
+    float effectDis = 7.5f;
     #region get/set
     public int Id
     {
@@ -119,6 +121,32 @@ public class Skill
         set
         {
             level = value;
+        }
+    }
+
+    public float AttackDis
+    {
+        get
+        {
+            return attackDis;
+        }
+
+        set
+        {
+            attackDis = value;
+        }
+    }
+
+    public float EffectDis
+    {
+        get
+        {
+            return effectDis;
+        }
+
+        set
+        {
+            effectDis = value;
         }
     }
     #endregion;

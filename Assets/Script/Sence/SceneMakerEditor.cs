@@ -32,9 +32,9 @@ public class SceneMakerEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("EndPrefab"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("WallPrefab"), true);
 
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("senceDataList"), true);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("entryDataList"), true);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("normalEnemyPrefab"), true);
 
+        
         serializedObject.ApplyModifiedProperties();
 
         if (GUILayout.Button("Create Start"))
