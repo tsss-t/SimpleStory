@@ -32,7 +32,6 @@ public class SceneMakerEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("EndPrefab"), true);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("WallPrefab"), true);
 
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("normalEnemyPrefab"), true);
 
         
         serializedObject.ApplyModifiedProperties();

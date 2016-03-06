@@ -21,6 +21,7 @@ public class SceneMaker : MonoBehaviour
     public bool isDownSet = false;
     public bool isPorSet = false;
 
+    private int floorNum;
     private WeightPoint nowWeightPoint;
     private UnitType makingAreaType;
     private int makeingCombo;
@@ -37,7 +38,6 @@ public class SceneMaker : MonoBehaviour
     public GameObject[] CornerPrefab;
     public GameObject[] WallPrefab;
 
-    public GameObject[] normalEnemyPrefab;
     #endregion
     #endregion
 
@@ -238,8 +238,9 @@ public class SceneMaker : MonoBehaviour
         mode = MakeMode.MakeSceneMode;
         MakeUpPoint();
     }
-    public void CreateDataStart()
+    public void CreateDataStart(int floorNum)
     {
+        this.floorNum = floorNum;
         nowWeightPoint = new WeightPoint();
         mode = MakeMode.MakeDataMode;
         areaDataList = new List<AreaData>();
@@ -283,7 +284,7 @@ public class SceneMaker : MonoBehaviour
             }
             while (angle == AngleFix.none);
 
-            Debug.Log(upPoint);
+            //Debug.Log(upPoint);
 
 
             TrimWeightPoint(areaManager, 0);
@@ -294,12 +295,12 @@ public class SceneMaker : MonoBehaviour
                 MakeNormalArea(areaManager.GetAreaPrefabInfo(angle).areaOut[i].position + new Vector3(upPoint.x, 0, upPoint.y), areaManager.GetAreaPrefabInfo(angle).areaOut[i].direction.TureBack(), 0);
                 TrimWeightPoint(areaManager, 0);
             }
-            Debug.Log(isPorSet);
+            //Debug.Log(isPorSet);
         }
         if (mode == MakeMode.MakeDataMode)
         {
-            GameController._instance.SetAreaData(GameController._instance.GetGoingToFloor(), areaDataList);
-            GameController._instance.SetEnemeyPositon(GameController._instance.GetGoingToFloor(), enemyDataList);
+            GameController._instance.SetAreaData(floorNum, areaDataList);
+            GameController._instance.SetEnemyPositon(floorNum, enemyDataList);
         }
     }
 
@@ -563,12 +564,12 @@ public class SceneMaker : MonoBehaviour
 
             if (isCreateEnemy)
             {
-                int enemyCount = Random.Range(1, areaManager.GetAreaPrefabInfo(angle).width * areaManager.GetAreaPrefabInfo(angle).height / 10);
-                string enemyName = normalEnemyPrefab[Random.Range(0, normalEnemyPrefab.Length)].name;
+                int enemyCount = Random.Range(1, areaManager.GetAreaPrefabInfo(angle).width * areaManager.GetAreaPrefabInfo(angle).height / 25);
+                int enemyID = GameController._instance.GetRandomEnemyInfo().ID;
                 enemyDataList.Add(
                     new EnemyPositionData(
                         GameController._instance.GetGoingToFloor(),
-                        enemyName,
+                        enemyID,
                         enemyCount,
                         GameController._instance.GetGoingToFloor() + 101,
                         position.x,

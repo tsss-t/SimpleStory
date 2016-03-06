@@ -1,6 +1,6 @@
 eventID,eventDone
 0,0,//floor0'event
 1,0,//floor-1' last talk event
-2,1,//floor-101 shopping event
-3,1,//floor-100 make the rocks out
+2,0,//floor-101 shopping event
+3,0,//floor-100 make the rocks out
 4,0

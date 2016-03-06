@@ -89,7 +89,7 @@ public class EventManager : MonoBehaviour
     }
     void EventTwoOne()
     {
-        enemyManager.makeEnemyAttackPlayer(new Vector3(-80, -20, 0), 20, 20, 6, enemyPrefab);
+        enemyManager.makeEnemyAttackPlayer(new Vector3(-72.4f, -11f, 0), 20, 20, 6, enemyPrefab);
         player.transform.LookAt(PositionTarget[1]);
         talkingManager = TalkingManager._instance;
         talkingManager.PlayEvent(2);

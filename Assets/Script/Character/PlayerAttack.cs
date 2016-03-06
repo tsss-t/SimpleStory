@@ -19,6 +19,10 @@ public class PlayerAttack : MonoBehaviour
     void Awake()
     {
         _instance = this;
+
+    }
+    void Start()
+    {
         playerState = PlayerState._instance;
         AttackEffectDictinary = new Dictionary<string, AttackEffect>();
         normalAttackEffects = this.GetComponentsInChildren<AttackEffect>();
@@ -52,7 +56,7 @@ public class PlayerAttack : MonoBehaviour
             {
                 Attack(SkillType.skill, PosType.two);
             }
-            if(Input.GetButtonDown("Skill3"))
+            if (Input.GetButtonDown("Skill3"))
             {
                 Attack(SkillType.skill, PosType.three);
             }
@@ -66,6 +70,11 @@ public class PlayerAttack : MonoBehaviour
     /// <param name="args">攻撃変数</param>
     void ShowAttack(string args)
     {
+        //パラメータ説明：
+        //０：攻撃タイプ
+        //１：特殊演出の名前
+        //２：攻撃判定をやるかどうか
+
         string[] proArray = args.Split(',');
         PosType type = (PosType)int.Parse(proArray[0]);
         string effectName = proArray[1];
@@ -89,7 +98,7 @@ public class PlayerAttack : MonoBehaviour
                 {
                     for (int i = 0; i < canAttackEnemy.Length; i++)
                     {
-                        if (AttackFront(canAttackEnemy[i].transform.position, PosType.basic,false))
+                        if (AttackFront(canAttackEnemy[i].transform.position, PosType.basic, false))
                         {
                             canAttackEnemy[i].GetComponent<EnemyController>().Hit(playerState.ATK);
                         }
@@ -100,7 +109,7 @@ public class PlayerAttack : MonoBehaviour
                 {
                     for (int i = 0; i < canAttackEnemy.Length; i++)
                     {
-                        if (AttackAround(canAttackEnemy[i].transform.position, PosType.one,false))
+                        if (AttackAround(canAttackEnemy[i].transform.position, PosType.one, false))
                         {
                             canAttackEnemy[i].GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.one).Damage);
                         }
@@ -113,7 +122,7 @@ public class PlayerAttack : MonoBehaviour
                     {
                         for (int i = 0; i < canAttackEnemy.Length; i++)
                         {
-                            if (AttackFront(canAttackEnemy[i].transform.position, PosType.two,false))
+                            if (AttackFront(canAttackEnemy[i].transform.position, PosType.two, false))
                             {
                                 canAttackEnemy[i].GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
                             }
@@ -137,7 +146,10 @@ public class PlayerAttack : MonoBehaviour
                 }
         }
     }
-
+    void ShowAttackSound(string args)
+    {
+        AudioManager._instance.Play(args);
+    }
     #region 攻撃判定
     float attackDis;
     /// <summary>
@@ -147,13 +159,13 @@ public class PlayerAttack : MonoBehaviour
     /// <param name="type">攻撃手段</param>
     /// <param name="isEffect">特殊攻撃？</param>
     /// <returns></returns>
-    bool AttackFront(Vector3 enemyPosition, PosType type,bool isEffect)
+    bool AttackFront(Vector3 enemyPosition, PosType type, bool isEffect)
     {
         enemyLocalPosition = transform.InverseTransformPoint(enemyPosition);
 
         if (enemyLocalPosition.z > 0.0f)//敵は正面にいる
         {
-            attackDis = getAttackDis(type,isEffect);
+            attackDis = getAttackDis(type, isEffect);
             //Debug.Log(playerState.GetAttackDis());
             if (Vector3.Distance(enemyPosition, transform.position) < attackDis)
             {
@@ -352,22 +364,31 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    public void ShowEffectSelfToTarget(string effectName)
+    //skill1
+    public void ShowEffectSelfToTarget(string args)
     {
+        string[] proArray = args.Split(',');
+
+        bool isAttack = false;
         AttackEffect effect;
-        AttackEffectDictinary.TryGetValue(effectName, out effect);
+        AttackEffectDictinary.TryGetValue(proArray[0], out effect);
         canAttackEnemy = EnemyManager._instance.getAttackEnemy();
         foreach (GameObject go in canAttackEnemy)
         {
-            if (AttackAround(go.transform.position, PosType.one,true))
+            if (AttackAround(go.transform.position, PosType.one, true))
             {
+                isAttack = true;
                 GameObject goEffect = (GameObject.Instantiate(effect) as AttackEffect).gameObject;
                 goEffect.transform.position = transform.position + Vector3.up;
                 goEffect.GetComponent<EffectSettings>().Target = go;
             }
         }
+        if (isAttack && proArray[1] != "")
+        {
+            AudioManager._instance.Play(proArray[1]);
+        }
     }
-
+    //skill2
     public void ShowEffectToTarget(string effectName)
     {
         AttackEffect effect;
@@ -377,7 +398,7 @@ public class PlayerAttack : MonoBehaviour
         {
             RaycastHit hit;
             bool collider = Physics.Raycast(go.transform.position + Vector3.up, Vector3.down, out hit, 10f, LayerMask.GetMask("Building"));
-            if (AttackFront(go.transform.position, PosType.two,true))
+            if (AttackFront(go.transform.position, PosType.two, true))
             {
                 if (collider)
                 {
@@ -388,6 +409,7 @@ public class PlayerAttack : MonoBehaviour
             }
         }
     }
+    //skill3
     public void ShowEffectHand()
     {
         string effectName = "DevilHandMobile";
@@ -402,7 +424,7 @@ public class PlayerAttack : MonoBehaviour
                 if (collider)
                 {
                     GameObject.Instantiate(effect, hit.point, Quaternion.identity);
-                    go.GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5,1,1);
+                    go.GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5, 1, 1);
                 }
             }
         }

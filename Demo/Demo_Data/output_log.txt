@@ -18,7 +18,7 @@ Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEng
 Loading C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
 Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
 Loading C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-- Completed reload, in  0.073 seconds
+- Completed reload, in  0.305 seconds
 Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\tianhang\SimpleStory\Demo\Demo_Data\Managed\System.dll (this message is harmless)
 desktop: 1920x1080 59Hz; virtual: 3286x1080 at -1366,0

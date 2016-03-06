@@ -20,7 +20,6 @@ public class UIQuestManager : MonoBehaviour
     private List<GameObject> stepShowList;
 
     private NPCManager npcManager;
-    private EnemyManager enemyManager;
     #region UI
     UIController mainControllerUI;
 
@@ -41,7 +40,6 @@ public class UIQuestManager : MonoBehaviour
         playerQuest = PlayerState._instance.GetPlayerQuest();
 
         npcManager =NPCManager._instance;
-        enemyManager = EnemyManager._instance;
         mainControllerUI =UIController._instance;
 
 
@@ -115,7 +113,7 @@ public class UIQuestManager : MonoBehaviour
                     case QuestType.killEnemy:
                         goStep.transform.Find("Tween").Find("LabelDescription").GetComponent<UILabel>().text = string.Format("任務説明：\n {0} \n\n 任務進捗：\n {1} :  {2}/{3}",
                             selectQuest.info.GetStep(i).description,
-                            enemyManager.getEnemyName(selectQuest.info.GetStep(i).targetID),
+                            GameController._instance.GetEnemyInfo(selectQuest.info.GetStep(i).targetID).Name,
                             selectQuest.count, selectQuest.info.GetStep(i).count);
                         break;
                     default:

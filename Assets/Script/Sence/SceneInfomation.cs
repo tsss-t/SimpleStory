@@ -11,9 +11,10 @@ public class SceneInfomation : MonoBehaviour
     void Awake()
     {
         _instance = this;
-        if (floorNum == -1000)
+        if (floorNum == -1000|| floorNum == -100)
         {
             remakeScene();
+
         }
     }
 
@@ -25,23 +26,30 @@ public class SceneInfomation : MonoBehaviour
     List<AreaData> areaDataList;
     void remakeScene()
     {
-        floorNum = GameController._instance.GetGoingToFloor();
+        if(floorNum!=-100)
+        {
+            floorNum = GameController._instance.GetGoingToFloor();
+        }
+        int nextFloorNum = floorNum + 1;
 
 
+        areaDataList = GameController._instance.GetAreaDataList(nextFloorNum);
 
+        if (areaDataList == null)
+        {
+            SceneMaker._instans.CreateDataStart(nextFloorNum);
+        }
         areaDataList = GameController._instance.GetAreaDataList(floorNum);
 
-        if(areaDataList==null)
+        if (areaDataList != null)
         {
-            SceneMaker._instans.CreateDataStart();
-            areaDataList = GameController._instance.GetAreaDataList(floorNum);
+            areaContainer = new GameObject("Environment");
+            for (int i = 0; i < areaDataList.Count; i++)
+            {
+                GameObject gameObject = Instantiate(Resources.Load(areaDataList[i].areaName), areaDataList[i].areaPosition, areaDataList[i].areaAngle) as GameObject;
+                gameObject.transform.parent = areaContainer.transform;
+            }
+        }
 
-        }
-        areaContainer = new GameObject("Environment");
-        for (int i = 0; i < areaDataList.Count; i++)
-        {
-            GameObject gameObject = Instantiate(Resources.Load(areaDataList[i].areaName), areaDataList[i].areaPosition, areaDataList[i].areaAngle) as GameObject;
-            gameObject.transform.parent = areaContainer.transform;
-        }
     }
 }

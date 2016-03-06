@@ -160,6 +160,13 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
+      - time: 0.06490878
+        functionName: ShowAttackSound
+        data: ice_attack
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       - time: 0.14350574
         functionName: ShowAttack
         data: 2,skill2_1,true
@@ -191,6 +198,27 @@ ModelImporter:
       - time: 0.54645646
         functionName: ShowEffectToTarget
         data: HolyFireStrike
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.16626453
+        functionName: ShowAttackSound
+        data: attackAir
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.19714803
+        functionName: ShowAttackSound
+        data: attackAir
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.5140845
+        functionName: ShowAttackSound
+        data: attackAir
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0

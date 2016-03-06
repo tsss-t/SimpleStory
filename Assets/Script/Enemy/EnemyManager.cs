@@ -51,19 +51,20 @@ public class EnemyManager : MonoBehaviour
 
 
         #region 保存したデータから、敵の位置データを貰う
-        List<EnemyPositionData> enemyPositionDataList = GameController._instance.GetEnemeyPosition(SceneInfomation._instance.floorNum);
+        List<EnemyPositionData> enemyPositionDataList = GameController._instance.GetEnemyPosition(SceneInfomation._instance.floorNum);
         EnemyStruct enemyArea;
-        if(enemyPositionDataList!=null)
+        if (enemyPositionDataList != null)
         {
             for (int i = 0; i < enemyPositionDataList.Count; i++)
             {
                 enemyArea = new EnemyStruct();
-                enemyArea.enemy = Resources.Load(enemyPositionDataList[i].enemyName) as GameObject;
-                enemyArea.count = enemyPositionDataList[i].enemeyCount;
-                enemyArea.postion = new Vector2(enemyPositionDataList[i].leftUpPosition.x, enemyPositionDataList[i].leftUpPosition.z);
-                enemyArea.width = enemyPositionDataList[i].width;
-                enemyArea.height = enemyPositionDataList[i].height;
-                enemyArea.enemy.GetComponent<EnemyController>().level = enemyPositionDataList[i].enemyLevel;
+                enemyArea.enemy = Resources.Load(GameController._instance.GetEnemyInfo(enemyPositionDataList[i].EnemyID).Name) as GameObject;
+                enemyArea.count = enemyPositionDataList[i].EnemeyCount;
+                enemyArea.postion = new Vector2(enemyPositionDataList[i].LeftUpPosition.x, enemyPositionDataList[i].LeftUpPosition.z);
+                enemyArea.width = enemyPositionDataList[i].Width;
+                enemyArea.height = enemyPositionDataList[i].Height;
+                enemyArea.enemy.GetComponent<EnemyController>().level = enemyPositionDataList[i].EnemyLevel;
+                enemyArea.enemy.GetComponent<EnemyController>().enemyID = enemyPositionDataList[i].EnemyID;
                 enemyArea.enemyList = new List<GameObject>();
                 this.enemyAreaList.Add(enemyArea);
             }
@@ -110,17 +111,19 @@ public class EnemyManager : MonoBehaviour
     /// <returns></returns>
     GameObject MakeEnemey(GameObject prefab, Vector3 postion, float width, float height)
     {
-        if(enemyContainer==null)
+        if (enemyContainer == null)
         {
             enemyContainer = new GameObject("enemyContainer");
         }
         buildPos = new Vector3(
-                width * Random.Range(0.0f, 1.0f)-width*0.5f + postion.x,
+                width * Random.Range(0.0f, 1.0f) - width * 0.5f + postion.x,
                 0,
-                height * Random.Range(0.0f, 1.0f)-height*0.5f + postion.y
+                height * Random.Range(0.0f, 1.0f) - height * 0.5f + postion.y
                 );
         GameObject gameObject = Instantiate(prefab, buildPos, Quaternion.Euler(0, Random.Range(-180, 180), 0)) as GameObject;
+
         gameObject.transform.parent = enemyContainer.transform;
+
         return gameObject;
     }
     #endregion
@@ -169,7 +172,7 @@ public class EnemyManager : MonoBehaviour
         for (int j = 0; j < Estruct.count; j++)
         {
 
-            GameObject gameObject = MakeEnemey(prefab,position,width,height);
+            GameObject gameObject = MakeEnemey(prefab, position, width, height);
             gameObject.GetComponent<EnemyController>().Lock();
             gameObject.transform.LookAt(GameObject.FindGameObjectWithTag(Tags.player).transform.position);
             Estruct.enemyList.Add(gameObject);
@@ -205,7 +208,7 @@ public class EnemyManager : MonoBehaviour
             {
                 for (int j = 0; j < enemyAreaList[i].enemyList.Count; j++)
                 {
-                    if (enemyAreaList[i].enemyList[j] != null&& enemyAreaList[i].enemyList[j].GetComponent<EnemyController>().nowState!= ActionState.die)
+                    if (enemyAreaList[i].enemyList[j] != null && enemyAreaList[i].enemyList[j].GetComponent<EnemyController>().nowState != ActionState.die)
                     {
                         canAttackEnemy.Add(enemyAreaList[i].enemyList[j]);
                     }
@@ -215,11 +218,11 @@ public class EnemyManager : MonoBehaviour
         }
         for (int i = 0; i < managedEnemyList.Count; i++)
         {
-            foreach (GameObject item in managedEnemyList[i].enemyList)
+            for (int j = 0; j < managedEnemyList[i].enemyList.Count; j++)
             {
-                if (item != null)
+                if (managedEnemyList[i].enemyList[j] != null && managedEnemyList[i].enemyList[j].GetComponent<EnemyController>().nowState != ActionState.die)
                 {
-                    canAttackEnemy.Add(item);
+                    canAttackEnemy.Add(managedEnemyList[i].enemyList[j]);
                 }
             }
         }
@@ -237,10 +240,10 @@ public class EnemyManager : MonoBehaviour
     public bool isInArea(EnemyStruct enemyStruct, Vector3 position)
     {
         EnemyController enemyController = enemyStruct.enemy.GetComponent<EnemyController>();
-        if (enemyStruct.postion.x - enemyStruct.width*0.5 - enemyController.attackDis - enemyController.followDis - playerstate.GetAttackDis() < position.x &&
-            enemyStruct.postion.x + enemyStruct.width*0.5 + enemyController.attackDis + enemyController.followDis + playerstate.GetAttackDis() > position.x &&
-            enemyStruct.postion.y + enemyStruct.height*0.5 + enemyController.attackDis + enemyController.followDis + playerstate.GetAttackDis() > position.z &&
-            enemyStruct.postion.y - enemyStruct.height*0.5 - enemyController.attackDis - enemyController.followDis - playerstate.GetAttackDis() < position.z
+        if (enemyStruct.postion.x - enemyStruct.width * 0.5 - enemyController.attackDis - enemyController.followDis - playerstate.GetAttackDis() < position.x &&
+            enemyStruct.postion.x + enemyStruct.width * 0.5 + enemyController.attackDis + enemyController.followDis + playerstate.GetAttackDis() > position.x &&
+            enemyStruct.postion.y + enemyStruct.height * 0.5 + enemyController.attackDis + enemyController.followDis + playerstate.GetAttackDis() > position.z &&
+            enemyStruct.postion.y - enemyStruct.height * 0.5 - enemyController.attackDis - enemyController.followDis - playerstate.GetAttackDis() < position.z
         )
         {
             return true;
