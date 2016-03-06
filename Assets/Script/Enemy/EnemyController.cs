@@ -18,8 +18,7 @@ public class EnemyController : MonoBehaviour
     public float fieldAngle;//監視範囲
 
     public GameObject damageEffectPrefab;//流血
-
-    //enemy state
+    #region enemy state
     public int HP;
     public int HPMax;
     public int ATK;
@@ -38,12 +37,14 @@ public class EnemyController : MonoBehaviour
     public float attackDis = 1.25f;
 
     public float HPbarDis = 20f;
-
+    #endregion
+    #region AnimationEvent
     public ActionEvent[] actionList;
     private ActionEvent[] normalActionList;
     private ActionEvent[] attackActionList;
     private ActionEvent[] hitActionList;
     private ActionEvent[] dieActionList;
+    #endregion
 
     private float timer;
     private float attackTimer;
@@ -59,9 +60,13 @@ public class EnemyController : MonoBehaviour
     private HashIDs hash;
     private Vector2 moveForward;
     private EnemyManager enemyManager;
-    private UIHpBarManager hpBarManager;
+
+    #region UI
+    private UIHpBarManager hpBarManagerUI;
     private GameObject hpBar;
     private UISlider hpSlider;
+    private UIGiftManager giftManagerUI;
+    #endregion
 
     private CharacterController charaController;
 
@@ -76,7 +81,10 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         positionStart = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        nowState = ActionState.notFoundPlayer;
+        if(nowState!= ActionState.locked)
+        {
+            nowState = ActionState.notFoundPlayer;
+        }
         playerPosition = playerState.playerTransform.position;
         normalActionList = actionList.GetNormalActionEvents();
         attackActionList = actionList.GetAttackActionEvents();
@@ -89,11 +97,17 @@ public class EnemyController : MonoBehaviour
         charaControler = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<PlayerController>();
         moveForward = new Vector2(transform.forward.x, transform.forward.z);
         enemyManager = EnemyManager._instance;
-        hpBarManager = UIHpBarManager.hpBarManager;
-        hpBar = hpBarManager.CreateHpBar(transform.Find("HpBarPoint").gameObject);
+
+        //HPbar
+        hpBarManagerUI = UIHpBarManager._instans;
+        hpBar = hpBarManagerUI.CreateHpBar(transform.Find("HpBarPoint").gameObject);
         hpSlider = hpBar.transform.GetComponentInChildren<UISlider>();
 
+        //Drop
+        giftManagerUI = UIGiftManager._instans;
+
         charaController = this.GetComponent<CharacterController>();
+
     }
     #endregion
     #region Update
@@ -151,7 +165,7 @@ public class EnemyController : MonoBehaviour
             }
             else
             {
-                if(charaController.enabled)
+                if (charaController.enabled)
                 {
                     charaController.SimpleMove(Vector3.zero);
                 }
@@ -413,7 +427,7 @@ public class EnemyController : MonoBehaviour
     {
         transform.LookAt(positionStart);
         anim.SetFloat(hash.enemySpeedFloat, speed, speedDampTime, Time.deltaTime);
-        charaController. SimpleMove(transform.forward * speed);
+        charaController.SimpleMove(transform.forward * speed);
         //GetComponent<Rigidbody>().velocity = new Vector3(speed * transform.forward.x, GetComponent<Rigidbody>().velocity.y, speed * transform.forward.z);
         if (Vector3.Distance(positionStart, transform.position) < 0.5f)
         {
@@ -453,6 +467,8 @@ public class EnemyController : MonoBehaviour
         }
     }
     #endregion
+    #region Lock
+
     public void Lock()
     {
         this.nowState = ActionState.locked;
@@ -461,10 +477,15 @@ public class EnemyController : MonoBehaviour
     {
         this.nowState = ActionState.foundPlayer;
     }
-    #region 被攻撃
+
+    #endregion
+    #region 被攻撃 / 死亡 / ドロップ
+
+    #region Hit
     ActionEvent hitAction;
     ActionEvent dieAction;
     int damage;
+
 
 
     /// <summary>
@@ -531,6 +552,8 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    #endregion
+    #region Die
     private void Die()
     {
         HP = 0;
@@ -549,6 +572,7 @@ public class EnemyController : MonoBehaviour
 
         playerState.KillEnemy(enemyID, EXP, level);
 
+        Drop();
 
 
         StartCoroutine(AfterDie());
@@ -564,16 +588,12 @@ public class EnemyController : MonoBehaviour
         StartCoroutine(AfterDie());
         charaController.enabled = false;
     }
-
-    #endregion
-
-    #region Die
     float height = 3;
     Vector3 targetPos;
     IEnumerator AfterDie()
     {
 
-        hpBarManager.DestoryHpBar(hpBar);
+        hpBarManagerUI.DestoryHpBar(hpBar);
         targetPos = new Vector3(transform.position.x, transform.position.y - height, transform.position.z);
         for (float timer = 0; timer < 10f; timer += Time.deltaTime)
             yield return 0;
@@ -593,4 +613,72 @@ public class EnemyController : MonoBehaviour
         yield return 0;
     }
     #endregion
+
+    public void Drop()
+    {
+        EnemyInfo dropInfo = GameController._instance.GetEnemyInfo(this.enemyID);
+
+        dropItem[] itemList = dropInfo.DropItemList.ToArray();
+        Random.seed = System.DateTime.Now.Millisecond;
+        int randomNum = Random.Range(0, 101);
+        int tempNum = 0;
+        int dropID = -1;
+        for (int i = 0; i < itemList.Length; i++)
+        {
+            if (level > itemList[i].dropItemLV)
+            {
+                itemList[i].dropItemPre = (int)(itemList[i].dropItemPre + level * 0.25f > 10 ? 10 : itemList[i].dropItemPre + level * 0.25f);
+            }
+            else
+            {
+                itemList[i].dropItemPre = 0;
+            }
+
+            if (randomNum < tempNum + itemList[i].dropItemPre)
+            {
+
+                dropID = itemList[i].itemID;
+                break;
+            }
+        }
+
+        if (dropID != -1)
+        {
+            playerState.GetItem(dropID);
+            giftManagerUI.CreatOneGift(this.gameObject);
+        }
+
+        int dropMoney = 0;
+
+        Random.seed = System.DateTime.Now.Millisecond + 5;
+        randomNum = Random.Range(0, 101);
+        if (randomNum < 25)
+        {
+            Random.seed = System.DateTime.Now.Millisecond + 10;
+            dropMoney = (int)(Mathf.Sqrt(level) * dropInfo.MoneyDropPre * 10 * Random.value);
+            if (dropMoney > 0)
+            {
+                playerState.GetMoney(dropMoney);
+
+                for (int i = 0; i < dropMoney % 100; i++)
+                {
+                    UICoinManager._instans.CreatOneCoin(this.gameObject, 13);
+                }
+                dropMoney = dropMoney % 100;
+                for (int i = 0; i < dropMoney % 10; i++)
+                {
+                    UICoinManager._instans.CreatOneCoin(this.gameObject, 9);
+
+                }
+                dropMoney = dropMoney % 10;
+                for (int i = 0; i < dropMoney; i++)
+                {
+                    UICoinManager._instans.CreatOneCoin(this.gameObject, 7);
+                }
+            }
+        }
+    }
+    #endregion
+
+
 }

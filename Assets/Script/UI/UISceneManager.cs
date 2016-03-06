@@ -39,6 +39,7 @@ public class UISceneManager : MonoBehaviour
     }
     public void Show(AsyncOperation ao)
     {
+
         BG.SetActive(true);
         isAsyn = true;
         this.ao = ao;

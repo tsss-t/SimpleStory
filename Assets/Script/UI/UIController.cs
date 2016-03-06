@@ -25,13 +25,16 @@ public class UIController : MonoBehaviour
     private UISlider sliderHP;
     private UILabel labelHP;
     private UILabel labelLevel;
+    private UILabel labelLog;
     private UISlider sliderExp;
+
     private UIBagManager bagManagerUI;
     private UIQuestManager questManagerUI;
     private UINPCQuestManager npcQuestManagerUI;
     private UICommunicationManager communicationPanelUI;
     private UISkillManager skillManagerUI;
     private UIPortalManager portalManagerUI;
+
 
     #endregion
     #region Start/Update
@@ -61,8 +64,12 @@ public class UIController : MonoBehaviour
         sliderExp = containerToolBar.Find("ExpBar").GetComponent<UISlider>();
         labelHP = sliderHP.transform.Find("labelHP").GetComponent<UILabel>();
         labelLevel = containerPlayerState.Find("labelLevel").GetComponent<UILabel>();
+        labelLog = containerToolBar.Find("Menu/LogPanel/Scroll View/LogLabel").GetComponent<UILabel>();
+
+
 
         playerState.OnPlayerStateChanged += OnStateChanged;
+        playerState.OnPlayerGetItem += OnGetNewItem;
         if (PortalManager._instans != null)
         {
             PortalManager._instans.playerStateChange += InOutPortal;
@@ -110,6 +117,18 @@ public class UIController : MonoBehaviour
     }
     #endregion
     #region delegate/UI update
+    void OnGetNewItem(string itemName,bool isItem)
+    {
+        if(isItem)
+        {
+            labelLog.text += string.Format("[E6E8FA]アイテム[-] [aa00cc]{0}[-] [E6E8FA]入手[-]\n", itemName);
+        }
+        else
+        {
+            labelLog.text += string.Format("[E6E8FA]コイン[-] [D9D919]{0}[-] [E6E8FA]枚入手[-]\n", itemName);
+        }
+    }
+
     void OnStateChanged(PlayerStateChangeType type)
     {
         switch (type)
@@ -286,10 +305,11 @@ public class UIController : MonoBehaviour
     void OnDestroy()
     {
         playerState.OnPlayerStateChanged -= OnStateChanged;
-
+        playerState.OnPlayerGetItem -= OnGetNewItem;
         if (PortalManager._instans != null)
         {
             PortalManager._instans.playerStateChange -= InOutPortal;
+
         }
     }
 

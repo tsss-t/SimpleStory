@@ -18,6 +18,7 @@ public class UISceneFader : MonoBehaviour
     }
     void Start()
     {
+        iTween.AudioTo(GameObject.FindGameObjectWithTag(Tags.mainCamera), 0.15f, 1f, 1f); ;
         switchFlag = true;
         thisTexture = GetComponent<GUITexture>();
         thisTexture.pixelInset = new

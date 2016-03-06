@@ -69,8 +69,9 @@ public class GameController
     string eventData;
     string portalData;
     string areaData;
+    string enemyInfoData;
     string enemyPositionData;
-    #endregion 
+    #endregion
     #region Game Running Data
     private EntryType lastChangeSceneType;
     public void SetLastChangeSceneType(EntryType type)
@@ -109,12 +110,16 @@ public class GameController
         portalData = GameManager._instans.portalData.text;
         areaData = GameManager._instans.sceneData.text;
         enemyPositionData = GameManager._instans.enemyPositionData.text;
+        enemyInfoData = GameManager._instans.enemyInfoData.text;
+
+
         //Application.targetFrameRate = 45;
         xs = new XmlSaver();
         gameData = new GameData();
         gameData.key = GameManager._instans.gameDataKey;
+
         playerInFloor = -1000;
-        InitSave();
+        //InitSave();
         Load();
         lastChangeSceneType = EntryType.Portal;
     }
@@ -264,7 +269,7 @@ public class GameController
         {
             for (int i = 0; i < item.Count; i++)
             {
-                saveString += string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n", item[i].floorNum, item[i].enemyName, item[i].enemeyCount, item[i].enemyLevel, item[i].leftUpPosition.x, item[i].leftUpPosition.y, item[i].leftUpPosition.z, item[i].width, item[i].height);
+                saveString += string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n", item[i].FloorNum, item[i].EnemyID, item[i].EnemeyCount, item[i].EnemyLevel, item[i].LeftUpPosition.x, item[i].LeftUpPosition.y, item[i].LeftUpPosition.z, item[i].Width, item[i].Height);
             }
         }
         gameData.EnemyPositionData = string.Format("{0}\n{1}", AreaDataUper, saveString);
@@ -288,7 +293,8 @@ public class GameController
             LoadPortalList();
             LoadAreaData();
             LoadPlayerPosition();
-            LoadEneymyPositionData();
+            LoadEnemyPositionData();
+            LoadenemyInfo();
         }
         //セーブデータが存在しません
         else
@@ -570,7 +576,7 @@ public class GameController
             if (dataArray[i] != "")
             {
                 proArray = dataArray[i].Split(',');
-                if (proArray[0].EndsWith(eventID.ToString()))
+                if (proArray[0].Equals(eventID.ToString()))
                 {
                     TalkText text = new TalkText();
                     switch (proArray[1])
@@ -819,10 +825,82 @@ public class GameController
     }
 
     #endregion
+
+    #region enemy
+    #region enemyInfo
+    Dictionary<int, EnemyInfo> enemyInfoDictionary;
+    EnemyInfo enemyInfo;
+    void LoadenemyInfo()
+    {
+        if (enemyInfoDictionary == null)
+        {
+            string[] proArray;
+            string[] dataArray = enemyInfoData.ToString().Split('\n');
+            string[] dropItemIDArray;
+            string[] dropItemLVArray;
+            string[] dropItemPreArray;
+            List<dropItem> dropItemList;
+            enemyInfoDictionary = new Dictionary<int, EnemyInfo>();
+            for (int i = 1; i < dataArray.Length; i++)
+            {
+                if (dataArray[i] != "")
+                {
+                    proArray = dataArray[i].Split(',');
+                    dropItemIDArray = proArray[2].Split('|');
+                    dropItemLVArray = proArray[3].Split('|');
+                    dropItemPreArray = proArray[4].Split('|');
+
+                    if (dropItemIDArray.Length != dropItemLVArray.Length || dropItemLVArray.Length != dropItemPreArray.Length)
+                    {
+                        Debug.LogError("DropInfomationError!");
+                        return;
+                    }
+                    else
+                    {
+                        dropItemList = new List<dropItem>();
+                        for (int j = 0; j < dropItemIDArray.Length; j++)
+                        {
+                            dropItemList.Add(new dropItem()
+                            {
+                                itemID = int.Parse(dropItemIDArray[j]),
+                                dropItemLV = int.Parse(dropItemLVArray[j]),
+                                dropItemPre = int.Parse(dropItemPreArray[j])
+
+                            });
+                        }
+                    }
+                    enemyInfo = new EnemyInfo(int.Parse(proArray[0]), proArray[1], dropItemList, float.Parse(proArray[5]));
+                    enemyInfoDictionary.Add(enemyInfo.ID, enemyInfo);
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// 敵のIDにより、敵の情報を貰い（ドロップ率など）
+    /// </summary>
+    /// <param name="enemyID">敵のID</param>
+    /// <returns></returns>
+    public EnemyInfo GetEnemyInfo(int enemyID)
+    {
+        if (enemyInfoDictionary == null)
+        {
+            LoadenemyInfo();
+        }
+        enemyInfoDictionary.TryGetValue(enemyID, out enemyInfo);
+
+        return enemyInfo;
+    }
+    public EnemyInfo GetRandomEnemyInfo()
+    {
+        return enemyInfoDictionary.getRandomOne();
+    }
+
+
+    #endregion
     #region enemyPosition
     Dictionary<int, List<EnemyPositionData>> enemyPositionDictionary;
     List<EnemyPositionData> enemyPositionList;
-    void LoadEneymyPositionData()
+    void LoadEnemyPositionData()
     {
         int floorNumber = 0;
         if (enemyPositionDictionary == null)
@@ -845,23 +923,27 @@ public class GameController
                     {
                         enemyPositionList = new List<EnemyPositionData>();
                     }
-                    enemyPositionList.Add(new EnemyPositionData(floorNumber, proArray[1], int.Parse(proArray[2]), int.Parse(proArray[3]), float.Parse(proArray[4]), float.Parse(proArray[5]), float.Parse(proArray[6]), float.Parse(proArray[7]), float.Parse(proArray[8])));
+                    enemyPositionList.Add(new EnemyPositionData(floorNumber, int.Parse(proArray[1]), int.Parse(proArray[2]), int.Parse(proArray[3]), float.Parse(proArray[4]), float.Parse(proArray[5]), float.Parse(proArray[6]), float.Parse(proArray[7]), float.Parse(proArray[8])));
 
                     enemyPositionDictionary[floorNumber] = enemyPositionList;
                 }
             }
         }
     }
-    public List<EnemyPositionData> GetEnemeyPosition(int floorNum)
+    public List<EnemyPositionData> GetEnemyPosition(int floorNum)
     {
         enemyPositionDictionary.TryGetValue(floorNum, out enemyPositionList);
         return enemyPositionList;
     }
-    public void SetEnemeyPositon(int floorNum, List<EnemyPositionData> enemeyPositonList)
+    public void SetEnemyPositon(int floorNum, List<EnemyPositionData> enemeyPositonList)
     {
         this.enemyPositionDictionary[floorNum] = enemeyPositonList;
     }
     #endregion
+
+
     #endregion
+    #endregion
+
 }
 #endregion

@@ -3,21 +3,113 @@ using System.Collections;
 
 public class EnemyPositionData
 {
-    public int floorNum;
-    public string enemyName;
-    public int enemeyCount;
-    public int enemyLevel;
-    public Vector3 leftUpPosition;
-    public float width, height;
+    int floorNum;
+    int enemyID;
+    int enemeyCount;
+    int enemyLevel;
+    Vector3 leftUpPosition;
+    float width, height;
 
-    public EnemyPositionData(int floorNum, string enemyName, int enemeyCount, int enemyLevel, float positionX, float positonY, float positionZ, float width, float height)
+    #region get/set
+    public int FloorNum
     {
-        this.floorNum = floorNum;
-        this.enemyName = enemyName;
-        this.enemeyCount = enemeyCount;
-        this.enemyLevel = enemyLevel;
-        this.leftUpPosition = new Vector3(positionX, positonY, positionZ);
-        this.width = width;
-        this.height = height;
+        get
+        {
+            return floorNum;
+        }
+
+        set
+        {
+            floorNum = value;
+        }
+    }
+
+    public int EnemyID
+    {
+        get
+        {
+            return enemyID;
+        }
+
+        set
+        {
+            enemyID = value;
+        }
+    }
+
+    public int EnemeyCount
+    {
+        get
+        {
+            return enemeyCount;
+        }
+
+        set
+        {
+            enemeyCount = value;
+        }
+    }
+
+    public int EnemyLevel
+    {
+        get
+        {
+            return enemyLevel;
+        }
+
+        set
+        {
+            enemyLevel = value;
+        }
+    }
+
+    public Vector3 LeftUpPosition
+    {
+        get
+        {
+            return leftUpPosition;
+        }
+
+        set
+        {
+            leftUpPosition = value;
+        }
+    }
+
+    public float Width
+    {
+        get
+        {
+            return width;
+        }
+
+        set
+        {
+            width = value;
+        }
+    }
+
+    public float Height
+    {
+        get
+        {
+            return height;
+        }
+
+        set
+        {
+            height = value;
+        }
+    }
+    #endregion
+    public EnemyPositionData(int floorNum, int enemyID, int enemeyCount, int enemyLevel, float positionX, float positonY, float positionZ, float width, float height)
+    {
+        this.FloorNum = floorNum;
+        this.enemyID = enemyID;
+        this.EnemeyCount = enemeyCount;
+        this.EnemyLevel = enemyLevel;
+        this.LeftUpPosition = new Vector3(positionX, positonY, positionZ);
+        this.Width = width;
+        this.Height = height;
     }
 }

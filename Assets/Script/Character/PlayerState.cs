@@ -114,6 +114,10 @@ public class PlayerState
     public delegate void OnPlayerStateChangedEvent(PlayerStateChangeType type);
     public event OnPlayerStateChangedEvent OnPlayerStateChanged;
 
+    public delegate void OnPlayerGetSomeItem(string itemName,bool isItem);
+    public event OnPlayerGetSomeItem OnPlayerGetItem;
+
+
     private PlayerBag bag;
     private PlayerEquep equep;
     private PlayerQuest quest;
@@ -331,9 +335,11 @@ public class PlayerState
     /// <param name="money">コイン数</param>
     public void GetMoney(int money)
     {
+        OnPlayerGetItem(money.ToString(), false);
         this.money += money;
         PlayerStateChanged(PlayerStateChangeType.money);
     }
+
 
     /// <summary>
     /// アイテムget
@@ -341,6 +347,8 @@ public class PlayerState
     /// <param name="itemID">アイテムリスト中のアイテムID</param>
     public void GetItem(int itemID)
     {
+
+        OnPlayerGetItem(ItemList.getItem(itemID).name,true);
         bag.AddItem(itemID);
         quest.UpdateQuestProcess(itemID);
         PlayerStateChanged(PlayerStateChangeType.bag);
@@ -389,9 +397,9 @@ public class PlayerState
     /// <param name="itemBagID">Bag中のid</param>
     public void UseItem(int itemBagID)
     {
-        HP=  HP+ bag.dictionBag[itemBagID].info.HP>=HPMax? HPMax: HP + bag.dictionBag[itemBagID].info.HP;
-        energy=energy + bag.dictionBag[itemBagID].info.energy>=energyMax?energyMax: energy + bag.dictionBag[itemBagID].info.energy;
-        
+        HP = HP + bag.dictionBag[itemBagID].info.HP >= HPMax ? HPMax : HP + bag.dictionBag[itemBagID].info.HP;
+        energy = energy + bag.dictionBag[itemBagID].info.energy >= energyMax ? energyMax : energy + bag.dictionBag[itemBagID].info.energy;
+
 
         quest.UpdateQuestProcess(bag.BagIDToItemID(itemBagID));
         bag.DeleteItem(itemBagID);

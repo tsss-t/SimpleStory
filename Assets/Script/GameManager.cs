@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public TextAsset portalData;
     public TextAsset sceneData;
     public TextAsset enemyPositionData;
+    public TextAsset enemyInfoData;
     public string gameDataKey;
 
     public static GameManager _instans;

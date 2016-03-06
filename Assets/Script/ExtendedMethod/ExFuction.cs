@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System.Collections.Generic;
 
 public static class ExFuction
 {
@@ -90,6 +90,22 @@ public static class ExFuction
         int x = Random.Range(0, array.Length);
 
         return array[x];
+    }
+
+    public static K getRandomOne<T, K>(this Dictionary<T, K> dictionary)
+    {
+
+        int randomIndex = Random.Range(0, dictionary.Count);
+        int index = 0;
+        foreach (K item in dictionary.Values)
+        {
+            if (index == randomIndex)
+            {
+                return item;
+            }
+            index++;
+        }
+        return default(K);
     }
 
 }
