@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 public class UICommunicationManager : MonoBehaviour
 {
-    public static UICommunicationManager _instans;
+    public static UICommunicationManager _instance;
     #region para
     bool isShowPanel;
     private PlayerState playerState;
@@ -29,7 +29,7 @@ public class UICommunicationManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _instans = this;
+        _instance = this;
         isShowPanel = false;
         npcManager =NPCManager._instance;
         NPCDictionary = npcManager.GetNPCDctionary();

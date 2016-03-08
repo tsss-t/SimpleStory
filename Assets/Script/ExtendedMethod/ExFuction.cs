@@ -85,6 +85,17 @@ public static class ExFuction
         }
         return tempArray;
     }
+    public static int[] ParseToInt(this string[] array)
+    {
+        int[] arrayInt=new int[array.Length];
+        for (int i = 0; i < array.Length; i++)
+        {
+            arrayInt[i] = int.Parse(array[i]);
+        }
+        return arrayInt;
+    }
+
+
     public static T getRandomOne<T>(this T[] array)
     {
         int x = Random.Range(0, array.Length);

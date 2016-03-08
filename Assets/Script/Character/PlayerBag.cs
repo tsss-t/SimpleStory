@@ -40,7 +40,7 @@ public class PlayerBag
         //TODO:Load from text
 
         //TODO:test Load
-        dictionBag = GameController._instance.LoadBag();
+        dictionBag = GameController._instance.GetBagItemList();
 
         foreach (KeyValuePair<int, Item> part in dictionBag)
         {
@@ -152,7 +152,7 @@ public class PlayerBag
     public void DeleteItem(int itemBagID, int count)
     {
         ItemInfo item = dictionBag[itemBagID].info;
-
+        
         if (ItemInfo.IsEquep(item.type))
         {
             dictionBag.Remove(itemBagID);
@@ -252,6 +252,55 @@ public class PlayerBag
             }
         }
         return count;
+    }
+
+
+
+    /// <summary>
+    /// 指定した合成レシピの原料が足りるかどうか
+    /// </summary>
+    /// <param name="itemCompose">合成レシピ</param>
+    /// <returns>合成可能＝true</returns>
+    public bool CheckCompose(ItemCompose itemCompose)
+    {
+        for (int i = 0; i < itemCompose.NeedItem.Count; i++)
+        {
+            if (GetItemCount(itemCompose.NeedItem[i].itemID) < itemCompose.NeedItem[i].itemCount)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// 指定した合成レシピより、アイテムを合成する、外部からの使用はplayerStateから
+    /// </summary>
+    /// <param name="itemCompose">合成レシピ</param>
+    public void ComposeItem(ItemCompose itemCompose)
+    {
+        int count;
+        for (int i = 0; i < itemCompose.NeedItem.Count; i++)
+        {
+            count = itemCompose.NeedItem[i].itemCount;
+            foreach (KeyValuePair<int, Item> item in dictionBag)
+            {
+                if (item.Value.info.id == itemCompose.NeedItem[i].itemID && !item.Value.isEqueped)
+                {
+                    if (count <= item.Value.count)
+                    {
+                        DeleteItem(item.Key, count);
+                        break;
+                    }
+                    else
+                    {
+                        count -= item.Value.count;
+                        DeleteItem(item.Key, item.Value.count);
+                    }
+                }
+            }
+        }
+        AddItem(itemCompose.ResultItem.itemID);
     }
     #endregion
 }

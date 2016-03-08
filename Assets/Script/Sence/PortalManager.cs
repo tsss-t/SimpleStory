@@ -5,7 +5,7 @@ public class PortalManager : MonoBehaviour
 {
     Dictionary<string, GameObject> colliderList;
 
-    public static PortalManager _instans;
+    public static PortalManager _instance;
 
     public EventDelegate otherCharaInEvent;
     public GameObject portalEffect;
@@ -16,7 +16,7 @@ public class PortalManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _instans = this;
+        _instance = this;
         colliderList = new Dictionary<string, GameObject>();
     }
 

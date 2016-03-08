@@ -38,11 +38,13 @@ public class UIController : MonoBehaviour
 
     #endregion
     #region Start/Update
+    void Awake()
+    {
+        _instance = this;
+    }
     // Use this for initialization
     void Start()
     {
-        _instance = this;
-
         player = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<PlayerController>();
         playerState = PlayerState._instance;
 
@@ -70,9 +72,9 @@ public class UIController : MonoBehaviour
 
         playerState.OnPlayerStateChanged += OnStateChanged;
         playerState.OnPlayerGetItem += OnGetNewItem;
-        if (PortalManager._instans != null)
+        if (PortalManager._instance != null)
         {
-            PortalManager._instans.playerStateChange += InOutPortal;
+            PortalManager._instance.playerStateChange += InOutPortal;
         }
 
 
@@ -299,6 +301,7 @@ public class UIController : MonoBehaviour
         communicationPanelUI.OnCloseButtonClick();
         skillManagerUI.OnCloseButtonClick();
         portalManagerUI.OnCloseButtonClick();
+        
     }
     #endregion
 
@@ -306,9 +309,9 @@ public class UIController : MonoBehaviour
     {
         playerState.OnPlayerStateChanged -= OnStateChanged;
         playerState.OnPlayerGetItem -= OnGetNewItem;
-        if (PortalManager._instans != null)
+        if (PortalManager._instance != null)
         {
-            PortalManager._instans.playerStateChange -= InOutPortal;
+            PortalManager._instance.playerStateChange -= InOutPortal;
 
         }
     }

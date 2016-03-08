@@ -4,11 +4,11 @@ using System.Collections;
 public class UIHpBarManager : MonoBehaviour
 {
     public GameObject HpBar;
-    public static UIHpBarManager _instans;
+    public static UIHpBarManager _instance;
     // Use this for initialization
     void Start()
     {
-        _instans = this;
+        _instance = this;
     }
 
     public GameObject CreateHpBar(GameObject enemy)

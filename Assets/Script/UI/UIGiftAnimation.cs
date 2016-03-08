@@ -41,7 +41,7 @@ public class UIGiftAnimation : MonoBehaviour
     IEnumerator delayDistroy()
     {
         yield return new WaitForSeconds(2f);
-        UIGiftManager._instans.DestoryGift(this.gameObject);
+        UIGiftManager._instance.DestoryGift(this.gameObject);
 
     }
 

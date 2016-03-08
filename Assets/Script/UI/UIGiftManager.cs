@@ -6,11 +6,11 @@ public class UIGiftManager : MonoBehaviour
 
 
     public GameObject giftPrefab;
-    public static UIGiftManager _instans;
+    public static UIGiftManager _instance;
 
     void Awake()
     {
-        _instans = this;
+        _instance = this;
     }
     // Use this for initialization
     void Start()
