@@ -11,7 +11,7 @@ public class SceneMaker : MonoBehaviour
 
     MakeMode mode;
 
-    public static SceneMaker _instans;
+    public static SceneMaker _instance;
 
     GameObject areaContainer;
     List<AreaData> areaDataList;
@@ -44,7 +44,7 @@ public class SceneMaker : MonoBehaviour
     #region 初期化
     void Awake()
     {
-        _instans = this;
+        _instance = this;
     }
     #endregion
     #region 内部方法

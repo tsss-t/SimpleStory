@@ -45,7 +45,7 @@ public class NPCInfomation : MonoBehaviour
 
     void OnDestroy()
     {
-        CommunicationStart -= UICommunicationManager._instans.CommunicationTalk;
+        CommunicationStart -= UICommunicationManager._instance.CommunicationTalk;
     }
 
 }

@@ -61,6 +61,7 @@ public class GameController
     string playerTypeData;
     string bagData;
     string itemListData;
+    string itemComposeData;
     string playerQuestData;
     string questListData;
     string NPCData;
@@ -97,26 +98,27 @@ public class GameController
     #region 初期化
     private GameController()
     {
-        playerStateData = GameManager._instans.playerStateData.text;
-        playerTypeData = GameManager._instans.playerTypeData.text;
-        bagData = GameManager._instans.bagData.text;
-        itemListData = GameManager._instans.itemListData.text;
-        playerQuestData = GameManager._instans.playerQuestData.text;
-        questListData = GameManager._instans.questListData.text;
-        NPCData = GameManager._instans.NPCData.text;
-        skillData = GameManager._instans.skillData.text;
-        openingData = GameManager._instans.openingData.text;
-        eventData = GameManager._instans.eventData.text;
-        portalData = GameManager._instans.portalData.text;
-        areaData = GameManager._instans.sceneData.text;
-        enemyPositionData = GameManager._instans.enemyPositionData.text;
-        enemyInfoData = GameManager._instans.enemyInfoData.text;
+        playerStateData = GameManager._instance.playerStateData.text;
+        playerTypeData = GameManager._instance.playerTypeData.text;
+        bagData = GameManager._instance.bagData.text;
+        itemListData = GameManager._instance.itemListData.text;
+        itemComposeData = GameManager._instance.itemComposeData.text;
+        playerQuestData = GameManager._instance.playerQuestData.text;
+        questListData = GameManager._instance.questListData.text;
+        NPCData = GameManager._instance.NPCData.text;
+        skillData = GameManager._instance.skillData.text;
+        openingData = GameManager._instance.openingData.text;
+        eventData = GameManager._instance.eventData.text;
+        portalData = GameManager._instance.portalData.text;
+        areaData = GameManager._instance.sceneData.text;
+        enemyPositionData = GameManager._instance.enemyPositionData.text;
+        enemyInfoData = GameManager._instance.enemyInfoData.text;
 
 
         //Application.targetFrameRate = 45;
         xs = new XmlSaver();
         gameData = new GameData();
-        gameData.key = GameManager._instans.gameDataKey;
+        gameData.key = GameManager._instance.gameDataKey;
 
         playerInFloor = -1000;
         //InitSave();
@@ -308,98 +310,190 @@ public class GameController
 
     Dictionary<int, ItemInfo> itemList;
     ItemInfo itemInfo;
+    void LoadItemList()
+    {
+        if (itemList == null)
+        {
+            //if(itemList!=null)
+            //{
+            //    return itemList;
+            //}
+            //else
+            //{
+            string[] proArray;
+            string[] dataArray = itemListData.ToString().Split('\n');
+
+            itemList = new Dictionary<int, ItemInfo>();
+
+            for (int i = 1; i < dataArray.Length; i++)
+            {
+                if (dataArray[i] != "")
+                {
+                    proArray = dataArray[i].Split(',');
+                    if (ItemInfo.IsEquep((ItemType)int.Parse(proArray[1])))
+                    {
+                        itemInfo = new ItemInfo(int.Parse(proArray[0]),
+                            (ItemType)int.Parse(proArray[1]),
+                            proArray[2],
+                            proArray[3],
+                            int.Parse(proArray[4]),
+                            int.Parse(proArray[5]),
+                            int.Parse(proArray[6]),
+                            int.Parse(proArray[7]),
+                            int.Parse(proArray[8]),
+                            int.Parse(proArray[11]),
+                            int.Parse(proArray[12]),
+                            int.Parse(proArray[13]),
+                            int.Parse(proArray[14]),
+                            int.Parse(proArray[15]),
+                            int.Parse(proArray[16]),
+                            proArray[17]
+                            );
+                    }
+                    else
+                    {
+                        itemInfo = new ItemInfo(
+                            int.Parse(proArray[0]),
+                            proArray[2],
+                            proArray[3],
+                            int.Parse(proArray[9]),
+                            int.Parse(proArray[10]),
+                            int.Parse(proArray[16]),
+                            proArray[17]
+                            );
+                    }
+                    itemList.Add(itemInfo.id, itemInfo);
+                }
+            }
+        }
+
+    }
+
     /// <summary>
     /// ファイルからアイテムのデータを導入
     /// </summary>
     /// <returns></returns>
-    public Dictionary<int, ItemInfo> LoadItemList()
+    public Dictionary<int, ItemInfo> GetItemList()
     {
-        //if(itemList!=null)
-        //{
-        //    return itemList;
-        //}
-        //else
-        //{
-        string[] proArray;
-        string[] dataArray = itemListData.ToString().Split('\n');
-
-        itemList = new Dictionary<int, ItemInfo>();
-
-        for (int i = 1; i < dataArray.Length; i++)
+        if (itemList == null)
         {
-            if (dataArray[i] != "")
-            {
-                proArray = dataArray[i].Split(',');
-                if (ItemInfo.IsEquep((ItemType)int.Parse(proArray[1])))
-                {
-                    itemInfo = new ItemInfo(int.Parse(proArray[0]),
-                        (ItemType)int.Parse(proArray[1]),
-                        proArray[2],
-                        proArray[3],
-                        int.Parse(proArray[4]),
-                        int.Parse(proArray[5]),
-                        int.Parse(proArray[6]),
-                        int.Parse(proArray[7]),
-                        int.Parse(proArray[8]),
-                        int.Parse(proArray[11]),
-                        int.Parse(proArray[12]),
-                        int.Parse(proArray[13]),
-                        int.Parse(proArray[14]),
-                        int.Parse(proArray[15]),
-                        int.Parse(proArray[16]),
-                        proArray[17]
-                        );
-                }
-                else
-                {
-                    itemInfo = new ItemInfo(
-                        int.Parse(proArray[0]),
-                        proArray[2],
-                        proArray[3],
-                        int.Parse(proArray[9]),
-                        int.Parse(proArray[10]),
-                        int.Parse(proArray[16]),
-                        proArray[17]
-                        );
-                }
-                itemList.Add(itemInfo.id, itemInfo);
-            }
+            LoadItemList();
         }
         return itemList;
         //}
+    }
 
+    public ItemInfo GetItem(int itemID)
+    {
+        if (itemList == null)
+        {
+            LoadItemList();
+        }
+        itemList.TryGetValue(itemID, out itemInfo);
+        return itemInfo;
     }
 
     Dictionary<int, Item> bagList;
     Item item;
+    void LoadBagItem()
+    {
+        if (bagList == null)
+        {
+            string[] proArray;
+            string[] dataArray = gameData.PlayerBag.ToString().Split('\n');
+            bagList = new Dictionary<int, Item>();
+
+            for (int i = 1; i < dataArray.Length; i++)
+            {
+                if (dataArray[i] != "")
+                {
+                    proArray = dataArray[i].Split(',');
+                    if (ItemInfo.IsEquep(ItemList.getItem(int.Parse(proArray[3])).type))
+                    {
+                        item = new Item(int.Parse(proArray[0]), proArray[1] == "0" ? false : true, ItemList.getItem(int.Parse(proArray[3])));
+                    }
+                    else
+                    {
+                        item = new Item(int.Parse(proArray[0]), int.Parse(proArray[2]), ItemList.getItem(int.Parse(proArray[3])));
+                    }
+                    bagList.Add(item.id, item);
+                }
+            }
+        }
+    }
+
+
     /// <summary>
     /// ファイルからバッグのデータを導入
     /// </summary>
     /// <returns></returns>
-    public Dictionary<int, Item> LoadBag()
+    public Dictionary<int, Item> GetBagItemList()
     {
-        string[] proArray;
-        string[] dataArray = gameData.PlayerBag.ToString().Split('\n');
-        bagList = new Dictionary<int, Item>();
-
-        for (int i = 1; i < dataArray.Length; i++)
+        if (bagList == null)
         {
-            if (dataArray[i] != "")
-            {
-                proArray = dataArray[i].Split(',');
-                if (ItemInfo.IsEquep(ItemList.getItem(int.Parse(proArray[3])).type))
-                {
-                    item = new Item(int.Parse(proArray[0]), proArray[1] == "0" ? false : true, ItemList.getItem(int.Parse(proArray[3])));
-                }
-                else
-                {
-                    item = new Item(int.Parse(proArray[0]), int.Parse(proArray[2]), ItemList.getItem(int.Parse(proArray[3])));
-                }
-                bagList.Add(item.id, item);
-            }
+            LoadBagItem();
         }
         return bagList;
     }
+    #endregion
+
+    #region ItemCompose
+    Dictionary<ItemType, List<ItemCompose>> itemComposeDictionary;
+    List<ItemCompose> itemComposeList;
+    ItemCompose itemCompose;
+    void LoadItemComposeList()
+    {
+        if (itemComposeDictionary == null)
+        {
+            string[] proArray;
+            string[] idArray;
+            string[] countArray;
+            string[] dataArray = itemComposeData.ToString().Split('\n');
+            itemComposeDictionary = new Dictionary<ItemType, List<ItemCompose>>();
+            ItemType itemtype;
+
+            for (int i = 1; i < dataArray.Length; i++)
+            {
+                if (dataArray[i] != "")
+                {
+                    proArray = dataArray[i].Split(',');
+                    idArray = proArray[2].Split('|');
+                    countArray = proArray[3].Split('|');
+
+                    itemCompose = new ItemCompose(int.Parse(proArray[0]), int.Parse(proArray[1]), idArray.ParseToInt(), countArray.ParseToInt());
+
+                    itemtype = GetItem(itemCompose.ResultItem.itemID).type;
+
+
+                    if (!itemComposeDictionary.TryGetValue(itemtype, out itemComposeList))
+                    {
+                        itemComposeList = new List<ItemCompose>();
+                        itemComposeList.Add(itemCompose);
+                        itemComposeDictionary.Add(GetItem(itemCompose.ResultItem.itemID).type, itemComposeList);
+                    }
+
+                    itemComposeDictionary[itemtype] = itemComposeList;
+                }
+            }
+        }
+    }
+
+    public List<ItemCompose> GetItemComposeList(ItemType type)
+    {
+        if (itemComposeDictionary == null)
+        {
+            LoadItemComposeList();
+        }
+        if( itemComposeDictionary.TryGetValue(type, out itemComposeList))
+        {
+            return itemComposeList;
+        }
+        else
+        {
+            return new List<ItemCompose>();
+        }
+    }
+
     #endregion
     #region Quest
     QuestInfo info;
@@ -624,7 +718,7 @@ public class GameController
         }
         return textList;
     }
-    #endregion 
+    #endregion
     #region Skill
     List<Skill> skillList;
     public List<Skill> LoadSkill()

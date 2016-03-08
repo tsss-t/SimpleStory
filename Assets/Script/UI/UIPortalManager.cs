@@ -17,9 +17,9 @@ public class UIPortalManager : MonoBehaviour
         isShowPanel = false;
         tweener = transform.Find("PortalContainer").GetComponent<UITweener>();
         portalGrid = transform.Find("PortalContainer/Scroll View/Items").gameObject;
-        if (PortalManager._instans != null)
+        if (PortalManager._instance != null)
         {
-            PortalManager._instans.playerStateChange += PlayerPositionChange;
+            PortalManager._instance.playerStateChange += PlayerPositionChange;
         }
 
         LoadData();
@@ -129,9 +129,9 @@ public class UIPortalManager : MonoBehaviour
 
     void OnDestroy()
     {
-        if (PortalManager._instans != null)
+        if (PortalManager._instance != null)
         {
-            PortalManager._instans.playerStateChange -= PlayerPositionChange;
+            PortalManager._instance.playerStateChange -= PlayerPositionChange;
         }
     }
 }

@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public TextAsset playerTypeData;
     public TextAsset bagData;
     public TextAsset itemListData;
+    public TextAsset itemComposeData;
+
     public TextAsset playerQuestData;
     public TextAsset questListData;
     public TextAsset NPCData;
@@ -20,12 +22,12 @@ public class GameManager : MonoBehaviour
     public TextAsset enemyInfoData;
     public string gameDataKey;
 
-    public static GameManager _instans;
+    public static GameManager _instance;
     // Use this for initialization
     void Awake()
     {
         Random.seed = System.DateTime.Now.Millisecond;
-        _instans = this;
+        _instance = this;
         if (GameObject.FindGameObjectWithTag(Tags.player) != null)
         {
             PlayerState._instance.playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;

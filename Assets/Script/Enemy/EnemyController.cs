@@ -99,12 +99,12 @@ public class EnemyController : MonoBehaviour
         enemyManager = EnemyManager._instance;
 
         //HPbar
-        hpBarManagerUI = UIHpBarManager._instans;
+        hpBarManagerUI = UIHpBarManager._instance;
         hpBar = hpBarManagerUI.CreateHpBar(transform.Find("HpBarPoint").gameObject);
         hpSlider = hpBar.transform.GetComponentInChildren<UISlider>();
 
         //Drop
-        giftManagerUI = UIGiftManager._instans;
+        giftManagerUI = UIGiftManager._instance;
 
         charaController = this.GetComponent<CharacterController>();
 
@@ -662,18 +662,18 @@ public class EnemyController : MonoBehaviour
 
                 for (int i = 0; i < dropMoney % 100; i++)
                 {
-                    UICoinManager._instans.CreatOneCoin(this.gameObject, 13);
+                    UICoinManager._instance.CreatOneCoin(this.gameObject, 13);
                 }
                 dropMoney = dropMoney % 100;
                 for (int i = 0; i < dropMoney % 10; i++)
                 {
-                    UICoinManager._instans.CreatOneCoin(this.gameObject, 9);
+                    UICoinManager._instance.CreatOneCoin(this.gameObject, 9);
 
                 }
                 dropMoney = dropMoney % 10;
                 for (int i = 0; i < dropMoney; i++)
                 {
-                    UICoinManager._instans.CreatOneCoin(this.gameObject, 7);
+                    UICoinManager._instance.CreatOneCoin(this.gameObject, 7);
                 }
             }
         }

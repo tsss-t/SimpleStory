@@ -5,11 +5,11 @@ public class UICoinManager : MonoBehaviour
 {
 
     public GameObject coinPrefab;
-    public static UICoinManager _instans;
+    public static UICoinManager _instance;
 
     void Awake()
     {
-        _instans = this;
+        _instance = this;
     }
     // Use this for initialization
     void Start()

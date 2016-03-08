@@ -60,7 +60,7 @@ public class UICoinAnimation : MonoBehaviour
     IEnumerator delayDistroy()
     {
         yield return new WaitForSeconds(2f);
-        UICoinManager._instans.DestoryCoin(this.gameObject);
+        UICoinManager._instance.DestoryCoin(this.gameObject);
 
     }
 }

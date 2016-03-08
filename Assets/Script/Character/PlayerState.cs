@@ -432,6 +432,17 @@ public class PlayerState
         PlayerStateChanged(PlayerStateChangeType.equep);
         PlayerStateChanged(PlayerStateChangeType.STATE);
     }
+
+    /// <summary>
+    /// 指定した合成レシピより、アイテムを合成する、外部からの使用はplayerStateから
+    /// </summary>
+    /// <param name="itemCompose">合成レシピ</param>
+    public void ComposeItem(ItemCompose itemCompose)
+    {
+        bag.ComposeItem(itemCompose);
+        PlayerStateChanged(PlayerStateChangeType.bag);
+    }
+
     #endregion
 
     #region クエスト関連

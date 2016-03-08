@@ -47,6 +47,8 @@ public class PlayerAttack : MonoBehaviour
             if (Input.GetButtonDown("Attack"))
             {
                 Attack(SkillType.basic, 0);
+
+                UIComposeManager._instance.OnCommunicationStart();
             }
             if (Input.GetButtonDown("Skill1"))
             {

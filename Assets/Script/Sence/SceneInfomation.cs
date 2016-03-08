@@ -37,7 +37,7 @@ public class SceneInfomation : MonoBehaviour
 
         if (areaDataList == null)
         {
-            SceneMaker._instans.CreateDataStart(nextFloorNum);
+            SceneMaker._instance.CreateDataStart(nextFloorNum);
         }
         areaDataList = GameController._instance.GetAreaDataList(floorNum);
 

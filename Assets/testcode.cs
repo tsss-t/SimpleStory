@@ -44,6 +44,6 @@ public class testcode : MonoBehaviour
     }
     public void touch()
     {
-        SceneMaker._instans.CreateDataStart(1);
+        SceneMaker._instance.CreateDataStart(1);
     }
 }
