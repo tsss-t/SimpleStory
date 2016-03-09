@@ -241,7 +241,6 @@ public class GameController
         foreach (KeyValuePair<int, bool> item in portalDictionary)
         {
             saveString += string.Format("{0},{1}\n", item.Key, item.Value ? "1" : "0");
-
         }
         gameData.PlayerPortalPorcess = string.Format("{0}\n{1}", playerPortalProcessUper, saveString);
     }
@@ -922,8 +921,8 @@ public class GameController
 
     #region enemy
     #region enemyInfo
-    Dictionary<int, EnemyInfo> enemyInfoDictionary;
-    EnemyInfo enemyInfo;
+    Dictionary<int, EnemyDropInfo> enemyInfoDictionary;
+    EnemyDropInfo enemyInfo;
     void LoadenemyInfo()
     {
         if (enemyInfoDictionary == null)
@@ -934,7 +933,7 @@ public class GameController
             string[] dropItemLVArray;
             string[] dropItemPreArray;
             List<dropItem> dropItemList;
-            enemyInfoDictionary = new Dictionary<int, EnemyInfo>();
+            enemyInfoDictionary = new Dictionary<int, EnemyDropInfo>();
             for (int i = 1; i < dataArray.Length; i++)
             {
                 if (dataArray[i] != "")
@@ -963,7 +962,7 @@ public class GameController
                             });
                         }
                     }
-                    enemyInfo = new EnemyInfo(int.Parse(proArray[0]), proArray[1], dropItemList, float.Parse(proArray[5]));
+                    enemyInfo = new EnemyDropInfo(int.Parse(proArray[0]), proArray[1], dropItemList, float.Parse(proArray[5]));
                     enemyInfoDictionary.Add(enemyInfo.ID, enemyInfo);
                 }
             }
@@ -974,7 +973,7 @@ public class GameController
     /// </summary>
     /// <param name="enemyID">敵のID</param>
     /// <returns></returns>
-    public EnemyInfo GetEnemyInfo(int enemyID)
+    public EnemyDropInfo GetEnemyInfo(int enemyID)
     {
         if (enemyInfoDictionary == null)
         {
@@ -984,7 +983,7 @@ public class GameController
 
         return enemyInfo;
     }
-    public EnemyInfo GetRandomEnemyInfo()
+    public EnemyDropInfo GetRandomEnemyInfo()
     {
         return enemyInfoDictionary.getRandomOne();
     }

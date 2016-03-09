@@ -63,8 +63,7 @@ public class EnemyManager : MonoBehaviour
                 enemyArea.postion = new Vector2(enemyPositionDataList[i].LeftUpPosition.x, enemyPositionDataList[i].LeftUpPosition.z);
                 enemyArea.width = enemyPositionDataList[i].Width;
                 enemyArea.height = enemyPositionDataList[i].Height;
-                enemyArea.enemy.GetComponent<EnemyController>().level = enemyPositionDataList[i].EnemyLevel;
-                enemyArea.enemy.GetComponent<EnemyController>().enemyID = enemyPositionDataList[i].EnemyID;
+                enemyArea.enemy.GetComponent<EnemyController>().InitEnemy(enemyPositionDataList[i].EnemyID, enemyPositionDataList[i].EnemyLevel);
                 enemyArea.enemyList = new List<GameObject>();
                 this.enemyAreaList.Add(enemyArea);
             }
@@ -208,7 +207,7 @@ public class EnemyManager : MonoBehaviour
             {
                 for (int j = 0; j < enemyAreaList[i].enemyList.Count; j++)
                 {
-                    if (enemyAreaList[i].enemyList[j] != null && enemyAreaList[i].enemyList[j].GetComponent<EnemyController>().nowState != ActionState.die)
+                    if (enemyAreaList[i].enemyList[j] != null && enemyAreaList[i].enemyList[j].GetComponent<EnemyController>().isAlive())
                     {
                         canAttackEnemy.Add(enemyAreaList[i].enemyList[j]);
                     }
@@ -220,7 +219,7 @@ public class EnemyManager : MonoBehaviour
         {
             for (int j = 0; j < managedEnemyList[i].enemyList.Count; j++)
             {
-                if (managedEnemyList[i].enemyList[j] != null && managedEnemyList[i].enemyList[j].GetComponent<EnemyController>().nowState != ActionState.die)
+                if (managedEnemyList[i].enemyList[j] != null && managedEnemyList[i].enemyList[j].GetComponent<EnemyController>().isAlive())
                 {
                     canAttackEnemy.Add(managedEnemyList[i].enemyList[j]);
                 }

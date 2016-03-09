@@ -100,7 +100,7 @@ public class PlayerAttack : MonoBehaviour
                     {
                         if (AttackFront(canAttackEnemy[i].transform.position, PosType.basic, false))
                         {
-                            canAttackEnemy[i].GetComponent<EnemyController>().Hit(playerState.ATK);
+                            canAttackEnemy[i].GetComponent<EnemyController>().TakeDamage(playerState.ATK);
                         }
                     }
                     break;
@@ -111,7 +111,7 @@ public class PlayerAttack : MonoBehaviour
                     {
                         if (AttackAround(canAttackEnemy[i].transform.position, PosType.one, false))
                         {
-                            canAttackEnemy[i].GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.one).Damage);
+                            canAttackEnemy[i].GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.one).Damage);
                         }
                     }
                     break;
@@ -124,7 +124,7 @@ public class PlayerAttack : MonoBehaviour
                         {
                             if (AttackFront(canAttackEnemy[i].transform.position, PosType.two, false))
                             {
-                                canAttackEnemy[i].GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
+                                canAttackEnemy[i].GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
                             }
                         }
                     }
@@ -138,7 +138,7 @@ public class PlayerAttack : MonoBehaviour
                         {
                             if (AttackFront(canAttackEnemy[i].transform.position, PosType.two, false))
                             {
-                                canAttackEnemy[i].GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
+                                canAttackEnemy[i].GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
                             }
                         }
                     }
@@ -403,7 +403,7 @@ public class PlayerAttack : MonoBehaviour
                 if (collider)
                 {
                     GameObject goEffect = (GameObject.Instantiate(effect) as AttackEffect).gameObject;
-                    go.GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.two).Damage * 5);
+                    go.GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage * 5);
                     goEffect.transform.position = go.transform.position;
                 }
             }
@@ -424,7 +424,7 @@ public class PlayerAttack : MonoBehaviour
                 if (collider)
                 {
                     GameObject.Instantiate(effect, hit.point, Quaternion.identity);
-                    go.GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5, 2, 3);
+                    go.GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5, 2, 3);
                 }
             }
         }

@@ -1,2 +1,2 @@
-floorNum,enemyName,enemyCount,enemyLevel,leftUpPositionX,leftUpPositionY,leftUpPositionZ,width,height
+floorNum,enemyID,enemyCount,enemyLevel,leftUpPositionX,leftUpPositionY,leftUpPositionZ,width,height
 -100,1,10,2,-32,0,-3,10,10

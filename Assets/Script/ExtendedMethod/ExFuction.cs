@@ -11,6 +11,12 @@ public static class ExFuction
         rate.constantMax = emissionRate;
         emission.rate = rate;
     }
+    /// <summary>
+    /// 入口をPrefabの中心点に参照して回転
+    /// </summary>
+    /// <param name="areaOut">入口情報</param>
+    /// <param name="angle">回転角</param>
+    /// <returns></returns>
     public static AreaPrefabOut Rot(this AreaPrefabOut areaOut, AngleFix angle)
     {
         AreaPrefabOut tempArea;
@@ -35,20 +41,43 @@ public static class ExFuction
         }
         return tempArea;
     }
+    /// <summary>
+    /// GameObjectを一つの点に参照して回転
+    /// </summary>
+    /// <param name="gameObject"></param>
+    /// <param name="referencePoint">参照点</param>
+    /// <param name="angle">回転角</param>
+    /// <returns></returns>
     public static GameObject Rot(this GameObject gameObject, Vector3 referencePoint, AngleFix angle)
     {
         GameObject go = gameObject;
         go.transform.Rotate(referencePoint, (int)angle);
         return go;
     }
+    /// <summary>
+    /// 180°回転
+    /// </summary>
+    /// <param name="angle"></param>
+    /// <returns></returns>
     public static AngleFix TureBack(this AngleFix angle)
     {
         return ((int)angle) + 180 > 270 ? angle - 180 : angle + 180;
     }
+    /// <summary>
+    /// 反対の方向を返す
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns></returns>
     public static OutDirection TureBack(this OutDirection direction)
     {
         return ((int)direction) + 2 > 4 ? direction - 2 : direction + 2;
     }
+    /// <summary>
+    /// 二つ方向の角度を計算
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <param name="targetDirection"></param>
+    /// <returns></returns>
     public static AngleFix getAngleFromTargetDirection(this OutDirection direction, OutDirection targetDirection)
     {
         return (AngleFix)(
@@ -85,6 +114,11 @@ public static class ExFuction
         }
         return tempArray;
     }
+    /// <summary>
+    /// string型のarrayを全部int型に変更
+    /// </summary>
+    /// <param name="array"></param>
+    /// <returns></returns>
     public static int[] ParseToInt(this string[] array)
     {
         int[] arrayInt=new int[array.Length];
@@ -95,7 +129,12 @@ public static class ExFuction
         return arrayInt;
     }
 
-
+    /// <summary>
+    /// arrayから、ランダムで一つを返す
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="array"></param>
+    /// <returns></returns>
     public static T getRandomOne<T>(this T[] array)
     {
         int x = Random.Range(0, array.Length);
@@ -103,6 +142,13 @@ public static class ExFuction
         return array[x];
     }
 
+    /// <summary>
+    /// dictionaryのバリューから、ランダムで一つを返す
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="K"></typeparam>
+    /// <param name="dictionary"></param>
+    /// <returns></returns>
     public static K getRandomOne<T, K>(this Dictionary<T, K> dictionary)
     {
 

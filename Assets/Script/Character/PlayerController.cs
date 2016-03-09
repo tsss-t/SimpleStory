@@ -235,14 +235,13 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     /// <param name="enemyATK"></param>
     /// <param name="ACC"></param>
-    public bool Hit(int enemyATK, int ACC)
+    public bool TakeDamage(int enemyATK, float ACC)
     {
         //TODO:攻撃のダメージ算出
         bool isHit = true;
-        if (Random.Range(0, 100) < ACC)
+        if (Random.value < ACC)
         {
             anim.SetTrigger(hash.hitTrigger);
-
         }
         else
         {
