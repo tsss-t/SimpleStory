@@ -316,7 +316,6 @@ public class EnemyController : Enemy
         base.Follow();
         if (nowAction == ActionType.run || nowAction == ActionType.idel)
         {
-            Debug.Log("F:---" + nowAction);
             transform.LookAt(playerPosition);
             if (Vector3.Distance(transform.position, playerPosition) > attackDis)
             {
@@ -349,7 +348,16 @@ public class EnemyController : Enemy
             }
             else
             {
-                nowAction = ActionType.attack;
+                if (CheckActionOver(ActionType.attack, 1))
+                {
+                    nowAction = ActionType.hit;
+                }
+                else
+                {
+                    nowAction = ActionType.attack;
+
+                }
+
             }
         }
         else
@@ -381,6 +389,18 @@ public class EnemyController : Enemy
                     nowAction = ActionType.run;
                 }
                 //Debug.Log(Vector3.Distance(transform.position, playerPosition));
+            }
+            else
+            {
+                if (!CheckActionOver(ActionType.hit, 2))
+                {
+                    nowAction = ActionType.hit;
+                }
+
+                if(!CheckActionOver(ActionType.attack, 1))
+                {
+                    nowAction = ActionType.attack;
+                }
             }
         }
     }
@@ -512,34 +532,36 @@ public class EnemyController : Enemy
     /// 被攻撃
     /// </summary>
     /// <param name="ATK">技の攻撃力</param>
-    public override void TakeDamage(int ATK)
+    public override bool TakeDamage(int ATK)
     {
-        TakeDamage(ATK);
         if (nowState != ActionState.die)
         {
             if (nowState == ActionState.notFoundPlayer)
             {
                 nowState = ActionState.foundPlayer;
             }
-            hpSlider.value = HP / (float)HPMax;
-            base.TakeDamage(ATK);
-            if (HP <= 0)
+            if (base.TakeDamage(ATK))
             {
-                this.Die();
-            }
-            else
-            {
-                if (hitActionList.Length == 1)
+                hpSlider.value = ((float)HP) / ((float)HPMax);
+                if (HP <= 0)
                 {
-                    anim.SetTrigger(hitActionList[0].actionTrigerName);
+                    this.Die();
                 }
                 else
                 {
-                    anim.SetTrigger(hitActionList[GetRandomEvent(hitActionList.GetProbs())].actionTrigerName);
+                    if (hitActionList.Length == 1)
+                    {
+                        anim.SetTrigger(hitActionList[0].actionTrigerName);
+                    }
+                    else
+                    {
+                        anim.SetTrigger(hitActionList[GetRandomEvent(hitActionList.GetProbs())].actionTrigerName);
+                    }
                 }
+                return true;
             }
         }
-
+        return false;
     }
 
     #endregion
