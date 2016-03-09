@@ -10,6 +10,7 @@
     public const string enemy = "Enemy";
     public const string terrain = "Terrain";
     public const string NPC = "NPC";
+    public const string worktop = "Worktop";
     //UI:
     public const string UIRoot = "UIRoot";
 
@@ -28,5 +29,26 @@ public class SceneName
     public const string LastFloor = "LastFloor";
     public const string ShopFloor = "ShopFloor";
     public const string RandomMapFloor = "RandomFloor";
+
+}
+
+public static class AudioName
+{
+    public const string coin = "coin";
+    public const string gift = "gift";
+
+    public const string hurt = "Hurt";
+
+    public const string attack1 = "attack1";
+    public const string attack2 = "attack2";
+    public const string attack3 = "attack3";
+
+    public const string skill1 = "bird";
+    public const string skill2 = "ice_attack";
+    public const string skill3_1 = "skill3_1";
+    public const string skill3_2 = "skill3_2";
+    public const string skill3_3 = "skill3_3";
+
+    public const string compose = "make";
 
 }

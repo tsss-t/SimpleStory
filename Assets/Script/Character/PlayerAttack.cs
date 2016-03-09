@@ -47,8 +47,6 @@ public class PlayerAttack : MonoBehaviour
             if (Input.GetButtonDown("Attack"))
             {
                 Attack(SkillType.basic, 0);
-
-                UIComposeManager._instance.OnCommunicationStart();
             }
             if (Input.GetButtonDown("Skill1"))
             {
@@ -426,7 +424,7 @@ public class PlayerAttack : MonoBehaviour
                 if (collider)
                 {
                     GameObject.Instantiate(effect, hit.point, Quaternion.identity);
-                    go.GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5, 1, 1);
+                    go.GetComponent<EnemyController>().Hit(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5, 2, 3);
                 }
             }
         }

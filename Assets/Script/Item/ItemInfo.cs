@@ -2,7 +2,7 @@
 using System.Collections;
 public enum ItemType
 {
-    head=0, necklace=1, body=2, foot=3, ring=4, bracelet=5, wing=6, weapon=7, drug=8, key=9, quest=10, error=11
+    head = 0, necklace = 1, body = 2, foot = 3, ring = 4, bracelet = 5, wing = 6, weapon = 7, clip = 8, drug = 9, quest = 10, error = 11
 }
 /// <summary>
 /// アイテムの詳細情報、データベースのitemテーブル
@@ -52,7 +52,7 @@ public class ItemInfo
     /// <param name="needCON">装備必要な運</param>
     /// <param name="needLevel">装備必要なレベル</param>
     /// <param name="money">値段</param>
-    public ItemInfo(int id, ItemType type, string picAdress, string name, int STR, int DEX, int INT, int CON, int LUK, int needSTR, int needDEX, int needINT, int needCON, int needLevel, int money,string descript)
+    public ItemInfo(int id, ItemType type, string picAdress, string name, int STR, int DEX, int INT, int CON, int LUK, int needSTR, int needDEX, int needINT, int needCON, int needLevel, int money, string descript)
     {
         if (!IsEquep(type))
         {
@@ -91,16 +91,25 @@ public class ItemInfo
     /// <param name="HP">HP回復点数</param>
     /// <param name="energy">体力回復点数</param>
     /// <param name="money">値段</param>
-    public ItemInfo(int id, string picAress, string name, int HP, int energy, int money,string descript)
+    public ItemInfo(int id, string picAress, string name, int HP, int energy, int money, string descript, ItemType type)
     {
+        if (type == ItemType.drug)
+        {
+            this.type = ItemType.drug;
+        }
+        else
+        {
+            this.type = ItemType.clip;
+
+        }
         this.id = id;
         this.adress = picAress;
         this.name = name;
-        this.type = ItemType.drug;
         this.HP = HP;
         this.energy = energy;
         this.money = money;
         this.descript = descript;
+
     }
     #endregion
     public static bool IsEquep(ItemType type)

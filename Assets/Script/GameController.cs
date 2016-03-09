@@ -359,7 +359,8 @@ public class GameController
                             int.Parse(proArray[9]),
                             int.Parse(proArray[10]),
                             int.Parse(proArray[16]),
-                            proArray[17]
+                            proArray[17],
+                            (ItemType)int.Parse(proArray[1])
                             );
                     }
                     itemList.Add(itemInfo.id, itemInfo);
@@ -468,10 +469,9 @@ public class GameController
                     if (!itemComposeDictionary.TryGetValue(itemtype, out itemComposeList))
                     {
                         itemComposeList = new List<ItemCompose>();
-                        itemComposeList.Add(itemCompose);
-                        itemComposeDictionary.Add(GetItem(itemCompose.ResultItem.itemID).type, itemComposeList);
-                    }
 
+                    }
+                    itemComposeList.Add(itemCompose);
                     itemComposeDictionary[itemtype] = itemComposeList;
                 }
             }
