@@ -74,9 +74,12 @@ public abstract class Enemy : MonoBehaviour
     }
     protected virtual void Attack()
     {
+
         ACC = level - PlayerState._instance.level > 0 ? 0.7f :
                    (0.7 - (PlayerState._instance.level - level) * 0.15f <= 0 ? 0.05f :
                            ((0.7f - (PlayerState._instance.level - level) * 0.15f + 0.05f)));
+        //debug test:
+        ACC = 1;
         PlayerController._instance.TakeDamage(ATK, ACC);
     }
     protected virtual void Follow()
@@ -87,7 +90,7 @@ public abstract class Enemy : MonoBehaviour
     {
 
     }
-    public virtual void TakeDamage(int ATK)
+    public virtual bool TakeDamage(int ATK)
     {
         if (nowState != ActionState.die)
         {
@@ -100,21 +103,29 @@ public abstract class Enemy : MonoBehaviour
             {
                 Debug.Log("Not set blooding effect");
             }
-
             ACC = PlayerState._instance.level - level > 0 ?
                0.7f + PlayerState._instance.DEX * 0.005f :
                    (0.7 - (level - PlayerState._instance.level) <= 0 ?
                        PlayerState._instance.DEX * 0.005f :
                            ((0.7f - (level - PlayerState._instance.level) * 0.15f + PlayerState._instance.DEX * 0.005f)));
-
+            //debug test:
+            ACC = 1;
             if (Random.value < ACC)//命中
             {
                 HP -= (ATK - DEF >= 0 ? ATK - DEF : 1);
+                return true;
             }
             //Debug.Log(ATK+"  damage:" +damage);
             //Debug.Log(HP / (float)HPMax);
+            else
+            {
+                return false;
+            }
 
-
+        }
+        else
+        {
+            return false;
         }
     }
 
