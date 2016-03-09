@@ -12,7 +12,7 @@
 　
 ### デモについて
 　デモを利用する際、Gitファイルサイズが１００ｍｂに制限されているため、デモフォルダ中のZIPファイルを解凍してください。
-　具体的なファイルリスト：
+　具体的なファイルリスト：  
 　Demo/player_win_x64.zip  
 　Demo/player_win_x86.zip  
 　Demo/Demo_Data/Demo_Data.zip
