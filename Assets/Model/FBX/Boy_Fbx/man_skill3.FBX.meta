@@ -152,6 +152,13 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
+      - time: 0.24030146
+        functionName: ShowAttackSound
+        data: attackAir
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       - time: 0.24571429
         functionName: ShowAttack
         data: 3,skill3_1,true
@@ -162,34 +169,6 @@ ModelImporter:
       - time: 0.37714285
         functionName: ShowAttack
         data: 3,skill3_2,true
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.5
-        functionName: ShowAttack
-        data: 3,skill3_3,true
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.67999995
-        functionName: ShowAttack
-        data: 3,skill3_4,true
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.7457143
-        functionName: ShowEffectHand
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.24030146
-        functionName: ShowAttackSound
-        data: attackAir
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
@@ -208,7 +187,28 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.67925376
+      - time: 0.5
+        functionName: ShowAttack
+        data: 3,skill3_3,true
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.6445901
+        functionName: ShowEffectHand
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.67999995
+        functionName: ShowAttack
+        data: 3,skill3_4,true
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.68243843
         functionName: ShowAttackSound
         data: attackAir
         objectReferenceParameter: {instanceID: 0}

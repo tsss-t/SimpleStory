@@ -42,64 +42,39 @@ public class UIComposeButtonEvent : MonoBehaviour
             ComposeResult.transform.Find("Count").gameObject.SetActive(false);
         }
 
-        ComposeClip1 = transform.Find("ComposeClip1").gameObject;
-        ComposeClipCount1 = ComposeClip1.transform.Find("Count/CountLabel").GetComponent<UILabel>();
-        ComposeClipSprite1 = ComposeClip1.transform.Find("Icon").GetComponent<UISprite>();
 
-        if (itemCompose.NeedItem[0].itemCount == 1)
+
+
+
+
+
+
+        if (itemCompose.NeedItem.Count >= 1)
         {
-            ComposeClip1.transform.Find("Count").gameObject.SetActive(false);
-        }
 
-
-
-
-        switch (itemCompose.NeedItem.Count)
-        {
-            case 2:
-                {
-
-                    ComposeClip2 = transform.Find("ComposeClip2").gameObject;
-                    ComposeClipCount2 = ComposeClip2.transform.Find("Count/CountLabel").GetComponent<UILabel>();
-                    ComposeClipSprite2 = ComposeClip2.transform.Find("Icon").GetComponent<UISprite>();
-                    if (itemCompose.NeedItem[1].itemCount == 1)
-                    {
-                        ComposeClip2.transform.Find("Count").gameObject.SetActive(false);
-                    }
-
-                    break;
-                }
-            case 3:
+            ComposeClip1 = transform.Find("ComposeClip1").gameObject;
+            ComposeClipCount1 = ComposeClip1.transform.Find("Count/CountLabel").GetComponent<UILabel>();
+            ComposeClipSprite1 = ComposeClip1.transform.Find("Icon").GetComponent<UISprite>();
+            if (itemCompose.NeedItem.Count >= 2)
+            {
+                ComposeClip2 = transform.Find("ComposeClip2").gameObject;
+                ComposeClipCount2 = ComposeClip2.transform.Find("Count/CountLabel").GetComponent<UILabel>();
+                ComposeClipSprite2 = ComposeClip2.transform.Find("Icon").GetComponent<UISprite>();
+                if (itemCompose.NeedItem.Count >= 3)
                 {
                     ComposeClip3 = transform.Find("ComposeClip3").gameObject;
                     ComposeClipCount3 = ComposeClip3.transform.Find("Count/CountLabel").GetComponent<UILabel>();
                     ComposeClipSprite3 = ComposeClip3.transform.Find("Icon").GetComponent<UISprite>();
-                    if (itemCompose.NeedItem[2].itemCount == 1)
+
+                    if (itemCompose.NeedItem.Count >= 4)
                     {
-                        ComposeClip3.transform.Find("Count").gameObject.SetActive(false);
+                        ComposeClip4 = transform.Find("ComposeClip4").gameObject;
+                        ComposeClipCount4 = ComposeClip4.transform.Find("Count/CountLabel").GetComponent<UILabel>();
+                        ComposeClipSprite4 = ComposeClip4.transform.Find("Icon").GetComponent<UISprite>();
+
                     }
-                    break;
                 }
-
-            case 4:
-                {
-                    ComposeClip4 = transform.Find("ComposeClip4").gameObject;
-                    ComposeClipCount4 = ComposeClip4.transform.Find("Count/CountLabel").GetComponent<UILabel>();
-                    ComposeClipSprite4 = ComposeClip4.transform.Find("Icon").GetComponent<UISprite>();
-                    if (itemCompose.NeedItem[3].itemCount == 1)
-                    {
-                        ComposeClip4.transform.Find("Count").gameObject.SetActive(false);
-                    }
-
-                    break;
-                }
-            default:
-                {
-                    Debug.LogError(string.Format("Item ID: {0} Item Compose Data Error", itemCompose.ResultItem.itemID));
-                    NGUITools.Destroy(this);
-                    break;
-                }
-
+            }
         }
         UpdateButton();
     }
@@ -108,40 +83,25 @@ public class UIComposeButtonEvent : MonoBehaviour
         SetLabelCount(ComposeResultCount, itemCompose.ResultItem.itemID, itemCompose.ResultItem.itemCount, true);
         ComposeResultSprite.spriteName = ItemList.getItem(itemCompose.ResultItem.itemID).adress;
 
-        SetLabelCount(ComposeClipCount1, itemCompose.NeedItem[0].itemID, itemCompose.NeedItem[0].itemCount, false);
-        ComposeClipSprite1.spriteName = ItemList.getItem(itemCompose.NeedItem[0].itemID).adress;
-
-
-        switch (itemCompose.NeedItem.Count)
+        if (itemCompose.NeedItem.Count >= 1)
         {
-            case 2:
-                {
-                    SetLabelCount(ComposeClipCount2, itemCompose.NeedItem[1].itemID, itemCompose.NeedItem[1].itemCount, false);
-                    ComposeClipSprite2.spriteName = ItemList.getItem(itemCompose.NeedItem[1].itemID).adress;
-
-                    break;
-                }
-            case 3:
+            SetLabelCount(ComposeClipCount1, itemCompose.NeedItem[0].itemID, itemCompose.NeedItem[0].itemCount, false);
+            ComposeClipSprite1.spriteName = ItemList.getItem(itemCompose.NeedItem[0].itemID).adress;
+            if (itemCompose.NeedItem.Count >= 2)
+            {
+                SetLabelCount(ComposeClipCount2, itemCompose.NeedItem[1].itemID, itemCompose.NeedItem[1].itemCount, false);
+                ComposeClipSprite2.spriteName = ItemList.getItem(itemCompose.NeedItem[1].itemID).adress;
+                if (itemCompose.NeedItem.Count >= 3)
                 {
                     SetLabelCount(ComposeClipCount3, itemCompose.NeedItem[2].itemID, itemCompose.NeedItem[2].itemCount, false);
                     ComposeClipSprite3.spriteName = ItemList.getItem(itemCompose.NeedItem[2].itemID).adress;
-
-                    break;
+                    if (itemCompose.NeedItem.Count >= 4)
+                    {
+                        SetLabelCount(ComposeClipCount4, itemCompose.NeedItem[3].itemID, itemCompose.NeedItem[3].itemCount, false);
+                        ComposeClipSprite4.spriteName = ItemList.getItem(itemCompose.NeedItem[3].itemID).adress;
+                    }
                 }
-
-            case 4:
-                {
-                    SetLabelCount(ComposeClipCount4, itemCompose.NeedItem[3].itemID, itemCompose.NeedItem[3].itemCount, false);
-                    ComposeClipSprite4.spriteName = ItemList.getItem(itemCompose.NeedItem[3].itemID).adress;
-
-                    break;
-                }
-            default:
-                {
-                    Debug.LogError(string.Format("Item ID: {0} Item Compose Data Error", itemCompose.ResultItem.itemID));
-                    NGUITools.Destroy(this);
-                    break;
-                }
+            }
         }
     }
 
@@ -159,7 +119,7 @@ public class UIComposeButtonEvent : MonoBehaviour
 
         if (isResult)
         {
-            color = "000000";
+            color = "FFFFFF";
         }
         else
         {

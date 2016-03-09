@@ -28,7 +28,20 @@ public class PlayerCommunication : MonoBehaviour
         {
             if (Input.GetButtonDown("Comunication") && targetObject != null && timer > 0.5f&&playerState.GetActionInfoNow()==PlayerState.PlayerAction.Free )
             {
-                playerState.DoQuest(QuestType.findNPC, targetObject.GetComponent<NPCInfomation>().Communication());
+                switch(targetObject.tag)
+                {
+                    case Tags.worktop:
+                        {
+                            UIComposeManager._instance.OnCommunicationStart();
+                            break;
+                        }
+                    case Tags.NPC:
+                        {
+                            playerState.DoQuest(QuestType.findNPC, targetObject.GetComponent<NPCInfomation>().Communication());
+                            break;
+                        }
+
+                }
                 timer = 0f;
             }
         }
@@ -43,7 +56,7 @@ public class PlayerCommunication : MonoBehaviour
     #region Event (OnTriggerEnter,OnTriggerExit)
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.gameObject.tag == Tags.NPC)
+        if (collider.gameObject.tag == Tags.NPC || collider.gameObject.tag == Tags.worktop)
         {
             colliderList.Add(collider.gameObject);
             FindObject();
@@ -51,7 +64,7 @@ public class PlayerCommunication : MonoBehaviour
     }
     void OnTriggerExit(Collider collider)
     {
-        if (collider.gameObject.tag == Tags.NPC)
+        if (collider.gameObject.tag == Tags.NPC || collider.gameObject.tag == Tags.worktop)
         {
             colliderList.Remove(collider.gameObject);
             FindObject();

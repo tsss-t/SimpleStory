@@ -229,6 +229,10 @@ public class EventManager : MonoBehaviour
     #endregion
 
     #region shopFloor Event 
+
+    /// <summary>
+    /// 商人救え出す
+    /// </summary>
     public void EventShopOneOne()
     {
         EventDelegate unlockPlayer = new EventDelegate(this, "MakePlayerFree");
@@ -262,15 +266,43 @@ public class EventManager : MonoBehaviour
         cameraLookAt.Execute();
         GameController._instance.doneEvent(2);
     }
-    public void EventHelpShopping(EventDelegate nextMethod)
+
+    /// <summary>
+    /// 合成台修復
+    /// </summary>
+    public void EventShopTwoOne()
     {
-        this.nextEvent = nextMethod;
-        StartCoroutine(helpShopping());
+        EventDelegate unlockPlayer = new EventDelegate(this, "MakePlayerFree");
+
+        EventDelegate talkEvent15 = new EventDelegate(this, "Talk");
+        talkEvent15.parameters[0] = new EventDelegate.Parameter(15);
+        talkEvent15.parameters[1] = new EventDelegate.Parameter(unlockPlayer);
+
+        EventDelegate cameraLookAt = new EventDelegate(this, "CameraLookAt");
+        cameraLookAt.parameters[0] = new EventDelegate.Parameter(PositionTarget[3].transform);
+        cameraLookAt.parameters[1] = new EventDelegate.Parameter(2f);
+        cameraLookAt.parameters[2] = new EventDelegate.Parameter(talkEvent15);
+
+        EventDelegate talkEvent14 = new EventDelegate(this, "Talk");
+        talkEvent14.parameters[0] = new EventDelegate.Parameter(14);
+        talkEvent14.parameters[1] = new EventDelegate.Parameter(cameraLookAt);
+
+        EventDelegate moveToShangRen = new EventDelegate(this, "MoveTo");
+        moveToShangRen.parameters[0] = new EventDelegate.Parameter(player.transform);
+        moveToShangRen.parameters[1] = new EventDelegate.Parameter(PositionTarget[2].position);
+        moveToShangRen.parameters[2] = new EventDelegate.Parameter(0f);
+        moveToShangRen.parameters[3] = new EventDelegate.Parameter(talkEvent14);
+
+        moveToShangRen.Execute();
+
+        GameController._instance.doneEvent(4);
     }
+
     #endregion
     #endregion
 
     #region Event API (Type )
+    #region EventNormal
     void MakeEnemyToAttakPlayer(Vector3 enemyPosition, int width, int height, int count, GameObject enemyPrefab, EventDelegate nextmethod)
     {
         enemyManager.makeEnemyAttackPlayer(enemyPosition, width, height, count, enemyPrefab);
@@ -337,40 +369,40 @@ public class EventManager : MonoBehaviour
         thisEventIsOver = true;
         nextEvent = nextmethod;
     }
-    void DesTufei(EventDelegate nextmethod)
-    {
-        StartCoroutine(DestroyTufei());
-        nextEvent = nextmethod;
 
-    }
     void MakePlayerFree()
     {
         playerState.ChangeAction(PlayerState.PlayerAction.Free);
         thisEventIsOver = true;
         nextEvent = null;
     }
+    #endregion
+    #region SpecilEvent
+    void DesTufei(EventDelegate nextmethod)
+    {
+        StartCoroutine(DestroyTufei());
+        nextEvent = nextmethod;
 
+    }
+    public void EventHelpShopping(EventDelegate nextMethod)
+    {
+        this.nextEvent = nextMethod;
+        StartCoroutine(helpShopping());
+    }
+    public void setGameObjectHide()
+    {
+        if (!GameController._instance.getEventIsDone(2))
+        {
+            foreach (GameObject item in NPCManager._instance.GetNPCDctionary().Values)
+            {
+                item.SetActive(false);
+            }
+        }
+    }
+    #endregion
     #endregion
 
     #region IEnumerator
-
-    IEnumerator DestroyTufei()
-    {
-        try
-        {
-            iTween.FadeTo(eventObject1.transform.Find("Merchant_body").gameObject, 0, 2f);
-            iTween.FadeTo(eventObject1.transform.Find("Object017").gameObject, 0, 2f);
-            iTween.FadeTo(eventObject1.transform.Find("Object018").gameObject, 0, 2f);
-            iTween.FadeTo(eventObject1.transform.Find("Object019").gameObject, 0, 2f);
-        }
-        catch { Debug.Log("error"); }
-        yield return new WaitForSeconds(1.5f);
-        thisEventIsOver = true;
-        Destroy(eventObject1);
-    }
-
-
-
     IEnumerator WaitToChangeAction(PlayerState.PlayerAction action)
     {
         while (!playerAutoMove.IsMoveOver())
@@ -406,18 +438,20 @@ public class EventManager : MonoBehaviour
     {
         thisEventIsOver = true;
     }
-
-    #endregion
     #region SpecilEvent
-    public void setGameObjectHide()
+    IEnumerator DestroyTufei()
     {
-        if(!GameController._instance.getEventIsDone(2))
+        try
         {
-            foreach (GameObject item in NPCManager._instance.GetNPCDctionary().Values)
-            {
-                item.SetActive(false);
-            }
+            iTween.FadeTo(eventObject1.transform.Find("Merchant_body").gameObject, 0, 2f);
+            iTween.FadeTo(eventObject1.transform.Find("Object017").gameObject, 0, 2f);
+            iTween.FadeTo(eventObject1.transform.Find("Object018").gameObject, 0, 2f);
+            iTween.FadeTo(eventObject1.transform.Find("Object019").gameObject, 0, 2f);
         }
+        catch { Debug.Log("error"); }
+        yield return new WaitForSeconds(1.5f);
+        thisEventIsOver = true;
+        Destroy(eventObject1);
     }
     IEnumerator helpShopping()
     {
@@ -449,4 +483,6 @@ public class EventManager : MonoBehaviour
     }
 
     #endregion
+    #endregion
+
 }

@@ -81,7 +81,7 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         positionStart = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        if(nowState!= ActionState.locked)
+        if (nowState != ActionState.locked)
         {
             nowState = ActionState.notFoundPlayer;
         }
@@ -118,6 +118,9 @@ public class EnemyController : MonoBehaviour
         {
             if (nowState != ActionState.die)
             {
+                checkState();
+
+
                 HPBarSee();
                 switch (nowState)
                 {
@@ -145,7 +148,7 @@ public class EnemyController : MonoBehaviour
                             playerPosition = playerState.playerTransform.position;
                             //TODO:追撃コード animation:run
                             Follow();
-                            //TODO:攻撃コード animation:attack
+                            ////TODO:攻撃コード animation:attack
                             Attack();
 
                             break;
@@ -176,13 +179,16 @@ public class EnemyController : MonoBehaviour
     #region HPBar管理
     void HPBarSee()
     {
-        if (Vector3.Distance(playerState.playerTransform.position, transform.position) < 20f)
+        if(hpBar!=null)
         {
-            hpBar.SetActive(true);
-        }
-        else
-        {
-            hpBar.SetActive(false);
+            if (Vector3.Distance(playerState.playerTransform.position, transform.position) < 20f)
+            {
+                hpBar.SetActive(true);
+            }
+            else
+            {
+                hpBar.SetActive(false);
+            }
         }
     }
     #endregion
@@ -373,6 +379,7 @@ public class EnemyController : MonoBehaviour
             else
             {
                 anim.SetFloat(hash.enemySpeedFloat, 0f);
+                charaController.SimpleMove(Vector3.zero);
             }
             if (Vector3.Distance(positionStart, transform.position) > followDis)
             {
@@ -496,8 +503,49 @@ public class EnemyController : MonoBehaviour
     /// <param name="backDis">後退距離</param>
     public void Hit(int ATK, int jumpDis, int backDis)
     {
-        iTween.MoveBy(this.gameObject, transform.InverseTransformDirection(playerState.playerTransform.forward) * backDis + Vector3.up * jumpDis, 0.3f);
         Hit(ATK);
+        if (nowState != ActionState.die && nowState != ActionState.locked)
+        {
+            Vector3[] path = new Vector3[3];
+            path[0] = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            path[1] = path[0] - (PlayerState._instance.playerTransform.position - transform.position).normalized * backDis * 0.5f + Vector3.up * jumpDis;
+            path[2] = path[0] - (PlayerState._instance.playerTransform.position - transform.position).normalized * backDis + Vector3.up * 0.3f;
+
+            RaycastHit hitInfo;
+            if (Physics.Raycast(path[0], path[1] - path[0], out hitInfo, (path[1] - path[0]).magnitude, LayerMask.GetMask("Building")))
+            {
+                path[1] = hitInfo.point;
+                Physics.Raycast(path[1] + Vector3.up, Vector3.down, out hitInfo, 10f, LayerMask.GetMask("Building"));
+                path[2] = hitInfo.point;
+            }
+            else if(Physics.Raycast(path[2], path[2] - path[1], out hitInfo, (path[2] - path[1]).magnitude, LayerMask.GetMask("Building")))
+            {
+                Vector3[] newPath = new Vector3[4];
+                newPath[0] = path[0];
+                newPath[1] = path[1];
+                newPath[2] = hitInfo.point;
+                Physics.Raycast(path[2] + Vector3.up, Vector3.down, out hitInfo, 10f, LayerMask.GetMask("Building"));
+                newPath[3] = hitInfo.point;
+
+                path = newPath;
+            }
+
+            while(!Physics.Raycast(path[path.Length-1] + Vector3.up, Vector3.down, out hitInfo, 10f, LayerMask.GetMask("Building")))
+            {
+                Debug.Log("drop down!");
+                path[path.Length - 1] -= (path[path.Length - 1] - path[0]).normalized * 0.1f;
+            }
+
+
+            iTween.MoveTo(this.gameObject, iTween.Hash("path", path, "time", 0.6f, "easeType", iTween.EaseType.linear));
+            this.nowState = ActionState.locked;
+            StartCoroutine(ChangeState(0.4f, ActionState.foundPlayer));
+        }
+
+
+
+        //iTween.MoveBy(this.gameObject, transform.InverseTransformDirection(playerState.playerTransform.forward) * backDis + Vector3.up * jumpDis, 0.3f);
+
 
     }
     /// <summary>
@@ -507,6 +555,7 @@ public class EnemyController : MonoBehaviour
     /// <param name="backDis">後退距離</param>
     public void Hit(int ATK, int backDis)
     {
+
         iTween.MoveBy(this.gameObject, transform.InverseTransformDirection(playerState.playerTransform.forward) * backDis, 0.3f);
         Hit(ATK);
     }
@@ -610,6 +659,21 @@ public class EnemyController : MonoBehaviour
 
         Destroy(this.gameObject);
 
+        yield return 0;
+    }
+    void checkState()
+    {
+        if (HP <= 0)
+        {
+            nowState = ActionState.die;
+        }
+    }
+    IEnumerator ChangeState(float time, ActionState state)
+    {
+        yield return new WaitForSeconds(time);
+
+        nowState = state;
+        Debug.Log("ON");
         yield return 0;
     }
     #endregion

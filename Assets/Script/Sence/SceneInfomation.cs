@@ -11,10 +11,9 @@ public class SceneInfomation : MonoBehaviour
     void Awake()
     {
         _instance = this;
-        if (floorNum == -1000|| floorNum == -100)
+        if (floorNum == -1000 || floorNum == -100)
         {
             remakeScene();
-
         }
     }
 
@@ -26,7 +25,7 @@ public class SceneInfomation : MonoBehaviour
     List<AreaData> areaDataList;
     void remakeScene()
     {
-        if(floorNum!=-100)
+        if (floorNum != -100)
         {
             floorNum = GameController._instance.GetGoingToFloor();
         }
@@ -48,6 +47,22 @@ public class SceneInfomation : MonoBehaviour
             {
                 GameObject gameObject = Instantiate(Resources.Load(areaDataList[i].areaName), areaDataList[i].areaPosition, areaDataList[i].areaAngle) as GameObject;
                 gameObject.transform.parent = areaContainer.transform;
+            }
+        }
+        else
+        {
+            if (floorNum != -100)
+            {
+
+
+                SceneMaker._instance.CreateDataStart(floorNum);
+                areaDataList = GameController._instance.GetAreaDataList(floorNum);
+                areaContainer = new GameObject("Environment");
+                for (int i = 0; i < areaDataList.Count; i++)
+                {
+                    GameObject gameObject = Instantiate(Resources.Load(areaDataList[i].areaName), areaDataList[i].areaPosition, areaDataList[i].areaAngle) as GameObject;
+                    gameObject.transform.parent = areaContainer.transform;
+                }
             }
         }
 

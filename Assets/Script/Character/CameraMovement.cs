@@ -6,7 +6,9 @@ public class CameraMovement : MonoBehaviour
     public float smooth = 1.5f;
     private Transform player;
     public Transform target;
-    private Vector3 relCameraPos;
+    //相机偏移
+    //relCameraPos = transform.position - target.position;
+    public Vector3 relCameraPos = new Vector3(0, 9, -4);
     private float relCameraPosMag;
     private Vector3 newPos;
 
@@ -39,9 +41,7 @@ public class CameraMovement : MonoBehaviour
         player = GameObject.FindGameObjectWithTag(Tags.player).transform;
         target = player;
 
-        //相机偏移
-        //relCameraPos = transform.position - target.position;
-        relCameraPos = new Vector3(0, 9, -4);
+
 
         relCameraPosMag = relCameraPos.magnitude - 0.5f;
 
