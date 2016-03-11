@@ -18,6 +18,9 @@ public abstract class Enemy : MonoBehaviour
     #endregion
     public EnemyDropInfo dropInfo;
 
+    public int EXP;
+    public int level;
+
     public float speed;
     protected float speedDampTime = 0.3f;
 
@@ -26,8 +29,7 @@ public abstract class Enemy : MonoBehaviour
     protected int ATK;
     protected int DEF;
     protected float ACC;
-    protected int EXP;
-    public int level;
+
 
     #region AnimationEvent
     public ActionEvent[] actionList;
@@ -72,7 +74,7 @@ public abstract class Enemy : MonoBehaviour
     {
 
     }
-    protected virtual void Attack()
+    protected virtual void Attack(int attackWeight = 1)
     {
 
         ACC = level - PlayerState._instance.level > 0 ? 0.7f :
@@ -81,6 +83,11 @@ public abstract class Enemy : MonoBehaviour
         //debug test:
         ACC = 1;
         PlayerController._instance.TakeDamage(ATK, ACC);
+        if(!PlayerState._instance.PlayerAliveNow)
+        {
+            nowState = ActionState.notFoundPlayer;
+        }
+
     }
     protected virtual void Follow()
     {
@@ -95,7 +102,7 @@ public abstract class Enemy : MonoBehaviour
         if (nowState != ActionState.die)
         {
             //blood effect
-            if(damageEffectPrefab!=null)
+            if (damageEffectPrefab != null)
             {
                 GameObject.Instantiate(damageEffectPrefab, transform.position, Quaternion.identity);
             }

@@ -28,7 +28,7 @@ public class EnemyController : Enemy
     //public float speedDampTime = 0.03f;
 
     public float actiontimer = 5;
-    public float attackkDelay = 3f;
+    public float attackDelay = 3f;
 
     public float followDis = 25f;
     public float patrolDis = 10f;
@@ -48,7 +48,6 @@ public class EnemyController : Enemy
     private UIHpBarManager hpBarManagerUI;
     private GameObject hpBar;
     private UISlider hpSlider;
-    private UIGiftManager giftManagerUI;
     #endregion
 
     private CharacterController charaController;
@@ -63,6 +62,11 @@ public class EnemyController : Enemy
         ATK = level * addATK + baseATK;
         DEF = level * addDEF + baseDEF;
         HP = HPMax;
+        if (HP == 0)
+        {
+            HP = level * 100;
+        }
+
 
         positionStart = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         if (nowState != ActionState.locked)
@@ -104,11 +108,8 @@ public class EnemyController : Enemy
                             //    public float fieldDistance;監視距離
                             //    public float fieldAngle;監視範囲
                             See();
-
-
                             //TODO：行動ランダムコード　animation:random
-                            Action();
-
+                            RandomAction();
                             break;
                         }
                     case ActionState.foundPlayer:
@@ -119,6 +120,8 @@ public class EnemyController : Enemy
                                 break;
                             }
                             playerPosition = PlayerState._instance.playerTransform.position;
+                            //次の動作を設定
+                            SetAction();
                             ////TODO:攻撃コード animation:attack
                             Attack();
                             //TODO:追撃コード animation:run
@@ -247,7 +250,7 @@ public class EnemyController : Enemy
 
     #endregion
     #region　行動ランダムコード
-    private void Action()
+    private void RandomAction()
     {
         timer += Time.deltaTime;
         if (timer > actiontimer)
@@ -336,71 +339,28 @@ public class EnemyController : Enemy
     }
     #endregion
     #region 攻撃コード
-    private ActionEvent attackAction;
-    protected override void Attack()
+    protected override void Attack(int attackWeight=1)
     {
-        if (attackTimer > 0f)
+        if (attackTimer > 0f&&nowAction!= ActionType.attack)
         {
             attackTimer -= Time.deltaTime;
-            if (CheckActionOver(ActionType.attack, 1) && CheckActionOver(ActionType.hit, 2))//今は攻撃と受け身両方でもない
-            {
-                nowAction = ActionType.run;
-            }
-            else
-            {
-                if (CheckActionOver(ActionType.attack, 1))
-                {
-                    nowAction = ActionType.hit;
-                }
-                else
-                {
-                    nowAction = ActionType.attack;
 
-                }
-
-            }
         }
         else
         {
-            if (CheckActionOver(ActionType.attack, 1) && CheckActionOver(ActionType.hit, 2))//今は攻撃と受け身両方でもない
+            //攻撃距離判定
+            if (Vector3.Distance(transform.position, playerPosition) <= attackDis)
             {
-                if (Vector3.Distance(transform.position, playerPosition) <= attackDis)
+                if (attackActionList.Length == 1)
                 {
-                    if (attackActionList.Length == 1)
-                    {
-                        attackAction = attackActionList[0];
-                    }
-                    else
-                    {
-                        attackAction = attackActionList[GetRandomEvent(attackActionList.GetProbs())];
-                    }
-
-                    anim.SetTrigger(attackAction.actionTrigerName);
-                    base.Attack();
-                    nowAction = ActionType.attack;
-                    attackTimer = attackkDelay;
-                    if (!PlayerState._instance.PlayerAliveNow)
-                    {
-                        nowState = ActionState.notFoundPlayer;
-                    }
+                    anim.SetTrigger(attackActionList[0].actionTrigerName);
                 }
                 else
                 {
-                    nowAction = ActionType.run;
+                    anim.SetTrigger(attackActionList[GetRandomEvent(attackActionList.GetProbs())].actionTrigerName);
                 }
-                //Debug.Log(Vector3.Distance(transform.position, playerPosition));
-            }
-            else
-            {
-                if (!CheckActionOver(ActionType.hit, 2))
-                {
-                    nowAction = ActionType.hit;
-                }
-
-                if(!CheckActionOver(ActionType.attack, 1))
-                {
-                    nowAction = ActionType.attack;
-                }
+                base.Attack();
+                attackTimer = attackDelay;
             }
         }
     }
@@ -420,6 +380,31 @@ public class EnemyController : Enemy
     #endregion
 
     #region  nowActionとアクション動作動画と関連
+    bool playingAttackNow;
+    bool playingHit;
+    /// <summary>
+    /// 現在の動画再生より、今の状態を設定
+    /// </summary>
+    private void SetAction()
+    {
+        playingAttackNow = !CheckActionOver(ActionType.attack, 1);
+        playingHit = !CheckActionOver(ActionType.hit, 2);
+        if (!playingAttackNow && !playingHit)//今は攻撃と受け身両方でもない
+        {
+            nowAction = ActionType.run;
+        }
+        else
+        {
+            if (playingAttackNow)
+            {
+                nowAction = ActionType.attack;
+            }
+            else if (playingHit)
+            {
+                nowAction = ActionType.hit;
+            }
+        }
+    }
     /// <summary>
     /// 指定するタップの動画が再生完了したか
     /// </summary>
