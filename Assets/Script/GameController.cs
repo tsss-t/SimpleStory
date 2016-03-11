@@ -120,10 +120,11 @@ public class GameController
         gameData = new GameData();
         gameData.key = GameManager._instance.gameDataKey;
 
-        playerInFloor = -1000;
-        //InitSave();
+        InitSave();
         Load();
         lastChangeSceneType = EntryType.Portal;
+        playerInFloor = -99;
+
     }
     #endregion
     #region paramater
@@ -139,6 +140,7 @@ public class GameController
     #region newGame
     public void newGame()
     {
+        gameController = new GameController();
         InitSave();
         Load();
         lastChangeSceneType = EntryType.Down;

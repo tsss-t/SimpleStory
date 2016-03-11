@@ -237,31 +237,38 @@ public class PlayerController : MonoBehaviour
     /// <param name="ACC"></param>
     public bool TakeDamage(int enemyATK, float ACC)
     {
-        //TODO:攻撃のダメージ算出
-        bool isHit = true;
-        if (Random.value < ACC)
+        if (playerState.PlayerAliveNow)
         {
-            anim.SetTrigger(hash.hitTrigger);
+            //TODO:攻撃のダメージ算出
+            bool isHit = true;
+            if (Random.value < ACC)
+            {
+                anim.SetTrigger(hash.hitTrigger);
+            }
+            else
+            {
+                isHit = false;
+            }
+
+
+            int damege = enemyATK - playerState.DEF;
+            if (damege <= 0)
+            {
+                damege = 1;
+            }
+            playerState.HP -= damege;
+            if (playerState.HP <= 0)
+            {
+                playerState.HP = 0;
+                die();
+            }
+            playerState.PlayerStateChanged(PlayerStateChangeType.HP);
+            return isHit;
         }
         else
         {
-            isHit = false;
+            return false;
         }
-
-
-        int damege = enemyATK - playerState.DEF;
-        if (damege <= 0)
-        {
-            damege = 1;
-        }
-        playerState.HP -= damege;
-        if (playerState.HP <= 0)
-        {
-            playerState.HP = 0;
-            die();
-        }
-        playerState.PlayerStateChanged(PlayerStateChangeType.HP);
-        return isHit;
     }
     void die()
     {
