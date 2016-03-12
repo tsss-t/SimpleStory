@@ -17,11 +17,20 @@ public class BossController : Enemy
     private Rigidbody rigidBody;
     private GameObject skill1;
     private GameObject skill2;
+
+    private Transform skill3Position;
+
     private ParticleSystem[] skill3WeapenFire;
     public GameObject skill3AreaFirePrefab;
-    private Transform skill3Position;
+
     private ParticleSystem[] skill3WeapenLightning;
     public GameObject skill3AreaLightningPrefab;
+
+
+    private Transform Skill3AreaFireCylinderPositions;
+    private ParticleSystem[] skill3WeapenFireCylinder;
+    public GameObject skill3AreaFireCylinderPrefab;
+    private Transform[] Skill3AreaFireCylinderPositionList;
     // Use this for initialization
     protected override void Start()
     {
@@ -35,7 +44,13 @@ public class BossController : Enemy
 
         skill3WeapenFire = transform.Find("Bip01/Bip01 Pelvis/Bip01 Spine/Bip01 Spine1/Bip01 Neck/Bip01 R Clavicle/Bip01 R UpperArm/Bip01 R Forearm/Bip01 R Hand/Bip01 R Finger1/Bip01 R Finger11/Skill3Fire").gameObject.GetComponentsInChildren<ParticleSystem>();
         skill3WeapenLightning = transform.Find("Bip01/Bip01 Pelvis/Bip01 Spine/Bip01 Spine1/Bip01 Neck/Bip01 R Clavicle/Bip01 R UpperArm/Bip01 R Forearm/Bip01 R Hand/Bip01 R Finger1/Bip01 R Finger11/Skill3Lightning").gameObject.GetComponentsInChildren<ParticleSystem>();
+        skill3WeapenFireCylinder = transform.Find("Bip01/Bip01 Pelvis/Bip01 Spine/Bip01 Spine1/Bip01 Neck/Bip01 R Clavicle/Bip01 R UpperArm/Bip01 R Forearm/Bip01 R Hand/Bip01 R Finger1/Bip01 R Finger11/Skill3FireCylinder").gameObject.GetComponentsInChildren<ParticleSystem>();
+
         skill3Position = transform.Find("Skill3AreaFirePosition").gameObject.transform;
+        Skill3AreaFireCylinderPositions = transform.Find("Skill3AreaFireCylinderPositions").gameObject.transform;
+
+        Skill3AreaFireCylinderPositionList = Skill3AreaFireCylinderPositions.GetComponentsInChildren<Transform>();
+
         //skill3 = transform.Find("Skill3").gameObject;
         rigidBody = this.GetComponent<Rigidbody>();
     }
@@ -59,7 +74,7 @@ public class BossController : Enemy
     Vector3 playerPos;
     protected override void Follow()
     {
-        Debug.Log(playerPos);
+
         base.Follow();
         playerPos = PlayerController._instance.transform.position;
         angle = Vector3.Angle(playerPos - transform.position, transform.forward);
@@ -73,7 +88,7 @@ public class BossController : Enemy
                 if (angle > seeAngle * 0.5f)
                 {
                     Quaternion targetRot = Quaternion.LookRotation(playerPos - transform.position);
-                    transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, 1 * Time.deltaTime);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, rotSpeed * Time.deltaTime);
                 }
                 if (Vector3.Distance(playerPos, transform.position) > attackDis)
                 {
@@ -115,9 +130,6 @@ public class BossController : Enemy
                 {
                     anim.SetTrigger(attackActionList[GetRandomEvent(attackActionList.GetProbs())].actionTrigerName);
                 }
-
-
-
                 attackTimer = attackDelay;
             }
             else
@@ -125,9 +137,14 @@ public class BossController : Enemy
                 if (Vector3.Distance(playerPos, transform.position) > 10f && angle < seeAngle * 0.5f)
                 {
                     anim.SetTrigger(attackActionList[3].actionTrigerName);
+                    attackTimer = attackDelay * 2;
+                }
+                else if(Vector3.Distance(playerPos, transform.position) < attackDis && angle >145)
+                {
+                    anim.SetTrigger(attackActionList[4].actionTrigerName);
+                    attackTimer = attackDelay * 2;
                 }
 
-                attackTimer = attackDelay * 2;
 
             }
         }
@@ -137,6 +154,7 @@ public class BossController : Enemy
     public void Skill1()
     {
         skill1.gameObject.SetActive(true);
+        skill1.gameObject.transform.position = playerPos;
         base.Attack(3);
         StartCoroutine(StopEffect(1f, skill1));
     }
@@ -201,6 +219,25 @@ public class BossController : Enemy
 
     }
 
+    #endregion
+
+    #region Skill3  -------FireCir
+    public void Skill3WeapenFireCylinder()
+    {
+        for (int i = 0; i < skill3WeapenFireCylinder.Length; i++)
+        {
+            skill3WeapenFireCylinder[i].Play();
+        }
+
+        StartCoroutine(StopParticle(3f, skill3WeapenFireCylinder));
+    }
+    public void Skill3AreaFireCylinder()
+    {
+        for (int i = 1; i < Skill3AreaFireCylinderPositionList.Length; i++)
+        {
+            GameObject.Instantiate(skill3AreaFireCylinderPrefab, Skill3AreaFireCylinderPositionList[i].position, transform.rotation * Quaternion.Euler(0,+ i * 45+40, 0));
+        }
+    }
     #endregion
 
     IEnumerator StopEffect(float timeSec, GameObject effect)
