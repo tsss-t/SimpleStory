@@ -21,10 +21,13 @@ public class EventManager : MonoBehaviour
 
     EventDelegate nextEvent;
     bool thisEventIsOver;
+    void Awake()
+    {
+        _instance = this;
+    }
     // Use this for initialization
     void Start()
     {
-        _instance = this;
         player = GameObject.FindGameObjectWithTag(Tags.player);
         enemyManager = EnemyManager._instance;
 
@@ -299,6 +302,64 @@ public class EventManager : MonoBehaviour
     }
 
     #endregion
+
+    #region BossFloor Event
+    public void EventBossOneOne()
+    {
+        GameObject[] bossList = GameObject.FindGameObjectsWithTag(Tags.boss);
+        for (int i = 0; i < bossList.Length; i++)
+        {
+            bossList[i].GetComponent<BossController>().FoundPlayer();
+        }
+        UIBossBloodManager._instance.OnOpenButtonClick();
+
+        EventDelegate unlockPlayer = new EventDelegate(this, "MakePlayerFree");
+
+
+        EventDelegate closeTheRoad = new EventDelegate(this, "SetObjectActive");
+        closeTheRoad.parameters[0] = new EventDelegate.Parameter(new GameObject[] { eventObject1, eventObject2 });
+        closeTheRoad.parameters[1] = new EventDelegate.Parameter(true);
+        closeTheRoad.parameters[2] = new EventDelegate.Parameter(1f);
+        closeTheRoad.parameters[3] = new EventDelegate.Parameter(unlockPlayer);
+
+        EventDelegate cameraLookAt = new EventDelegate(this, "CameraLookAt");
+        cameraLookAt.parameters[0] = new EventDelegate.Parameter(PositionTarget[0].transform);
+        cameraLookAt.parameters[1] = new EventDelegate.Parameter(1f);
+        cameraLookAt.parameters[2] = new EventDelegate.Parameter(closeTheRoad);
+
+        EventDelegate openTheParticleSystem = new EventDelegate(this, "SetParticleSystemActive");
+        openTheParticleSystem.parameters[0] = new EventDelegate.Parameter(new GameObject[] { eventObject1, eventObject2 });
+        openTheParticleSystem.parameters[1] = new EventDelegate.Parameter(true);
+        openTheParticleSystem.parameters[2] = new EventDelegate.Parameter(0.5f);
+        openTheParticleSystem.parameters[3] = new EventDelegate.Parameter(cameraLookAt);
+
+        openTheParticleSystem.Execute();
+    }
+    public void EventBossOneTwo()
+    {
+        EventDelegate unlockPlayer = new EventDelegate(this, "MakePlayerFree");
+
+
+        EventDelegate openTheRoad = new EventDelegate(this, "SetObjectActive");
+        openTheRoad.parameters[0] = new EventDelegate.Parameter(new GameObject[] { eventObject1, eventObject2 });
+        openTheRoad.parameters[1] = new EventDelegate.Parameter(false);
+        openTheRoad.parameters[2] = new EventDelegate.Parameter(1f);
+        openTheRoad.parameters[3] = new EventDelegate.Parameter(unlockPlayer);
+
+        EventDelegate cameraLookAt = new EventDelegate(this, "CameraLookAt");
+        cameraLookAt.parameters[0] = new EventDelegate.Parameter(PositionTarget[1].transform);
+        cameraLookAt.parameters[1] = new EventDelegate.Parameter(1f);
+        cameraLookAt.parameters[2] = new EventDelegate.Parameter(openTheRoad);
+
+        EventDelegate closeTheParticleSystem = new EventDelegate(this, "SetParticleSystemActive");
+        closeTheParticleSystem.parameters[0] = new EventDelegate.Parameter(new GameObject[] { eventObject1, eventObject2 });
+        closeTheParticleSystem.parameters[1] = new EventDelegate.Parameter(false);
+        closeTheParticleSystem.parameters[2] = new EventDelegate.Parameter(1f);
+        closeTheParticleSystem.parameters[3] = new EventDelegate.Parameter(cameraLookAt);
+
+        closeTheParticleSystem.Execute();
+    }
+    #endregion
     #endregion
 
     #region Event API (Type )
@@ -343,7 +404,7 @@ public class EventManager : MonoBehaviour
         nextEvent = nextmethod;
     }
 
-    void CameraLookAt(Transform targetPosition,  float camaraWaitTime, EventDelegate nextmethod)
+    void CameraLookAt(Transform targetPosition, float camaraWaitTime, EventDelegate nextmethod)
     {
         playerState.ChangeAction(PlayerState.PlayerAction.Locked);
         GameObject.FindGameObjectWithTag(Tags.mainCamera).GetComponent<CameraMovement>().setTarget(targetPosition);
@@ -376,6 +437,45 @@ public class EventManager : MonoBehaviour
         thisEventIsOver = true;
         nextEvent = null;
     }
+
+    void SetObjectActive(GameObject[] gameObjectList, bool active, float time, EventDelegate nextmethod)
+    {
+        Debug.Log("act");
+
+        for (int i = 0; i < gameObjectList.Length; i++)
+        {
+            gameObjectList[i].GetComponent<Collider>().enabled = (active);
+        }
+        StartCoroutine(Wait(time));
+        nextEvent = nextmethod;
+    }
+    void SetParticleSystemActive(GameObject[] gameObjectList, bool active, float time, EventDelegate nextmethod)
+    {
+        ParticleSystem[] particleSystem;
+
+        for (int i = 0; i < gameObjectList.Length; i++)
+        {
+
+            particleSystem = gameObjectList[i].GetComponentsInChildren<ParticleSystem>();
+            for (int j = 0; j < particleSystem.Length; j++)
+            {
+                Debug.Log(gameObjectList.Length);
+
+                if (active)
+                {
+                    particleSystem[j].Play();
+                }
+                else
+                {
+                    particleSystem[j].Stop();
+                }
+            }
+
+        }
+        StartCoroutine(Wait(time));
+        nextEvent = nextmethod;
+    }
+
     #endregion
     #region SpecilEvent
     void DesTufei(EventDelegate nextmethod)

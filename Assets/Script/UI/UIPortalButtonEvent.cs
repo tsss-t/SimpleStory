@@ -24,14 +24,16 @@ public class UIPortalButtonEvent : MonoBehaviour
 
         if (floorNumber == -1)
         {
+            GameController._instance.SetGoingToFloor(-1);
             LoadingBar.Show(SceneManager.LoadSceneAsync(SceneName.FirstFloor));
         }
-        if (floorNumber == -100)
+        if (floorNumber == -10)
         {
             LoadingBar.Show(SceneManager.LoadSceneAsync(SceneName.LastFloor));
+            GameController._instance.SetGoingToFloor(-10);
+
         }
         GameController._instance.SetLastChangeSceneType(EntryType.Portal);
-        Debug.Log(floorNumber);
     }
 
 }

@@ -25,13 +25,17 @@ public class EnemyManager : MonoBehaviour
     public static EnemyManager _instance;
 
     public List<EnemyStruct> managedEnemyList;//イベント用
+
     #endregion
     Terrain tr;
 
     Vector3 buildPos;
     PlayerState playerstate;
+    List<GameObject> bossList;
     List<GameObject> canAttackEnemy;
     GameObject enemyContainer;
+
+
     #endregion
     #region start
     void Awake()
@@ -43,6 +47,7 @@ public class EnemyManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        bossList = new List<GameObject>();
         managedEnemyList = new List<EnemyStruct>();
         //tr = GameObject.FindGameObjectWithTag(Tags.terrain).GetComponent<Terrain>();
         playerstate = PlayerState._instance;
@@ -51,7 +56,7 @@ public class EnemyManager : MonoBehaviour
 
 
         #region 保存したデータから、敵の位置データを貰う
-        List<EnemyPositionData> enemyPositionDataList = GameController._instance.GetEnemyPosition(SceneInfomation._instance.floorNum);
+        List<EnemyPositionData> enemyPositionDataList = GameController._instance.GetEnemyPosition(SceneInfomation._instance.FloorNumber);
         EnemyStruct enemyArea;
         if (enemyPositionDataList != null)
         {
@@ -68,6 +73,13 @@ public class EnemyManager : MonoBehaviour
                 this.enemyAreaList.Add(enemyArea);
             }
         }
+        GameObject[] boss = GameObject.FindGameObjectsWithTag(Tags.boss);
+
+        for (int i = 0; i < boss.Length; i++)
+        {
+            bossList.Add(boss[i]);
+        }
+
         #endregion
 
         UpdateSence();
@@ -134,22 +146,25 @@ public class EnemyManager : MonoBehaviour
     /// <returns></returns>
     public bool destroyEnemy(GameObject enemy)
     {
-        for (int i = 0; i < enemyAreaList.Count; i++)
+        if (enemy.tag != Tags.boss)
         {
-            if (isInArea(enemyAreaList[i], enemy.transform.position))
+            for (int i = 0; i < enemyAreaList.Count; i++)
             {
-                for (int j = 0; j < enemyAreaList[i].enemyList.Count; j++)
+                if (isInArea(enemyAreaList[i], enemy.transform.position))
                 {
-                    if (enemyAreaList[i].enemyList[j] == enemy)
+                    for (int j = 0; j < enemyAreaList[i].enemyList.Count; j++)
                     {
-                        enemyAreaList[i].enemyList.Remove(enemyAreaList[i].enemyList[j]);
-                        return true;
+                        if (enemyAreaList[i].enemyList[j] == enemy)
+                        {
+                            enemyAreaList[i].enemyList.Remove(enemyAreaList[i].enemyList[j]);
+                            return true;
+                        }
                     }
                 }
-            }
-            else
-            {
-                continue;
+                else
+                {
+                    continue;
+                }
             }
         }
         return false;
@@ -225,7 +240,10 @@ public class EnemyManager : MonoBehaviour
                 }
             }
         }
-
+        for (int i = 0; i < bossList.Count; i++)
+        {
+            canAttackEnemy.Add(bossList[i]);
+        }
         return canAttackEnemy.ToArray();
     }
     #endregion

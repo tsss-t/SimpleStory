@@ -339,15 +339,16 @@ public class EnemyController : Enemy
     }
     #endregion
     #region 攻撃コード
-    protected override void Attack(int attackWeight=1)
+    protected override void Attack(int attackWeight = 1)
     {
-        if (attackTimer > 0f&&nowAction!= ActionType.attack)
+        if (attackTimer >= 0f )
         {
             attackTimer -= Time.deltaTime;
 
         }
         else
         {
+            Debug.Log("attack");
             //攻撃距離判定
             if (Vector3.Distance(transform.position, playerPosition) <= attackDis)
             {
