@@ -3,8 +3,16 @@ using System.Collections;
 
 public class BossController : Enemy
 {
+
+    #region para
+
+    #region Editor
     public int BossATK = 500;
     public int BossDEF = 500;
+
+
+    public int DropItemID = -1;
+    public int DropMoney = -1;
 
     public float attackDis = 1.25f;
 
@@ -13,6 +21,8 @@ public class BossController : Enemy
 
     public float attackDelay = 3f;
 
+    public EventDelegate AfterBossDie;
+    #endregion
     private float attackTimer;
     private Rigidbody rigidBody;
     private GameObject skill1;
@@ -20,6 +30,8 @@ public class BossController : Enemy
 
     private Transform skill3Position;
 
+
+    #region Skill
     private ParticleSystem[] skill3WeapenFire;
     public GameObject skill3AreaFirePrefab;
 
@@ -31,6 +43,15 @@ public class BossController : Enemy
     private ParticleSystem[] skill3WeapenFireCylinder;
     public GameObject skill3AreaFireCylinderPrefab;
     private Transform[] Skill3AreaFireCylinderPositionList;
+
+
+    public delegate void OnStateChangeEvent(int BossID);
+    public event OnStateChangeEvent onStateChanged;
+
+    #endregion
+
+    #endregion
+    #region 初期化/UPDATE
     // Use this for initialization
     protected override void Start()
     {
@@ -68,7 +89,7 @@ public class BossController : Enemy
             }
         }
     }
-
+    #endregion
     #region Follow
     float angle;
     Vector3 playerPos;
@@ -108,7 +129,7 @@ public class BossController : Enemy
 
     }
     #endregion
-    #region　Attack/Skill
+    #region　Boss Action
     protected override void Attack(int attackWeight = 1)
     {
         if (attackTimer > 0f)
@@ -139,7 +160,7 @@ public class BossController : Enemy
                     anim.SetTrigger(attackActionList[3].actionTrigerName);
                     attackTimer = attackDelay * 2;
                 }
-                else if(Vector3.Distance(playerPos, transform.position) < attackDis && angle >145)
+                else if (Vector3.Distance(playerPos, transform.position) < attackDis && angle > 145)
                 {
                     anim.SetTrigger(attackActionList[4].actionTrigerName);
                     attackTimer = attackDelay * 2;
@@ -149,6 +170,103 @@ public class BossController : Enemy
             }
         }
 
+    }
+
+    public override bool TakeDamage(int ATK)
+    {
+
+        if (nowState != ActionState.die)
+        {
+            if (nowState == ActionState.notFoundPlayer)
+            {
+                nowState = ActionState.foundPlayer;
+            }
+            if (base.TakeDamage(ATK))
+            {
+                onStateChanged(this.enemyID);
+                if (HP <= 0)
+                {
+                    this.Die();
+                }
+                else
+                {
+                    if (hitActionList.Length == 1)
+                    {
+                        anim.SetTrigger(hitActionList[0].actionTrigerName);
+                    }
+                    else
+                    {
+                        anim.SetTrigger(hitActionList[GetRandomEvent(hitActionList.GetProbs())].actionTrigerName);
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    protected override void Die()
+    {
+        base.Die();
+        HP = 0;
+        nowState = ActionState.die;
+        //ランダムの死亡動画
+        if (dieActionList.Length == 1)
+        {
+            anim.SetTrigger(dieActionList[0].actionTrigerName);
+        }
+        else
+        {
+            anim.SetTrigger(dieActionList[GetRandomEvent(dieActionList.GetProbs())].actionTrigerName);
+        }
+        PlayerState._instance.KillEnemy(enemyID, EXP, level);
+
+        Drop();
+        StartCoroutine(AfterDie());
+    }
+    protected override void BugDie()
+    {
+        base.BugDie();
+        StartCoroutine(AfterDie());
+    }
+    protected override IEnumerator AfterDie()
+    {
+
+        onStateChanged(this.enemyID);
+        if(AfterBossDie!=null)
+        {
+            AfterBossDie.Execute();
+        }
+        base.AfterDie();
+
+        yield return 0;
+    }
+    protected override void Drop()
+    {
+        if (DropItemID != -1)
+        {
+            PlayerState._instance.GetItem(DropItemID);
+            UIGiftManager._instance.CreatOneGift(this.gameObject);
+        }
+        if (DropMoney > 0)
+        {
+            PlayerState._instance.GetMoney(DropMoney);
+
+            for (int i = 0; i < DropMoney % 100; i++)
+            {
+                UICoinManager._instance.CreatOneCoin(this.gameObject, 13);
+            }
+            DropMoney = DropMoney % 100;
+            for (int i = 0; i < DropMoney % 10; i++)
+            {
+                UICoinManager._instance.CreatOneCoin(this.gameObject, 9);
+
+            }
+            DropMoney = DropMoney % 10;
+            for (int i = 0; i < DropMoney; i++)
+            {
+                UICoinManager._instance.CreatOneCoin(this.gameObject, 7);
+            }
+        }
     }
     #region Skill
     public void Skill1()
@@ -235,7 +353,7 @@ public class BossController : Enemy
     {
         for (int i = 1; i < Skill3AreaFireCylinderPositionList.Length; i++)
         {
-            GameObject.Instantiate(skill3AreaFireCylinderPrefab, Skill3AreaFireCylinderPositionList[i].position, transform.rotation * Quaternion.Euler(0,+ i * 45+40, 0));
+            GameObject.Instantiate(skill3AreaFireCylinderPrefab, Skill3AreaFireCylinderPositionList[i].position, transform.rotation * Quaternion.Euler(0, +i * 45 + 40, 0));
         }
     }
     #endregion
@@ -255,6 +373,12 @@ public class BossController : Enemy
     }
     #endregion
     #endregion
+    #region 外部API
+    public void FoundPlayer()
+    {
+        nowState = ActionState.foundPlayer;
+    }
+    #endregion
     #region  nowActionとアクション動作動画と関連
     bool playingAttackNow;
     bool playingHit;
@@ -264,7 +388,7 @@ public class BossController : Enemy
     private void SetAction()
     {
         playingAttackNow = !CheckActionOver(ActionType.attack, 1);
-        playingHit = !CheckActionOver(ActionType.hit, 2);
+        playingHit = !CheckActionOver(ActionType.hit, 1);
         if (!playingAttackNow && !playingHit)//今は攻撃と受け身両方でもない
         {
             nowAction = ActionType.run;

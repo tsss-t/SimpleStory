@@ -27,12 +27,12 @@ public class EntryManager : MonoBehaviour
     {
         if (entryType == EntryType.Up)
         {
-            goToFloorNum = goToFloorNum == -1000 ? SceneInfomation._instance.floorNum + 1 : goToFloorNum;
+            goToFloorNum = goToFloorNum ==(int) SceneFloorInfo.RandomMapFloor ? SceneInfomation._instance.FloorNumber + 1 : goToFloorNum;
 
         }
         else
         {
-            goToFloorNum = goToFloorNum == -1000 ? SceneInfomation._instance.floorNum - 1 : goToFloorNum;
+            goToFloorNum = goToFloorNum == (int)SceneFloorInfo.RandomMapFloor ? SceneInfomation._instance.FloorNumber - 1 : goToFloorNum;
         }
     }
 
@@ -44,24 +44,28 @@ public class EntryManager : MonoBehaviour
             GameController._instance.SetGoingToFloor(goToFloorNum);
             //FOR DEBUG
 
-            if (goToFloorNum == 0)
+            if (goToFloorNum == (int)SceneFloorInfo.Town)
             {
                 UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.Town));
             }
-            else if (goToFloorNum == -1)
+            else if (goToFloorNum == (int)SceneFloorInfo.FirstFloor)
             {
                 UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.FirstFloor));
 
             }
-            else if (goToFloorNum == -100)
+            else if (goToFloorNum == (int)SceneFloorInfo.LastFloor)
             {
                 UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.LastFloor));
 
             }
-            else if (goToFloorNum == -101)
+            else if (goToFloorNum == (int)SceneFloorInfo.ShopFloor)
             {
                 UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.ShopFloor));
 
+            }
+            else if(goToFloorNum==(int)SceneFloorInfo.BossFloor)
+            {
+                UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.BossFloor));
             }
             else
             {

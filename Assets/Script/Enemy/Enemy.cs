@@ -25,12 +25,12 @@ public abstract class Enemy : MonoBehaviour
     protected float speedDampTime = 0.3f;
 
     protected int HP;
-    protected int HPMax;
+    public int HPMax;
     protected int ATK;
     protected int DEF;
     protected float ACC;
 
-
+        
     #region AnimationEvent
     public ActionEvent[] actionList;
     protected ActionEvent[] normalActionList;
@@ -53,7 +53,8 @@ public abstract class Enemy : MonoBehaviour
     #region methord
     protected virtual void Start()
     {
-
+        HP = HPMax;
+        nowState = ActionState.notFoundPlayer;
         dropInfo = GameController._instance.GetEnemyInfo(this.enemyID);
         hash = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<HashIDs>();
         anim = this.GetComponent<Animator>();
@@ -108,7 +109,7 @@ public abstract class Enemy : MonoBehaviour
             }
             else
             {
-                Debug.Log("Not set blooding effect");
+                Debug.Log("Have not set blooding effect");
             }
             ACC = PlayerState._instance.level - level > 0 ?
                0.7f + PlayerState._instance.DEX * 0.005f :
@@ -268,7 +269,14 @@ public abstract class Enemy : MonoBehaviour
         this.level = level;
         Init();
     }
-
+    public int GetBossHP()
+    {
+        return this.HP;
+    }
+    public int GetBossMaxHP()
+    {
+        return this.HPMax;
+    }
     #endregion
 
 }

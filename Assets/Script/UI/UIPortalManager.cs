@@ -30,7 +30,7 @@ public class UIPortalManager : MonoBehaviour
     {
         foreach (KeyValuePair<int, bool> item in GameController._instance.getPortalList())
         {
-            if (item.Key == SceneInfomation._instance.floorNum)
+            if (item.Key == SceneInfomation._instance.FloorNumber)
             {
                 go = NGUITools.AddChild(portalGrid, protalPrefabOn);
                 go.transform.Find("mark").GetComponent<UISprite>().spriteName = "pic_星星";

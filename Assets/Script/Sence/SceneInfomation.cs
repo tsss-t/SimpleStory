@@ -5,16 +5,24 @@ using System.Collections.Generic;
 public class SceneInfomation : MonoBehaviour
 {
     GameObject areaContainer;
-    public int floorNum = -1000;
+    public SceneFloorInfo floorNumber;
     public static SceneInfomation _instance;
 
+    private int floorNum = -1000;
+    public int FloorNumber
+    {
+        get
+        {
+            return floorNum;
+        }
+    }
     void Awake()
     {
         _instance = this;
-        if (floorNum == -1000 || floorNum == -100)
-        {
-            remakeScene();
-        }
+        floorNum = (int)floorNumber;
+
+        remakeScene();
+
     }
 
     // Use this for initialization
@@ -25,38 +33,34 @@ public class SceneInfomation : MonoBehaviour
     List<AreaData> areaDataList;
     void remakeScene()
     {
-        if (floorNum != -100)
+        if (floorNumber == SceneFloorInfo.RandomMapFloor)
         {
             floorNum = GameController._instance.GetGoingToFloor();
         }
         int nextFloorNum = floorNum + 1;
 
-
-        areaDataList = GameController._instance.GetAreaDataList(nextFloorNum);
-
-        if (areaDataList == null)
+        if (nextFloorNum != (int)SceneFloorInfo.Town &&
+            nextFloorNum != (int)SceneFloorInfo.FirstFloor &&
+            nextFloorNum != (int)SceneFloorInfo.LastFloor &&
+            nextFloorNum != (int)SceneFloorInfo.BossFloor &&
+            nextFloorNum != (int)SceneFloorInfo.ShopFloor &&
+            nextFloorNum < 0
+            )
         {
-            SceneMaker._instance.CreateDataStart(nextFloorNum);
-        }
-        areaDataList = GameController._instance.GetAreaDataList(floorNum);
+            //次の階段のマップデータを生成
+            areaDataList = GameController._instance.GetAreaDataList(nextFloorNum);
 
-        if (areaDataList != null)
-        {
-            areaContainer = new GameObject("Environment");
-            for (int i = 0; i < areaDataList.Count; i++)
+            if (areaDataList == null)
             {
-                GameObject gameObject = Instantiate(Resources.Load(areaDataList[i].areaName), areaDataList[i].areaPosition, areaDataList[i].areaAngle) as GameObject;
-                gameObject.transform.parent = areaContainer.transform;
+                SceneMaker._instance.CreateDataStart(nextFloorNum);
             }
-        }
-        else
-        {
-            if (floorNum != -100)
+
+
+            //現段階のマップ構成
+            areaDataList = GameController._instance.GetAreaDataList(floorNum);
+
+            if (areaDataList != null)
             {
-
-
-                SceneMaker._instance.CreateDataStart(floorNum);
-                areaDataList = GameController._instance.GetAreaDataList(floorNum);
                 areaContainer = new GameObject("Environment");
                 for (int i = 0; i < areaDataList.Count; i++)
                 {
@@ -64,7 +68,30 @@ public class SceneInfomation : MonoBehaviour
                     gameObject.transform.parent = areaContainer.transform;
                 }
             }
-        }
+            //TEST用！！
+            else
+            {
+                if (floorNum != (int)SceneFloorInfo.Town &&
+                floorNum != (int)SceneFloorInfo.FirstFloor &&
+                floorNum != (int)SceneFloorInfo.LastFloor &&
+                floorNum != (int)SceneFloorInfo.BossFloor &&
+                floorNum != (int)SceneFloorInfo.ShopFloor &&
+                floorNum < 0
+                )
+                {
+                    SceneMaker._instance.CreateDataStart(floorNum);
+                    areaDataList = GameController._instance.GetAreaDataList(floorNum);
+                    areaContainer = new GameObject("Environment");
+                    for (int i = 0; i < areaDataList.Count; i++)
+                    {
+                        GameObject gameObject = Instantiate(Resources.Load(areaDataList[i].areaName), areaDataList[i].areaPosition, areaDataList[i].areaAngle) as GameObject;
+                        gameObject.transform.parent = areaContainer.transform;
+                    }
+                }
 
+
+            }
+
+        }
     }
 }

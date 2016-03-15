@@ -1,16 +1,13 @@
-﻿public class Tags 
+﻿public static class Tags
 {
     public const string player = "Player";
     public const string mainCamera = "MainCamera";
-    public const string alarm = "AlarmLight";
-    public const string siren = "Siren";
-    public const string gameController = "GameController";
     public const string mainLight = "MainLight";
-    public const string fader = "Fader";
     public const string enemy = "Enemy";
     public const string terrain = "Terrain";
     public const string NPC = "NPC";
     public const string worktop = "Worktop";
+    public const string boss = "Boss";
     //UI:
     public const string UIRoot = "UIRoot";
 
@@ -20,16 +17,28 @@
     public const string PortalPosition = "PortalPosition";
 
 }
-public class SceneName
+public static class SceneName
 {
     public const string StartMenu = "Start";
     public const string Opening = "Opening";
     public const string Town = "Town";
     public const string FirstFloor = "FirstFloor";
     public const string LastFloor = "LastFloor";
+    public const string BossFloor = "BossFloor";
     public const string ShopFloor = "ShopFloor";
     public const string RandomMapFloor = "RandomFloor";
 
+}
+public static class SceneFloor
+{
+    public const int Town = 0;
+    public const int FirstFloor = -1;
+    public const int LastFloor = -10;
+    public const int ShopFloor = -11;
+}
+public enum SceneFloorInfo
+{
+    Town=0, FirstFloor = -1, LastFloor = -10, ShopFloor = -11, BossFloor=-3, RandomMapFloor=-1000
 }
 
 public static class AudioName

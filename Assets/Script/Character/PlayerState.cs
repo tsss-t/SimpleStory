@@ -126,10 +126,10 @@ public class PlayerState
     private PlayerState()
     {
         playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
-        HP = 100;
         energy = 100;
         LoadData();
         Init();
+        HP = HPMax;
     }
     //基礎statusを導入
     public void LoadData()
@@ -154,7 +154,7 @@ public class PlayerState
         this.quest = PlayerQuest.nowPlayerQuest;
 
     }
-    //status算出
+    //status算出d
     private void Init()
     {
         InitEquep();
@@ -169,11 +169,11 @@ public class PlayerState
         LUK = (int)(level * 0.25f + baseLUK + equepLUK);
         ATK = (int)(STR * 1.25f);
         DEF = (int)(DEX * 0.4f + CON * 0.4f);
-        energyUP = 0.1f - DEX * 0.001f;
+        energyUP = 0.17f - DEX * 0.001f;
         energyMax = 100;
         HPMax = level * 100 + STR * 10 + CON * 25;
         HP = HPMax > HP ? HP : HPMax;
-        health = 1 + level * 0.3f + CON * 0.2f;
+        health = 1 + level * 0.3f + CON * 0.02f;
         attackDis = 5;
     }
     /// <summary>
