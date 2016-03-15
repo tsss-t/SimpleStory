@@ -243,7 +243,11 @@ public class PlayerController : MonoBehaviour
             bool isHit = true;
             if (Random.value < ACC)
             {
-                anim.SetTrigger(hash.hitTrigger);
+                Random.seed = System.DateTime.Now.Millisecond; 
+                if (Random.value>0.75)
+                {
+                    anim.SetTrigger(hash.hitTrigger);
+                }
             }
             else
             {

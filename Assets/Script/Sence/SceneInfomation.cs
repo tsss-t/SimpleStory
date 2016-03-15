@@ -8,7 +8,7 @@ public class SceneInfomation : MonoBehaviour
     public SceneFloorInfo floorNumber;
     public static SceneInfomation _instance;
 
-    private int floorNum = -1000;
+    public int floorNum = -1000;
     public int FloorNumber
     {
         get
@@ -54,13 +54,33 @@ public class SceneInfomation : MonoBehaviour
             {
                 SceneMaker._instance.CreateDataStart(nextFloorNum);
             }
+        }
 
+        //現段階のマップ構成
+        areaDataList = GameController._instance.GetAreaDataList(floorNum);
 
-            //現段階のマップ構成
-            areaDataList = GameController._instance.GetAreaDataList(floorNum);
-
-            if (areaDataList != null)
+        if (areaDataList != null)
+        {
+            areaContainer = new GameObject("Environment");
+            for (int i = 0; i < areaDataList.Count; i++)
             {
+                GameObject gameObject = Instantiate(Resources.Load(areaDataList[i].areaName), areaDataList[i].areaPosition, areaDataList[i].areaAngle) as GameObject;
+                gameObject.transform.parent = areaContainer.transform;
+            }
+        }
+        //TEST用！！
+        else
+        {
+            if (floorNum != (int)SceneFloorInfo.Town &&
+            floorNum != (int)SceneFloorInfo.FirstFloor &&
+            floorNum != (int)SceneFloorInfo.LastFloor &&
+            floorNum != (int)SceneFloorInfo.BossFloor &&
+            floorNum != (int)SceneFloorInfo.ShopFloor &&
+            floorNum < 0
+            )
+            {
+                SceneMaker._instance.CreateDataStart(floorNum);
+                areaDataList = GameController._instance.GetAreaDataList(floorNum);
                 areaContainer = new GameObject("Environment");
                 for (int i = 0; i < areaDataList.Count; i++)
                 {
@@ -68,30 +88,10 @@ public class SceneInfomation : MonoBehaviour
                     gameObject.transform.parent = areaContainer.transform;
                 }
             }
-            //TEST用！！
-            else
-            {
-                if (floorNum != (int)SceneFloorInfo.Town &&
-                floorNum != (int)SceneFloorInfo.FirstFloor &&
-                floorNum != (int)SceneFloorInfo.LastFloor &&
-                floorNum != (int)SceneFloorInfo.BossFloor &&
-                floorNum != (int)SceneFloorInfo.ShopFloor &&
-                floorNum < 0
-                )
-                {
-                    SceneMaker._instance.CreateDataStart(floorNum);
-                    areaDataList = GameController._instance.GetAreaDataList(floorNum);
-                    areaContainer = new GameObject("Environment");
-                    for (int i = 0; i < areaDataList.Count; i++)
-                    {
-                        GameObject gameObject = Instantiate(Resources.Load(areaDataList[i].areaName), areaDataList[i].areaPosition, areaDataList[i].areaAngle) as GameObject;
-                        gameObject.transform.parent = areaContainer.transform;
-                    }
-                }
 
-
-            }
 
         }
+
     }
+
 }

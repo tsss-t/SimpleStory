@@ -185,12 +185,10 @@ public class EnemyManager : MonoBehaviour
         Estruct.enemyList = new List<GameObject>();
         for (int j = 0; j < Estruct.count; j++)
         {
-
             GameObject gameObject = MakeEnemey(prefab, position, width, height);
             gameObject.GetComponent<EnemyController>().Lock();
             gameObject.transform.LookAt(GameObject.FindGameObjectWithTag(Tags.player).transform.position);
             Estruct.enemyList.Add(gameObject);
-
         }
         managedEnemyList.Add(Estruct);
     }
@@ -217,7 +215,6 @@ public class EnemyManager : MonoBehaviour
         canAttackEnemy = new List<GameObject>();
         for (int i = 0; i < enemyAreaList.Count; i++)
         {
-
             if (isInArea(enemyAreaList[i], playerstate.playerTransform.position))
             {
                 for (int j = 0; j < enemyAreaList[i].enemyList.Count; j++)

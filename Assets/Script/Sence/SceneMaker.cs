@@ -571,9 +571,9 @@ public class SceneMaker : MonoBehaviour
                         GameController._instance.GetGoingToFloor(),
                         enemyID,
                         enemyCount,
-                        GameController._instance.GetGoingToFloor() + 101,
+                        GameController._instance.GetGoingToFloor() + 11,
                         position.x,
-                        0,
+                        0.25f,
                         position.y,
                         areaManager.GetAreaPrefabInfo(angle).width,
                         areaManager.GetAreaPrefabInfo(angle).height

@@ -23,7 +23,7 @@ public class UIBossBloodManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        boss= GameObject.FindGameObjectsWithTag(Tags.boss);
+        boss = GameObject.FindGameObjectsWithTag(Tags.boss);
         isShowPanel = false;
         bossBloodBarDictionary = new Dictionary<int, UIBossBloodItemEvent>();
         bossControllerDictionary = new Dictionary<int, BossController>();
@@ -59,7 +59,7 @@ public class UIBossBloodManager : MonoBehaviour
     }
     #endregion
     #region UI Actions
-    void OnBossStateChanged(int BossID)
+    public void OnBossStateChanged(int BossID)
     {
         UIBossBloodItemEvent item;
         BossController tempBossController;
@@ -86,7 +86,10 @@ public class UIBossBloodManager : MonoBehaviour
     {
         for (int i = 0; i < boss.Length; i++)
         {
-            boss[i].GetComponent<BossController>().onStateChanged -= OnBossStateChanged;
+            if (boss[i] != null)
+            {
+                boss[i].GetComponent<BossController>().onStateChanged -= OnBossStateChanged;
+            }
         }
     }
     void Show()

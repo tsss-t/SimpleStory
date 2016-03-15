@@ -13,6 +13,7 @@ public class UIItemInfoPanel : MonoBehaviour
     GameObject BuyButton;
     GameObject ItemInfoBG;
     GameObject ConstLabels;
+    GameObject MoneyIcon;
     UISprite equepSprite;
     UILabel STRLabel;
     UILabel CONLabel;
@@ -21,6 +22,7 @@ public class UIItemInfoPanel : MonoBehaviour
     UILabel LUKLabel;
     UILabel NameLabel;
     UILabel DescripteLabel;
+    UILabel MoneyLabel;
 
     #endregion
     #region Start
@@ -44,7 +46,8 @@ public class UIItemInfoPanel : MonoBehaviour
         SellButton = ItemInfoBG.transform.Find("SellButton").gameObject;
         BuyButton = ItemInfoBG.transform.Find("BuyButton").gameObject;
         ConstLabels = ItemInfoBG.transform.Find("ConstLabels").gameObject;
-
+        MoneyIcon = ItemInfoBG.transform.Find("MoneyIcon").gameObject;
+        MoneyLabel = MoneyIcon.transform.Find("MoneyLabel").GetComponent<UILabel>();
     }
     #endregion
     #region show EquepInfoPanel
@@ -55,7 +58,7 @@ public class UIItemInfoPanel : MonoBehaviour
         UseButton.SetActive(false);
         SellButton.SetActive(false);
         BuyButton.SetActive(false);
-
+        MoneyIcon.SetActive(false);
         equepSprite.spriteName = item.info.adress;
         NameLabel.text = item.info.name;
         DescripteLabel.text = item.info.descript;
@@ -68,6 +71,7 @@ public class UIItemInfoPanel : MonoBehaviour
             DEXLabel.text = item.info.DEX.ToString();
             CONLabel.text = item.info.CON.ToString();
             LUKLabel.text = item.info.LUK.ToString();
+            MoneyLabel.text = item.info.money.ToString();
             switch (playerState.GetActionInfoNow())
             {
                 case PlayerState.PlayerAction.Free:
@@ -85,10 +89,12 @@ public class UIItemInfoPanel : MonoBehaviour
                 case PlayerState.PlayerAction.Shopping:
                     if (from == ItemFrom.Bag)
                     {
+                        MoneyIcon.SetActive(true);
                         SellButton.SetActive(true);
                     }
                     else if (from == ItemFrom.Shop)
                     {
+                        MoneyIcon.SetActive(true);
                         BuyButton.SetActive(true);
                     }
                     break;
@@ -105,6 +111,7 @@ public class UIItemInfoPanel : MonoBehaviour
             DEXLabel.text = string.Empty;
             CONLabel.text = string.Empty;
             LUKLabel.text = string.Empty;
+            MoneyLabel.text = item.info.money.ToString();
             switch (playerState.GetActionInfoNow())
             {
                 case PlayerState.PlayerAction.Free:
@@ -115,10 +122,12 @@ public class UIItemInfoPanel : MonoBehaviour
                 case PlayerState.PlayerAction.Shopping:
                     if (from == ItemFrom.Bag)
                     {
+                        MoneyIcon.SetActive(true);
                         SellButton.SetActive(true);
                     }
                     else if (from == ItemFrom.Shop)
                     {
+                        MoneyIcon.SetActive(true);
                         BuyButton.SetActive(true);
                     }
                     break;

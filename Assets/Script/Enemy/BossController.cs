@@ -172,7 +172,7 @@ public class BossController : Enemy
 
     }
 
-    public override bool TakeDamage(int ATK)
+    public override bool TakeDamage(int ATK, bool hitRecover = false)
     {
 
         if (nowState != ActionState.die)
@@ -190,13 +190,16 @@ public class BossController : Enemy
                 }
                 else
                 {
-                    if (hitActionList.Length == 1)
+                    if(hitRecover)
                     {
-                        anim.SetTrigger(hitActionList[0].actionTrigerName);
-                    }
-                    else
-                    {
-                        anim.SetTrigger(hitActionList[GetRandomEvent(hitActionList.GetProbs())].actionTrigerName);
+                        if (hitActionList.Length == 1)
+                        {
+                            anim.SetTrigger(hitActionList[0].actionTrigerName);
+                        }
+                        else
+                        {
+                            anim.SetTrigger(hitActionList[GetRandomEvent(hitActionList.GetProbs())].actionTrigerName);
+                        }
                     }
                 }
                 return true;
@@ -221,6 +224,7 @@ public class BossController : Enemy
         PlayerState._instance.KillEnemy(enemyID, EXP, level);
 
         Drop();
+        
         StartCoroutine(AfterDie());
     }
     protected override void BugDie()
@@ -232,7 +236,7 @@ public class BossController : Enemy
     {
 
         onStateChanged(this.enemyID);
-        if(AfterBossDie!=null)
+        if (AfterBossDie != null)
         {
             AfterBossDie.Execute();
         }
@@ -437,4 +441,8 @@ public class BossController : Enemy
         return true;
     }
     #endregion
+    void OnDestroy()
+    {
+        onStateChanged -= UIBossBloodManager._instance.OnBossStateChanged;
+    }
 }

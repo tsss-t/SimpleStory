@@ -4,15 +4,14 @@ using System.Collections;
 
 public class UIStartMenuManager : MonoBehaviour
 {
+    GameObject LoadContainer;
     // Use this for initialization
     void Start()
     {
+        LoadContainer = transform.Find("SystemPanel").gameObject;
+        LoadContainer.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
 
     public void OnNewButtonClick()
     {
@@ -21,59 +20,15 @@ public class UIStartMenuManager : MonoBehaviour
     }
     public void OnContinueButtonClick()
     {
-        GameController._instance.Load();
-        int floorNumber = GameController._instance.GetGoingToFloor();
-        if (floorNumber == 0)
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.Town));
-        }
-        else if (floorNumber == -1)
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.FirstFloor));
-
-        }
-        else if (floorNumber == -100)
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.LastFloor));
-
-        }
-        else if (floorNumber == -101)
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.ShopFloor));
-
-        }
-        else
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.RandomMapFloor));
-        }
+        LoadContainer.SetActive(true);
     }
     public void OnLoadButtonClick()
     {
-        GameController._instance.Load();
-        int floorNumber = GameController._instance.GetGoingToFloor();
-        if (floorNumber == 0)
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.Town));
-        }
-        else if (floorNumber == -1)
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.FirstFloor));
-
-        }
-        else if (floorNumber == -100)
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.LastFloor));
-
-        }
-        else if(floorNumber==-101)
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.ShopFloor));
-
-        }
-        else
-        {
-            UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.RandomMapFloor));
-        }
+        LoadContainer.SetActive(true);
+    }
+    public void OnLoadButtonCloseClick()
+    {
+        LoadContainer.SetActive(false);
 
     }
     public void OnExitButtonClick()

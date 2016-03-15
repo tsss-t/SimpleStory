@@ -19,6 +19,7 @@ public class Skill
     int level = 1;
     float attackDis = 5;
     float effectDis = 7.5f;
+    int enegy;
     #region get/set
     public int Id
     {
@@ -147,6 +148,19 @@ public class Skill
         set
         {
             effectDis = value;
+        }
+    }
+
+    public int Enegy
+    {
+        get
+        {
+            return enegy;
+        }
+
+        set
+        {
+            enegy = value;
         }
     }
     #endregion;

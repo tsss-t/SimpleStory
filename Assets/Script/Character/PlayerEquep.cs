@@ -25,7 +25,7 @@ public class PlayerEquep
         Init();
     }
 
-    private void Init()
+    public void Init()
     {
         dictionaryEquep = new Dictionary<ItemType, Item>();
         dictionaryEquep.Add(ItemType.head, null);
