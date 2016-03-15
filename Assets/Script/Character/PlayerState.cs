@@ -131,6 +131,22 @@ public class PlayerState
         Init();
         HP = HPMax;
     }
+    /// <summary>
+    /// Game Loadの時使用
+    /// </summary>
+    public void ReLoad()
+    {
+        playerTransform = GameObject.FindGameObjectWithTag(Tags.player).transform;
+        energy = 100;
+
+        equep.Init();
+        bag.Init();
+        quest.Init();
+        LoadData();
+        Init();
+        HP = HPMax;
+    }
+
     //基礎statusを導入
     public void LoadData()
     {

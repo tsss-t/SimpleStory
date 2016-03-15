@@ -38,7 +38,7 @@ public static class SceneFloor
 }
 public enum SceneFloorInfo
 {
-    Town=0, FirstFloor = -1, LastFloor = -10, ShopFloor = -11, BossFloor=-3, RandomMapFloor=-1000
+    Town=0, FirstFloor = -1, LastFloor = -10, ShopFloor = -11, BossFloor=-9, RandomMapFloor=-1000
 }
 
 public static class AudioName

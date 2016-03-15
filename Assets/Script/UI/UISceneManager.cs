@@ -30,7 +30,7 @@ public class UISceneManager : MonoBehaviour
 
         if (isAsyn)
         {
-            progressBar.value = ao.progress;
+            progressBar.value = Mathf.Lerp(ao.progress, progressBar.value, Time.deltaTime);
             if (ao.progress == 1)
             {
                 Hide();

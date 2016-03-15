@@ -27,12 +27,12 @@ public class EntryManager : MonoBehaviour
     {
         if (entryType == EntryType.Up)
         {
-            goToFloorNum = goToFloorNum ==(int) SceneFloorInfo.RandomMapFloor ? SceneInfomation._instance.FloorNumber + 1 : goToFloorNum;
+            goToFloorNum = goToFloorNum == (int)SceneFloorInfo.RandomMapFloor ? SceneInfomation._instance.FloorNumber + 1: goToFloorNum ;
 
         }
         else
         {
-            goToFloorNum = goToFloorNum == (int)SceneFloorInfo.RandomMapFloor ? SceneInfomation._instance.FloorNumber - 1 : goToFloorNum;
+            goToFloorNum = goToFloorNum == (int)SceneFloorInfo.RandomMapFloor ? SceneInfomation._instance.FloorNumber - 1: goToFloorNum ;
         }
     }
 
@@ -63,7 +63,7 @@ public class EntryManager : MonoBehaviour
                 UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.ShopFloor));
 
             }
-            else if(goToFloorNum==(int)SceneFloorInfo.BossFloor)
+            else if (goToFloorNum == (int)SceneFloorInfo.BossFloor)
             {
                 UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.BossFloor));
             }

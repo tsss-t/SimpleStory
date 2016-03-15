@@ -33,6 +33,7 @@ public class PortalManager : MonoBehaviour
             if (collider.gameObject.tag.Equals(Tags.player))
             {
                 playerIn();
+                GameController._instance.makePortalOpen(SceneInfomation._instance.FloorNumber);
             }
             else if (!collider.gameObject.tag.Equals(Tags.player))
             {

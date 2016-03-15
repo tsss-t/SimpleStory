@@ -34,7 +34,7 @@ public class PlayerQuest
     /// <summary>
     /// 
     /// </summary>
-    private void Init()
+    public void Init()
     {
         //TODO:Load from server
 

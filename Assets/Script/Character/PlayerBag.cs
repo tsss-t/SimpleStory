@@ -33,7 +33,7 @@ public class PlayerBag
     /// <summary>
     /// 最初の一回、初期化
     /// </summary>
-    private void Init()
+    public void Init()
     {
         //TODO:Load from server
 

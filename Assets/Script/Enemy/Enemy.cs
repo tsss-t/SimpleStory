@@ -6,7 +6,7 @@ public enum ActionType
 }
 public enum ActionState
 {
-    foundPlayer, notFoundPlayer, goBack, die, locked
+    notFoundPlayer, foundPlayer, goBack, die, locked
 }
 public abstract class Enemy : MonoBehaviour
 {
@@ -30,7 +30,7 @@ public abstract class Enemy : MonoBehaviour
     protected int DEF;
     protected float ACC;
 
-        
+
     #region AnimationEvent
     public ActionEvent[] actionList;
     protected ActionEvent[] normalActionList;
@@ -43,7 +43,7 @@ public abstract class Enemy : MonoBehaviour
     protected HashIDs hash;
     protected EnemyManager enemyManager;
     protected Vector3 playerPosition;
-    protected ActionState nowState;
+    public ActionState nowState;
     protected ActionType nowAction;
 
     #region Get/Set
@@ -54,7 +54,6 @@ public abstract class Enemy : MonoBehaviour
     protected virtual void Start()
     {
         HP = HPMax;
-        nowState = ActionState.notFoundPlayer;
         dropInfo = GameController._instance.GetEnemyInfo(this.enemyID);
         hash = GameObject.FindGameObjectWithTag(Tags.player).GetComponent<HashIDs>();
         anim = this.GetComponent<Animator>();
@@ -81,10 +80,8 @@ public abstract class Enemy : MonoBehaviour
         ACC = level - PlayerState._instance.level > 0 ? 0.7f :
                    (0.7 - (PlayerState._instance.level - level) * 0.15f <= 0 ? 0.05f :
                            ((0.7f - (PlayerState._instance.level - level) * 0.15f + 0.05f)));
-        //debug test:
-        ACC = 1;
         PlayerController._instance.TakeDamage(ATK, ACC);
-        if(!PlayerState._instance.PlayerAliveNow)
+        if (!PlayerState._instance.PlayerAliveNow)
         {
             nowState = ActionState.notFoundPlayer;
         }
@@ -98,7 +95,7 @@ public abstract class Enemy : MonoBehaviour
     {
 
     }
-    public virtual bool TakeDamage(int ATK)
+    public virtual bool TakeDamage(int ATK,bool hitRecover=false)
     {
         if (nowState != ActionState.die)
         {

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 #region セーブデータクラス
 /// <summary>
@@ -120,15 +121,21 @@ public class GameController
         gameData = new GameData();
         gameData.key = GameManager._instance.gameDataKey;
 
-        InitSave();
-        Load();
+        //Load(0);
+
+
+        #region test
+        testLoad();
+
         lastChangeSceneType = EntryType.Portal;
-        playerInFloor = -99;
+        playerInFloor = -8;
+
+        #endregion
 
     }
     #endregion
     #region paramater
-    private const string dataFileName = "save.dat";//セーブデータの名前
+    private string dataFileName = "save0.dat";//セーブデータの名前
 
     private XmlSaver xs;
     public GameData gameData;
@@ -141,8 +148,7 @@ public class GameController
     public void newGame()
     {
         gameController = new GameController();
-        InitSave();
-        Load();
+        testLoad();
         lastChangeSceneType = EntryType.Down;
     }
     #endregion
@@ -154,8 +160,9 @@ public class GameController
         string dataString = xs.SerializeObject(gameData, typeof(GameData));
         xs.CreateXML(gameDataFile, dataString);
     }
-    public void Save()
+    public void Save(int dataNumber)
     {
+        dataFileName = string.Format("save{0}.dat", dataNumber);
         SaveAcceptQuest();
         SaveBag();
         SavePlayerState();
@@ -167,6 +174,7 @@ public class GameController
     }
     void InitSave()
     {
+        dataFileName = "save0.dat";
         gameData.PlayerAcceptData = playerQuestData.ToString();
         gameData.PlayerBag = bagData.ToString();
         gameData.PlayerState = playerStateData.ToString();
@@ -283,8 +291,10 @@ public class GameController
     #endregion
 
     #region Load
-    public void Load()
+    void testLoad()
     {
+        InitSave();
+        dataFileName = string.Format("save0.dat");
         string gameDataFile = GameManager.GetDataPath() + "/" + dataFileName;
         if (xs.hasFile(gameDataFile))
         {
@@ -298,13 +308,93 @@ public class GameController
             LoadPlayerPosition();
             LoadEnemyPositionData();
             LoadenemyInfo();
+
+        }
+    }
+    void clearData()
+    {
+        if (bagList != null)
+        {
+            bagList.Clear();
+        }
+        if (eventDictionary != null)
+        {
+            eventDictionary.Clear();
+
+        }
+
+        if (stepList != null)
+        {
+            stepList.Clear();
+        }
+        if (portalDictionary != null)
+        {
+
+            portalDictionary.Clear();
+        }
+        if (areaDictionary != null)
+        {
+            areaDictionary.Clear();
+
+        }
+    }
+    public void Load(int dataNumber)
+    {
+        dataFileName = string.Format("save{0}.dat", dataNumber);
+        string gameDataFile = GameManager.GetDataPath() + "/" + dataFileName;
+        if (xs.hasFile(gameDataFile))
+        {
+            string dataString = xs.LoadXML(gameDataFile);
+            GameData gameDataFromXML = xs.DeserializeObject(dataString, typeof(GameData)) as GameData;
+            //セーブデータ　使用可能
+            gameData = gameDataFromXML;
+            clearData();
+            LoadBagItem();
+            LoadEventProcess();
+            LoadPortalList();
+            LoadAreaData();
+            LoadPlayerPosition();
+            LoadEnemyPositionData();
+            LoadenemyInfo();
+
+            int floorNumber = GameController._instance.GetGoingToFloor();
+            if (floorNumber == (int)SceneFloorInfo.Town)
+            {
+                UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.Town));
+            }
+            else if (floorNumber == (int)SceneFloorInfo.FirstFloor)
+            {
+                UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.FirstFloor));
+
+            }
+            else if (floorNumber == (int)SceneFloorInfo.LastFloor)
+            {
+                UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.LastFloor));
+
+            }
+            else if (floorNumber == (int)SceneFloorInfo.ShopFloor)
+            {
+                UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.ShopFloor));
+
+            }
+            else if (floorNumber == (int)SceneFloorInfo.BossFloor)
+            {
+                UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.BossFloor));
+
+            }
+            else
+            {
+                UISceneManager._instance.Show(SceneManager.LoadSceneAsync(SceneName.RandomMapFloor));
+            }
+            PlayerState._instance.ReLoad();
+
         }
         //セーブデータが存在しません
         else
         {
             Debug.Log("Not found savedata");
             InitSave();
-            Load();
+            Load(0);
         }
     }
     #region Item
@@ -313,7 +403,7 @@ public class GameController
     ItemInfo itemInfo;
     void LoadItemList()
     {
-        if (itemList == null)
+        if (itemList == null || itemList.Count == 0)
         {
             //if(itemList!=null)
             //{
@@ -377,7 +467,7 @@ public class GameController
     /// <returns></returns>
     public Dictionary<int, ItemInfo> GetItemList()
     {
-        if (itemList == null)
+        if (itemList == null || itemList.Count == 0)
         {
             LoadItemList();
         }
@@ -387,7 +477,7 @@ public class GameController
 
     public ItemInfo GetItem(int itemID)
     {
-        if (itemList == null)
+        if (itemList == null || itemList.Count == 0)
         {
             LoadItemList();
         }
@@ -399,7 +489,7 @@ public class GameController
     Item item;
     void LoadBagItem()
     {
-        if (bagList == null)
+        if (bagList == null || bagList.Count == 0)
         {
             string[] proArray;
             string[] dataArray = gameData.PlayerBag.ToString().Split('\n');
@@ -431,7 +521,7 @@ public class GameController
     /// <returns></returns>
     public Dictionary<int, Item> GetBagItemList()
     {
-        if (bagList == null)
+        if (bagList == null || bagList.Count == 0)
         {
             LoadBagItem();
         }
@@ -445,7 +535,7 @@ public class GameController
     ItemCompose itemCompose;
     void LoadItemComposeList()
     {
-        if (itemComposeDictionary == null)
+        if (itemComposeDictionary == null || itemComposeDictionary.Count == 0)
         {
             string[] proArray;
             string[] idArray;
@@ -481,11 +571,11 @@ public class GameController
 
     public List<ItemCompose> GetItemComposeList(ItemType type)
     {
-        if (itemComposeDictionary == null)
+        if (itemComposeDictionary == null || itemComposeDictionary.Count == 0)
         {
             LoadItemComposeList();
         }
-        if( itemComposeDictionary.TryGetValue(type, out itemComposeList))
+        if (itemComposeDictionary.TryGetValue(type, out itemComposeList))
         {
             return itemComposeList;
         }
@@ -780,6 +870,7 @@ public class GameController
             }
             skill.ColdTime = int.Parse(proArray[6]);
             skill.Damage = int.Parse(proArray[7]);
+            skill.Enegy = int.Parse(proArray[8]);
             skill.Level = 1;
             skillList.Add(skill);
         }
@@ -795,7 +886,7 @@ public class GameController
     Dictionary<int, bool> eventDictionary;
     void LoadEventProcess()
     {
-        if (eventDictionary == null)
+        if (eventDictionary == null || eventDictionary.Count == 0)
         {
             string[] proArray;
             string[] dataArray = gameData.PlayerEventProcess.ToString().Split('\n');
@@ -833,7 +924,7 @@ public class GameController
     Dictionary<int, bool> portalDictionary;
     void LoadPortalList()
     {
-        if (portalDictionary == null)
+        if (portalDictionary == null || portalDictionary.Count == 0)
         {
             string[] proArray;
             string[] dataArray = gameData.PlayerPortalPorcess.ToString().Split('\n');
@@ -882,7 +973,7 @@ public class GameController
     void LoadAreaData()
     {
         int floorNumber = 0;
-        if (areaDictionary == null)
+        if (areaDictionary == null || areaDictionary.Count == 0)
         {
             string[] proArray;
             string[] dataArray = gameData.SenceData.ToString().Split('\n');

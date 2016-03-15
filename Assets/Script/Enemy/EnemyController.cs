@@ -341,14 +341,13 @@ public class EnemyController : Enemy
     #region 攻撃コード
     protected override void Attack(int attackWeight = 1)
     {
-        if (attackTimer >= 0f )
+        if (attackTimer >= 0f)
         {
             attackTimer -= Time.deltaTime;
 
         }
         else
         {
-            Debug.Log("attack");
             //攻撃距離判定
             if (Vector3.Distance(transform.position, playerPosition) <= attackDis)
             {
@@ -518,7 +517,8 @@ public class EnemyController : Enemy
     /// 被攻撃
     /// </summary>
     /// <param name="ATK">技の攻撃力</param>
-    public override bool TakeDamage(int ATK)
+
+    public override bool TakeDamage(int ATK, bool hitRecover = true)
     {
         if (nowState != ActionState.die)
         {
@@ -543,6 +543,7 @@ public class EnemyController : Enemy
                     {
                         anim.SetTrigger(hitActionList[GetRandomEvent(hitActionList.GetProbs())].actionTrigerName);
                     }
+
                 }
                 return true;
             }

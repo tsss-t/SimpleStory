@@ -100,7 +100,7 @@ public class PlayerAttack : MonoBehaviour
                     {
                         if (AttackFront(canAttackEnemy[i].transform.position, PosType.basic, false))
                         {
-                            if(canAttackEnemy[i].tag==Tags.boss)
+                            if (canAttackEnemy[i].tag == Tags.boss)
                             {
                                 canAttackEnemy[i].GetComponent<BossController>().TakeDamage(playerState.ATK);
                             }
@@ -138,14 +138,17 @@ public class PlayerAttack : MonoBehaviour
                     {
                         for (int i = 0; i < canAttackEnemy.Length; i++)
                         {
-                            if (canAttackEnemy[i].tag == Tags.boss)
+                            if (AttackFront(canAttackEnemy[i].transform.position, PosType.two, false))
                             {
-                                canAttackEnemy[i].GetComponent<BossController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
+                                if (canAttackEnemy[i].tag == Tags.boss)
+                                {
+                                    canAttackEnemy[i].GetComponent<BossController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
 
-                            }
-                            else
-                            {
-                                canAttackEnemy[i].GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
+                                }
+                                else
+                                {
+                                    canAttackEnemy[i].GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage);
+                                }
                             }
                         }
                     }
@@ -157,14 +160,17 @@ public class PlayerAttack : MonoBehaviour
                     {
                         for (int i = 0; i < canAttackEnemy.Length; i++)
                         {
-                            if (canAttackEnemy[i].tag == Tags.boss)
+                            if (AttackFront(canAttackEnemy[i].transform.position, PosType.three, false))
                             {
-                                canAttackEnemy[i].GetComponent<BossController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.three).Damage);
+                                if (canAttackEnemy[i].tag == Tags.boss)
+                                {
+                                    canAttackEnemy[i].GetComponent<BossController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.three).Damage);
 
-                            }
-                            else
-                            {
-                                canAttackEnemy[i].GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.three).Damage);
+                                }
+                                else
+                                {
+                                    canAttackEnemy[i].GetComponent<EnemyController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.three).Damage);
+                                }
                             }
                         }
                     }
@@ -322,7 +328,7 @@ public class PlayerAttack : MonoBehaviour
                     {
                         case PosType.one:
                             {
-                                if (playerState.energy < 60)
+                                if (playerState.energy < SkillManager._instance.GetSkillByPosition(PosType.one).Enegy)
                                 {
                                     return false;
                                 }
@@ -330,7 +336,7 @@ public class PlayerAttack : MonoBehaviour
                             }
                         case PosType.two:
                             {
-                                if (playerState.energy < 40)
+                                if (playerState.energy < SkillManager._instance.GetSkillByPosition(PosType.two).Enegy)
                                 {
                                     return false;
                                 }
@@ -338,7 +344,7 @@ public class PlayerAttack : MonoBehaviour
                             }
                         case PosType.three:
                             {
-                                if (playerState.energy < 70)
+                                if (playerState.energy < SkillManager._instance.GetSkillByPosition(PosType.three).Enegy)
                                 {
                                     return false;
                                 }
@@ -371,17 +377,17 @@ public class PlayerAttack : MonoBehaviour
                     {
                         case PosType.one:
                             {
-                                playerState.UseEnergy(70);
+                                playerState.UseEnergy(SkillManager._instance.GetSkillByPosition(PosType.one).Enegy);
                                 break;
                             }
                         case PosType.two:
                             {
-                                playerState.UseEnergy(70);
+                                playerState.UseEnergy(SkillManager._instance.GetSkillByPosition(PosType.two).Enegy);
                                 break;
                             }
                         case PosType.three:
                             {
-                                playerState.UseEnergy(80);
+                                playerState.UseEnergy(SkillManager._instance.GetSkillByPosition(PosType.three).Enegy);
                                 break;
                             }
                     }
@@ -429,9 +435,9 @@ public class PlayerAttack : MonoBehaviour
                 if (collider)
                 {
                     GameObject goEffect = (GameObject.Instantiate(effect) as AttackEffect).gameObject;
-                    if(go.tag==Tags.boss)
+                    if (go.tag == Tags.boss)
                     {
-                        go.GetComponent<BossController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage * 5);
+                        go.GetComponent<BossController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.two).Damage * 5, true);
                     }
                     else
                     {
@@ -458,9 +464,9 @@ public class PlayerAttack : MonoBehaviour
                 if (collider)
                 {
                     GameObject.Instantiate(effect, hit.point, Quaternion.identity);
-                    if(go.tag==Tags.boss)
+                    if (go.tag == Tags.boss)
                     {
-                        go.GetComponent<BossController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5);
+                        go.GetComponent<BossController>().TakeDamage(SkillManager._instance.GetSkillByPosition(PosType.three).Damage * 5, true);
 
                     }
                     else
